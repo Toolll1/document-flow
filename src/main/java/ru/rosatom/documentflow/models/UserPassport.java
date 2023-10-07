@@ -14,20 +14,20 @@ import java.time.LocalDate;
 @Builder
 @Entity
 @Table(name = "passports")
-public class Passport {
+public class UserPassport {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "passport_id")
     private final Long id;
     @Column(name = "series", nullable = false, length = 4)
-    private  String series;
+    private String series;
     @Column(name = "number", nullable = false, length = 6)
-    private  String number;
+    private String number;
     @Column(name = "issued", nullable = false, length = 320)
-    private  String issued; //кем выдан
+    private String issued; //кем выдан
     @Column(name = "date")
-    private  LocalDate date;
+    private LocalDate date;
     @Column(name = "kp", nullable = false, length = 6)
-    private  String kp;  //код подразделения
+    private String kp;  //код подразделения
 }

@@ -1,0 +1,18 @@
+{
+	"info": {
+		"_postman_id": "0ef66098-0688-4a12-95f1-cf467c0f13b1",
+		"name": "document-flow",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26121869"
+	},
+	"item": [
+		{
+			"name": "создание нового пользователя",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}

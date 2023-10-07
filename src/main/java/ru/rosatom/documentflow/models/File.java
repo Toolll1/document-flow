@@ -4,6 +4,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -18,17 +20,25 @@ public class File {
     @Column(name = "file_id")
     private final Long id;
     @Column(name = "title", nullable = false, length = 100)
-    private  String title;
-    @Column(name = "file_path", nullable = false, length = 100)
-    private  String path;
+    private String title;
+    @Column(name = "file_path", nullable = false, length = 1000)
+    private String path;
     @Column(name = "created_at")
     private LocalDate date;
     @ToString.Exclude
     @OneToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "creator_id")
     private User owner;  //создатель файла
     @ToString.Exclude
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "type_id")
-    private Type type;  //тип файла
+    private FileType fileType;  //тип файла
+    @ToString.Exclude
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "file_id")
+    private List<FileChanges> changes = new ArrayList<>(); //список изменений
+    @ToString.Exclude
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "file_id")
+    private List<FileAttributeValues> attributeValues = new ArrayList<>();  // список значений атрибутов
 }

@@ -1,3 +1,7 @@
+# document-flow
+ER-диаграмма:
+![This is an image](https://i.postimg.cc/q7y7sjw4/ER.jpg)
+
 
 
 ## Запуск через Docker
