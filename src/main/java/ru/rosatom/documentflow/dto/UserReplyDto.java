@@ -14,6 +14,7 @@ import ru.rosatom.documentflow.models.UserRole;
 @Builder
 public class UserReplyDto {
 
+    private final Long id;
     private final String fullName;
     private final String dateOfBird;
     private final String email;
