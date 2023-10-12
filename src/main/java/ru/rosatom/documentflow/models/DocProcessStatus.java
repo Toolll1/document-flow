@@ -1,6 +1,6 @@
 package ru.rosatom.documentflow.models;
 
-public enum FileProcessStatus {
+public enum DocProcessStatus {
     NEW,
     IN_PROGRESS,
     APPROVED,

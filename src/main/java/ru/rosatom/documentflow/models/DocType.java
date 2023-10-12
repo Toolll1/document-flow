@@ -11,8 +11,8 @@ import java.util.List;
 @NoArgsConstructor(force = true)
 @Builder
 @Entity
-@Table(name = "file_types")
-public class FileType {
+@Table(name = "document_types")
+public class DocType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,9 +21,9 @@ public class FileType {
     @Column(name = "name", nullable = false, length = 320)
     private String name;
     @ToString.Exclude
-    @ManyToMany(cascade = CascadeType.ALL, targetEntity = FileAttribute.class)
+    @ManyToMany(cascade = CascadeType.ALL, targetEntity = DocAttribute.class)
     @JoinTable(name = "type_attributes",
             joinColumns = @JoinColumn(name = "type_id", referencedColumnName = "type_id"),
             inverseJoinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "attribute_id"))
-    private List<FileAttribute> attributes = new ArrayList<>();
+    private List<DocAttribute> attributes = new ArrayList<>();
 }

@@ -12,15 +12,15 @@ import javax.persistence.*;
 @NoArgsConstructor(force = true)
 @Builder
 @Entity
-@Table(name = "attribute_values")
-public class FileAttributeValues {
+@Table(name = "attributes")
+public class DocAttribute {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "value_id")
+    @Column(name = "attribute_id")
     private final Long id;
-    @Column(name = "attribute_name", nullable = false, length = 320)
+    @Column(name = "name", nullable = false, length = 320)
     private String name;
-    @Column(name = "attribute_value", nullable = false, length = 1000)
-    private String value;
+    @Column(name = "type", nullable = false, length = 16)
+    private String type;
 }
