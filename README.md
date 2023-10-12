@@ -1,6 +1,6 @@
 # document-flow
 ER-диаграмма:
-![This is an image](https://i.postimg.cc/q7y7sjw4/ER.jpg)
+![This is an image](https://i.postimg.cc/PqtHMVVL/ER.png)
 
 
 

@@ -9,8 +9,8 @@ import javax.persistence.*;
 @NoArgsConstructor(force = true)
 @Builder
 @Entity
-@Table(name = "file_process")
-public class FileProcess {
+@Table(name = "document_process")
+public class DocProcess {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +26,7 @@ public class FileProcess {
     private User recipient;  //получатель
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private FileProcessStatus status;
+    private DocProcessStatus status;
     @Column(name = "comment", nullable = false, length = 1000)
     private String comment;
 }

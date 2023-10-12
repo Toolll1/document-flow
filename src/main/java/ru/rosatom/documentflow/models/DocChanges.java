@@ -10,8 +10,8 @@ import java.time.LocalDate;
 @NoArgsConstructor(force = true)
 @Builder
 @Entity
-@Table(name = "changes")
-public class FileChanges {
+@Table(name = "document_changes")
+public class DocChanges {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
