@@ -22,4 +22,7 @@ public interface UserService {
     UserReplyDto getUserByEmail(String email);
 
     UserReplyDto getUserByPassport(String passport);
+
+    boolean setPasswordToUser(String password, Long id);
+
 }
