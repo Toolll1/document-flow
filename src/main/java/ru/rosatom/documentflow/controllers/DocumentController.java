@@ -36,7 +36,7 @@ public class DocumentController {
     }
 
     @PatchMapping("/{documentId}")
-    public Document patchEvent(@PathVariable Long userId, @PathVariable Long documentId,
+    public Document updateDocument(@PathVariable Long userId, @PathVariable Long documentId,
                                    @RequestBody @Valid DocumentUpdateDto documentUpdateDto) {
         log.trace("Обновление информации о событии {} пользователем {}", documentId, userId);
         return documentService.updateDocument(documentUpdateDto, documentId, userId);
