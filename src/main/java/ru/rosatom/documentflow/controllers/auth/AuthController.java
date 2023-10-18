@@ -21,7 +21,7 @@ public class AuthController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<?> login(@RequestBody UserCredentialsDto userCredentialsDto) {
         log.info("Received a request to login user with email = {}", userCredentialsDto.getEmail());
-        return authService.loginUser(userCredentialsDto);
+        return authService.loginUser(userCredentialsDto.getEmail(), userCredentialsDto.getPassword());
     }
 
     @GetMapping("/info")
