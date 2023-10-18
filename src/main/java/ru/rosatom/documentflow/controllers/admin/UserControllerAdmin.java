@@ -3,6 +3,7 @@ package ru.rosatom.documentflow.controllers.admin;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.rosatom.documentflow.dto.UserCreateDto;
@@ -12,6 +13,7 @@ import ru.rosatom.documentflow.services.UserService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Slf4j
@@ -39,6 +41,17 @@ public class UserControllerAdmin {
         log.info("Received a request to update a user {}. userId = {}", dto, userId);
 
         return service.updateUser(dto, userId);
+    }
+
+    @PutMapping("/password/{userId}")
+    public ResponseEntity<?> setUserPassword(@Valid @Size(min = 8, message = "password is too short") @RequestParam(required = true, value = "password") String password,
+                                             @PathVariable Long userId) {
+        log.info("Received a request to set password to user with userId = {}", userId);
+        if (service.setPasswordToUser(password, userId)) {
+            return ResponseEntity.ok("Password has been set to user with id " + userId);
+        } else {
+            return new ResponseEntity<>("User with id " + userId + " not found", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/id/{userId}")

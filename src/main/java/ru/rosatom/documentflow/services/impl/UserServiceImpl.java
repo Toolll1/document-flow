@@ -1,8 +1,10 @@
 package ru.rosatom.documentflow.services.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.rosatom.documentflow.adapters.DateTimeAdapter;
@@ -27,6 +29,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -37,6 +40,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
     private final UserPassportRepository passportRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserReplyDto createUser(UserCreateDto dto) {
@@ -146,6 +150,15 @@ public class UserServiceImpl implements UserService {
         return userMapper.objectToReplyDto(user);
     }
 
+    @Override
+    public boolean setPasswordToUser(String password, Long id) {
+        return userRepository.findById(id).map(user -> {
+            user.setPassword(passwordEncoder.encode(password));
+            userRepository.save(user);
+            return true;
+        }).orElse(false);
+    }
+
     private void checkUnique(UserCreateDto dto) {
 
         if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
@@ -200,4 +213,6 @@ public class UserServiceImpl implements UserService {
 
         return userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("There is no user with this id"));
     }
+
+
 }
