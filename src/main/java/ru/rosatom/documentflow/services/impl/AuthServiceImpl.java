@@ -35,12 +35,12 @@ public class AuthServiceImpl implements AuthService {
 
 
     @Override
-    public ResponseEntity<?> loginUser(UserCredentialsDto userCredentialsDto) {
+    public ResponseEntity<?> loginUser(String email,String password) {
         try {
             final Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(userCredentialsDto.getEmail(), userCredentialsDto.getPassword()));
+                    new UsernamePasswordAuthenticationToken(email, password));
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            return new ResponseEntity<>(jwtUtil.generateToken(userCredentialsDto.getEmail()), HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(jwtUtil.generateToken(email), HttpStatus.ACCEPTED);
         } catch (AuthenticationException authenticationException) {
             log.error("Authentication failed: ", authenticationException);
             return new ResponseEntity<>(authenticationException.getMessage(), HttpStatus.UNAUTHORIZED);
