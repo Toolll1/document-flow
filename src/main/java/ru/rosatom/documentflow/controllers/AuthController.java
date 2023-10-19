@@ -1,4 +1,4 @@
-package ru.rosatom.documentflow.controllers.auth;
+package ru.rosatom.documentflow.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
