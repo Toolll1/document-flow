@@ -5,7 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import org.springframework.lang.Nullable;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @Data
 @AllArgsConstructor
@@ -28,7 +30,7 @@ public class UserUpdateDto {
     @Nullable
     @Pattern(regexp = "\\A(?!\\s*\\Z).+")
     @Size(min = 10, max = 10)
-    private final String dateOfBird;
+    private final String dateOfBirth;
     @Nullable
     @Email
     @Size(min = 6, max = 320)

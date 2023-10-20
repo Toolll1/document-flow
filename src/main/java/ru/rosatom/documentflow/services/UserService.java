@@ -1,25 +1,30 @@
 package ru.rosatom.documentflow.services;
 
-import ru.rosatom.documentflow.dto.UserCreateDto;
-import ru.rosatom.documentflow.dto.UserReplyDto;
 import ru.rosatom.documentflow.dto.UserUpdateDto;
+import ru.rosatom.documentflow.models.User;
+import ru.rosatom.documentflow.models.UserOrganization;
+import ru.rosatom.documentflow.models.UserPassport;
 
 import java.util.List;
 
 public interface UserService {
-    UserReplyDto createUser(UserCreateDto dto);
+    User createUser(UserOrganization organization, UserPassport passport, User user);
 
-    UserReplyDto updateUser(UserUpdateDto dto, Long userId);
+    User updateUser(UserUpdateDto dto, Long userId);
 
-    UserReplyDto getUserDto(Long userId);
+    User getUser(Long userId);
 
-    List<UserReplyDto> getUsers(List<Long> ids, String sort, Integer from, Integer size);
+    List<User> getUsers(List<Long> ids, String sort, Integer from, Integer size);
 
-    UserReplyDto getUserByPhone(String phone);
+    User getUserByPhone(String phone);
 
     void deleteUser(Long userId);
 
-    UserReplyDto getUserByEmail(String email);
+    User getUserByEmail(String email);
 
-    UserReplyDto getUserByPassport(String passport);
+    User getUserByPassport(String passport);
+
+    boolean setPasswordToUser(String password, Long id);
+
+    List<User> getAllUsers();
 }

@@ -1,19 +1,17 @@
 package ru.rosatom.documentflow.services.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.rosatom.documentflow.adapters.DateTimeAdapter;
-import ru.rosatom.documentflow.dto.UserCreateDto;
-import ru.rosatom.documentflow.dto.UserReplyDto;
 import ru.rosatom.documentflow.dto.UserUpdateDto;
 import ru.rosatom.documentflow.exceptions.BadRequestException;
 import ru.rosatom.documentflow.exceptions.ConflictException;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
-import ru.rosatom.documentflow.mappers.UserMapper;
-import ru.rosatom.documentflow.mappers.UserPassportMapper;
 import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.models.UserOrganization;
 import ru.rosatom.documentflow.models.UserPassport;
@@ -27,31 +25,29 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserOrganizationService organizationService;
-    private final UserPassportMapper passportMapper;
-    private final UserMapper userMapper;
-    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     private final UserPassportRepository passportRepository;
+    private final UserRepository userRepository;
 
     @Override
-    public UserReplyDto createUser(UserCreateDto dto) {
+    public User createUser(UserOrganization organization, UserPassport passport, User user) {
 
-        checkUnique(dto);
+        checkUnique(user);
 
-        UserOrganization organization = organizationService.getOrganization(dto.getOrganizationId());
-        UserPassport passport = passportRepository.save(passportMapper.dtoToObject(dto));
-        User user = userRepository.save(userMapper.dtoToObject(dto, organization, passport));
+        passportRepository.save(passport);
 
-        return userMapper.objectToReplyDto(user);
+        return userRepository.save(user);
     }
 
     @Override
-    public UserReplyDto updateUser(UserUpdateDto dto, Long userId) {
+    public User updateUser(UserUpdateDto dto, Long userId) {
 
         checkUnique(dto, userId);
 
@@ -61,52 +57,47 @@ public class UserServiceImpl implements UserService {
         passport.setSeries(defaultIfNull(dto.getPassportSeries(), passport.getSeries()));
         passport.setNumber(defaultIfNull(dto.getPassportNumber(), passport.getNumber()));
         passport.setIssued(defaultIfNull(dto.getPassportIssued(), passport.getIssued()));
-        passport.setDate(defaultIfNull(DateTimeAdapter.stringToDate(dto.getPassportDate()), passport.getDate()));
         passport.setKp(defaultIfNull(dto.getPassportKp(), passport.getKp()));
+        passport.setDate((dto.getPassportDate() != null) ? DateTimeAdapter.stringToDate(dto.getPassportDate()) : passport.getDate());
+
         user.setFirstName(defaultIfNull(dto.getFirstName(), user.getFirstName()));
         user.setLastName(defaultIfNull(dto.getLastName(), user.getLastName()));
         user.setPatronymic(defaultIfNull(dto.getPatronymic(), user.getPatronymic()));
-        user.setDateOfBirth(defaultIfNull(DateTimeAdapter.stringToDate(dto.getDateOfBird()), user.getDateOfBirth()));
+        user.setDateOfBirth((dto.getDateOfBirth() != null) ? DateTimeAdapter.stringToDate(dto.getDateOfBirth()) : user.getDateOfBirth());
         user.setEmail(defaultIfNull(dto.getEmail(), user.getEmail()));
         user.setPhone(defaultIfNull(dto.getPhone(), user.getPhone()));
         user.setPost(defaultIfNull(dto.getPost(), user.getPost()));
-        user.setRole(defaultIfNull(UserRole.valueOf(dto.getRole()), user.getRole()));
+        user.setRole((dto.getRole() != null) ? UserRole.valueOf(dto.getRole()) : user.getRole());
         user.setOrganization((dto.getOrganizationId() == null) ? user.getOrganization() : organizationService.getOrganization(dto.getOrganizationId()));
         user.setPassport(passport);
 
-        return userMapper.objectToReplyDto(userRepository.save(user));
+        return user;
+    }
+
+    public User getUser(Long userId) {
+
+        return userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("There is no user with this id"));
     }
 
     @Override
-    public UserReplyDto getUserDto(Long userId) {
-
-        return userMapper.objectToReplyDto(getUser(userId));
-    }
-
-    @Override
-    public List<UserReplyDto> getUsers(List<Long> ids, String sort, Integer from, Integer size) {
+    public List<User> getUsers(List<Long> ids, String sort, Integer from, Integer size) {
 
         PageRequest pageable = pageableCreator(from, size, sort);
 
         if (ids == null || ids.isEmpty()) {
             return userRepository.findAll(pageable)
                     .stream()
-                    .map(userMapper::objectToReplyDto)
                     .collect(Collectors.toList());
         } else {
-            return userRepository.findAllByIdIn(ids, pageable)
-                    .stream()
-                    .map(userMapper::objectToReplyDto)
-                    .collect(Collectors.toList());
+            System.out.println(userRepository.findAllByIdIn(ids, pageable));
+            return userRepository.findAllByIdIn(ids, pageable);
         }
     }
 
     @Override
-    public UserReplyDto getUserByPhone(String phone) {
+    public User getUserByPhone(String phone) {
 
-        User user = userRepository.findByPhone(phone).orElseThrow(() -> new ObjectNotFoundException("There is no user with this phone"));
-
-        return userMapper.objectToReplyDto(user);
+        return userRepository.findByPhone(phone).orElseThrow(() -> new ObjectNotFoundException("There is no user with this phone"));
     }
 
     @Override
@@ -118,15 +109,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserReplyDto getUserByEmail(String email) {
+    public User getUserByEmail(String email) {
 
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new ObjectNotFoundException("There is no user with this email"));
-
-        return userMapper.objectToReplyDto(user);
+        return userRepository.findByEmail(email).orElseThrow(() -> new ObjectNotFoundException("There is no user with this email"));
     }
 
     @Override
-    public UserReplyDto getUserByPassport(String passport) {
+    public User getUserByPassport(String passport) {
 
         String pass = passport.replaceAll(" ", "");
 
@@ -140,21 +129,34 @@ public class UserServiceImpl implements UserService {
             throw new BadRequestException("input error - incorrect length");
         }
 
-        User user = userRepository.findByPassportSeriesAndPassportNumber(pass.substring(0, 4), pass.substring(4))
+        return userRepository.findByPassportSeriesAndPassportNumber(pass.substring(0, 4), pass.substring(4))
                 .orElseThrow(() -> new ObjectNotFoundException("There is no user with this passport"));
-
-        return userMapper.objectToReplyDto(user);
     }
 
-    private void checkUnique(UserCreateDto dto) {
+    @Override
+    public boolean setPasswordToUser(String password, Long id) {
+        return userRepository.findById(id).map(user -> {
+            user.setPassword(passwordEncoder.encode(password));
+            userRepository.save(user);
+            return true;
+        }).orElse(false);
+    }
 
-        if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
+    @Override
+    public List<User> getAllUsers() {
+
+        return userRepository.findAll();
+    }
+
+    private void checkUnique(User user) {
+
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new ConflictException("Пользователь с таким email уже существует");
         }
-        if (userRepository.findByPhone(dto.getPhone()).isPresent()) {
+        if (userRepository.findByPhone(user.getPhone()).isPresent()) {
             throw new ConflictException("Пользователь с таким телефоном уже существует");
         }
-        if (userRepository.findByPassportSeriesAndPassportNumber(dto.getPassportSeries(), dto.getPassportNumber()).isPresent()) {
+        if (userRepository.findByPassportSeriesAndPassportNumber(user.getPassport().getSeries(), user.getPassport().getNumber()).isPresent()) {
             throw new ConflictException("Пользователь с таким паспортом уже существует");
         }
     }
@@ -194,10 +196,5 @@ public class UserServiceImpl implements UserService {
             default:
                 throw new BadRequestException("Unknown sort: " + sort);
         }
-    }
-
-    private User getUser(Long userId) {
-
-        return userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("There is no user with this id"));
     }
 }

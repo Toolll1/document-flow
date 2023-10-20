@@ -7,10 +7,273 @@
 	},
 	"item": [
 		{
+			"name": "авторизация админа",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\":\"admin@mail.ru\",\r\n    \"password\":\"251323Nn\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "создание нового пользователя",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJcImRlbW9cIiIsInN1YiI6ImFkbWluQG1haWwucnUiLCJpYXQiOjE2OTc2NTYwMzMsImV4cCI6MTY5Nzc0MjQzM30.M0-IdMB8B0lL-7vYONS-meEaIOJ9WildgnboWVldBO0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"lastName\": \"Ильичевский\",\r\n    \"firstName\": \"Илья\",\r\n    \"patronymic\": \"Ильич\",\r\n    \"dateOfBirth\": \"01.01.2000\",\r\n    \"email\": \"user2@user1.com\",\r\n    \"phone\": \"88005553531\",\r\n    \"post\": \"менеджер\",\r\n    \"role\": \"USER\",\r\n    \"passportSeries\": \"1231\",\r\n    \"passportNumber\": \"567890\",\r\n    \"passportIssued\": \"ОУФМС по КК\",\r\n    \"passportDate\": \"10.10.2021\",\r\n    \"passportKp\": \"231003\",\r\n    \"organizationId\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/admin/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"admin",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "поиск по паспорту",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJcImRlbW9cIiIsInN1YiI6ImFkbWluQG1haWwucnUiLCJpYXQiOjE2OTc2NTAyNTMsImV4cCI6MTY5NzczNjY1M30.IK3O9V1WoxAwHhdAzIdr0UeFWwcISb7IIj23Usr33OY",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/admin/users/passport/1231567890",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"admin",
+						"users",
+						"passport",
+						"1231567890"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "изменение данных пользователя",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJcImRlbW9cIiIsInN1YiI6ImFkbWluQG1haWwucnUiLCJpYXQiOjE2OTc2NTU5NjQsImV4cCI6MTY5Nzc0MjM2NH0.ZEhpClgB1xfUjhgvIFv8n0vRpzbITSmSkL7hoyiFiFs",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"lastName\": \"Ильичевский1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/admin/users/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"admin",
+						"users",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "удаление пользователя",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJcImRlbW9cIiIsInN1YiI6ImFkbWluQG1haWwucnUiLCJpYXQiOjE2OTc2NTYwMzMsImV4cCI6MTY5Nzc0MjQzM30.M0-IdMB8B0lL-7vYONS-meEaIOJ9WildgnboWVldBO0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/admin/users/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"admin",
+						"users",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "поиск всех пользователей",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJcImRlbW9cIiIsInN1YiI6ImFkbWluQG1haWwucnUiLCJpYXQiOjE2OTc2NTYwMzMsImV4cCI6MTY5Nzc0MjQzM30.M0-IdMB8B0lL-7vYONS-meEaIOJ9WildgnboWVldBO0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/admin/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"admin",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "поиск по списку id с пагинацией и сортировкой",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJcImRlbW9cIiIsInN1YiI6ImFkbWluQG1haWwucnUiLCJpYXQiOjE2OTc2NTYwMzMsImV4cCI6MTY5Nzc0MjQzM30.M0-IdMB8B0lL-7vYONS-meEaIOJ9WildgnboWVldBO0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/admin/users/ids?ids=1&ids=2&from=0&size=10&sort=ID",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"admin",
+						"users",
+						"ids"
+					],
+					"query": [
+						{
+							"key": "ids",
+							"value": "1"
+						},
+						{
+							"key": "ids",
+							"value": "2"
+						},
+						{
+							"key": "from",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						},
+						{
+							"key": "sort",
+							"value": "ID"
+						}
+					]
+				}
 			},
 			"response": []
 		}
