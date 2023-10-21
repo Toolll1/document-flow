@@ -8,6 +8,8 @@ import ru.rosatom.documentflow.models.UserOrganization;
 import ru.rosatom.documentflow.repositories.UserOrganizationRepository;
 import ru.rosatom.documentflow.services.UserOrganizationService;
 
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -19,5 +21,10 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
     public UserOrganization getOrganization(Long orgId) {
 
         return repository.findById(orgId).orElseThrow(() -> new ObjectNotFoundException("There is no organization with this id"));
+    }
+
+    @Override
+    public List<UserOrganization> getAllOrganizations() {
+        return repository.findAll();
     }
 }
