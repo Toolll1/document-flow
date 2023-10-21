@@ -1,6 +1,7 @@
 package ru.rosatom.documentflow.services.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
@@ -76,7 +77,12 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
     @Override
     public UserOrganization deleteOrganization(Long orgId) {
         UserOrganization organization = getOrganization(orgId);
-        repository.delete(organization);
+        try {
+            repository.delete(organization);
+        } catch (DataIntegrityViolationException e) {
+        throw new DataIntegrityViolationException("Cannot delete organization " +
+                "with id " + orgId + " because users are associated with it. Please delete users or change their organization first.");
+        }
         return organization;
     }
 

@@ -2,7 +2,6 @@ package ru.rosatom.documentflow.controllers;
 
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.rosatom.documentflow.dto.OrgCreateRequestDto;
@@ -65,13 +64,9 @@ public class OrgController {
 
     @DeleteMapping("/{orgId}")
     public OrgDto deleteOrg(@PathVariable Long orgId) {
-        try {
-            UserOrganization organization = userOrganizationService.deleteOrganization(orgId);
-            return modelMapper.map(organization, OrgDto.class);
-        } catch (DataIntegrityViolationException e) {
-            throw new DataIntegrityViolationException("Cannot delete organization " +
-                    "with id " + orgId + " because users are associated with it. Please delete users or change their organization first.");
-        }
+        UserOrganization organization = userOrganizationService.deleteOrganization(orgId);
+        return modelMapper.map(organization, OrgDto.class);
+
     }
 
 
