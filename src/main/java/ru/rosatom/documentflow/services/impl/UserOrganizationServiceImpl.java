@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.rosatom.documentflow.exceptions.ConflictException;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
 import ru.rosatom.documentflow.models.OrgCreationRequest;
 import ru.rosatom.documentflow.models.OrgUpdateRequest;
@@ -100,7 +101,7 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
     private void throwIfOrganizationExists(Long ignoreId, String name) {
         Optional<UserOrganization> organization = repository.findByName(name);
         if (organization.isPresent() && !organization.get().getId().equals(ignoreId)) {
-            throw new IllegalArgumentException("Organization with this name already exists");
+            throw new ConflictException("Organization with this name already exists");
         }
     }
 
