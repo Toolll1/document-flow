@@ -2,11 +2,14 @@ package ru.rosatom.documentflow.controllers;
 
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.rosatom.documentflow.dto.OrgCreateRequestDto;
 import ru.rosatom.documentflow.dto.OrgDto;
+import ru.rosatom.documentflow.dto.OrgUpdateRequestDto;
 import ru.rosatom.documentflow.models.OrgCreationRequest;
+import ru.rosatom.documentflow.models.OrgUpdateRequest;
 import ru.rosatom.documentflow.models.UserOrganization;
 import ru.rosatom.documentflow.services.UserOrganizationService;
 
@@ -31,6 +34,7 @@ public class OrgController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public OrgDto createOrg(@Valid @RequestBody OrgCreateRequestDto orgCreateRequestDto) {
         OrgCreationRequest orgCreationRequest = modelMapper.map(orgCreateRequestDto, OrgCreationRequest.class);
         UserOrganization organization = userOrganizationService.createOrganization(orgCreationRequest);
@@ -38,9 +42,37 @@ public class OrgController {
     }
 
     @GetMapping("/{orgId}")
-    @ResponseStatus(HttpStatus.CREATED)
     public OrgDto getOrg(@PathVariable Long orgId) {
         UserOrganization organization = userOrganizationService.getOrganization(orgId);
         return modelMapper.map(organization, OrgDto.class);
     }
+
+    @GetMapping("/name/{name}")
+    public List<OrgDto> getOrgsByNameLike(@PathVariable String name) {
+        List<UserOrganization> organizations = userOrganizationService.getOrganizationsByNameLike(name);
+        return organizations.stream()
+                .map(o -> modelMapper.map(o, OrgDto.class))
+                .collect(Collectors.toList());
+    }
+
+
+    @RequestMapping(value = "/{orgId}", method = RequestMethod.PATCH)
+    public OrgDto updateOrg(@PathVariable Long orgId, @Valid @RequestBody OrgUpdateRequestDto orgUpdateRequestDto) {
+        OrgUpdateRequest orgUpdateRequest = modelMapper.map(orgUpdateRequestDto, OrgUpdateRequest.class);
+        UserOrganization organization = userOrganizationService.updateOrganization(orgId, orgUpdateRequest);
+        return modelMapper.map(organization, OrgDto.class);
+    }
+
+    @DeleteMapping("/{orgId}")
+    public OrgDto deleteOrg(@PathVariable Long orgId) {
+        try {
+            UserOrganization organization = userOrganizationService.deleteOrganization(orgId);
+            return modelMapper.map(organization, OrgDto.class);
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException("Cannot delete organization " +
+                    "with id " + orgId + " because users are associated with it. Please delete users or change their organization first.");
+        }
+    }
+
+
 }
