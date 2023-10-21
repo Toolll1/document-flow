@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
+import ru.rosatom.documentflow.models.OrgCreationRequest;
 import ru.rosatom.documentflow.models.UserOrganization;
 import ru.rosatom.documentflow.repositories.UserOrganizationRepository;
 import ru.rosatom.documentflow.services.UserOrganizationService;
@@ -20,11 +21,25 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
     @Override
     public UserOrganization getOrganization(Long orgId) {
 
-        return repository.findById(orgId).orElseThrow(() -> new ObjectNotFoundException("There is no organization with this id"));
+        return repository
+                .findById(orgId).
+                orElseThrow(() -> new ObjectNotFoundException("There is no organization with this id"));
     }
 
     @Override
     public List<UserOrganization> getAllOrganizations() {
         return repository.findAll();
+    }
+
+    @Override
+    public UserOrganization createOrganization(OrgCreationRequest orgCreationRequest){
+        repository.findByName(orgCreationRequest.getName()).ifPresent(o -> {
+            throw new IllegalArgumentException("Organization with this name already exists");
+        });
+        UserOrganization organization = UserOrganization.builder()
+                .name(orgCreationRequest.getName())
+                .inn(orgCreationRequest.getInn())
+                .build();
+        return repository.save(organization);
     }
 }
