@@ -1,11 +1,172 @@
 {
 	"info": {
-		"_postman_id": "0ef66098-0688-4a12-95f1-cf467c0f13b1",
+		"_postman_id": "7dab837e-3966-4d14-ba1c-29b05e240f0f",
 		"name": "document-flow",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "26121869"
+		"_exporter_id": "26417847"
 	},
 	"item": [
+		{
+			"name": "Организации",
+			"item": [
+				{
+					"name": "Получить все организации",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/v1/org",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"org"
+							],
+							"query": [
+								{
+									"key": "Accept",
+									"value": "application/json",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Создать организацию",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"test\",\n    \"inn\":4121242214\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/org",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"org"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Получить организацию по id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/v1/org/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"org",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Обновить данные организации",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"aaaa\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/org/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"org",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Удалить организацию",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/v1/org/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"org",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Поиск организации по подстроке в имени",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/v1/org/name/test111",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"org",
+								"name",
+								"test111"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
 		{
 			"name": "авторизация админа",
 			"request": {
@@ -38,16 +199,6 @@
 		{
 			"name": "создание нового пользователя",
 			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJcImRlbW9cIiIsInN1YiI6ImFkbWluQG1haWwucnUiLCJpYXQiOjE2OTc2NTYwMzMsImV4cCI6MTY5Nzc0MjQzM30.M0-IdMB8B0lL-7vYONS-meEaIOJ9WildgnboWVldBO0",
-							"type": "string"
-						}
-					]
-				},
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -276,6 +427,51 @@
 				}
 			},
 			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"",
+					"pm.sendRequest({",
+					"    url: 'http://localhost:8080/auth/login',",
+					"    method: 'POST',",
+					"    header: 'Content-Type:application/json',",
+					"    body: {",
+					"        mode: 'raw',",
+					"        raw: JSON.stringify(",
+					"            { ",
+					"                email: \"admin@mail.ru\",",
+					"                password:\"251323Nn\"",
+					"                })",
+					"    }",
+					"}, function (err, res) {",
+					"        pm.globals.set(\"token\", res.text());",
+					"});"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }
