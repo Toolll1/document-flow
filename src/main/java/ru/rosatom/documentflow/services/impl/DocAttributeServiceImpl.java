@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
 import ru.rosatom.documentflow.models.DocAttribute;
+import ru.rosatom.documentflow.models.DocAttributeCreationRequest;
 import ru.rosatom.documentflow.repositories.DocAttributeRepository;
 import ru.rosatom.documentflow.services.DocAttributeService;
 
@@ -33,16 +34,22 @@ public class DocAttributeServiceImpl implements DocAttributeService {
   }
 
   @Override
-  public DocAttribute createDocAttribute(DocAttribute docAttribute) {
+  public DocAttribute createDocAttribute(DocAttributeCreationRequest docAttributeCreationRequest) {
+    DocAttribute docAttribute =
+        DocAttribute.builder()
+            .name(docAttributeCreationRequest.getName())
+            .type(docAttributeCreationRequest.getType())
+            .build();
     return docAttributeRepository.save(docAttribute);
   }
 
   @Override
-  public DocAttribute updateDocAttribute(Long id, DocAttribute docAttribute) {
-    if (docAttributeRepository.existsById(id)) {
+  public DocAttribute updateDocAttribute(DocAttribute docAttribute) {
+    if (docAttributeRepository.existsById(docAttribute.getId())) {
       return docAttributeRepository.save(docAttribute);
     } else {
-      throw new ObjectNotFoundException("DocAttribute with ID " + id + " not found.");
+      throw new ObjectNotFoundException(
+          "DocAttribute with ID " + docAttribute.getId() + " not found.");
     }
   }
 
@@ -54,8 +61,9 @@ public class DocAttributeServiceImpl implements DocAttributeService {
       throw new ObjectNotFoundException("DocAttribute with ID " + id + " not found.");
     }
   }
+
   @Override
   public List<DocAttribute> getDocAttributesByName(String name) {
-    return docAttributeRepository.findByName(name);
+    return null;
   }
 }
