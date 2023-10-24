@@ -50,7 +50,6 @@ public class SecurityConfiguration {
                 .and().build();
     }
 
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity, JWTAuthFilter jwtAuthFilter) throws Exception {
 
