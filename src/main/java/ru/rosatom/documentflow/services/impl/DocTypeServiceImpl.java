@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
 import ru.rosatom.documentflow.models.DocType;
+import ru.rosatom.documentflow.models.DocTypeCreationRequest;
 import ru.rosatom.documentflow.repositories.DocTypeRepository;
 import ru.rosatom.documentflow.services.DocTypeService;
 
@@ -33,17 +34,18 @@ public class DocTypeServiceImpl implements DocTypeService {
   }
 
   @Override
-  public DocType createDocType(DocType docType) {
+  public DocType createDocType(DocTypeCreationRequest docTypeCreationRequest) {
+    DocType docType = DocType.builder().name(docTypeCreationRequest.getName()).build();
     return docTypeRepository.save(docType);
   }
 
   @Override
-  public DocType updateDocType(Long id, DocType docType) {
+  public DocType updateDocType(DocType docType) {
 
-    if (docTypeRepository.existsById(id)) {
+    if (docTypeRepository.existsById(docType.getId())) {
       return docTypeRepository.save(docType);
     } else {
-      throw new ObjectNotFoundException("DocType with ID " + id + " not found.");
+      throw new ObjectNotFoundException("DocType with ID " + docType.getId() + " not found.");
     }
   }
 

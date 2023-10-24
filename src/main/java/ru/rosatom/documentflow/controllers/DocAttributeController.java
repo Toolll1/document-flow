@@ -12,11 +12,10 @@ import ru.rosatom.documentflow.services.DocAttributeService;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/admin/docattributes")
+@RequestMapping(path = "/v1/docattributes")
 public class DocAttributeController {
 
   private final DocAttributeService docAttributeService;
   private final ModelMapper modelMapper;
-
 
 }

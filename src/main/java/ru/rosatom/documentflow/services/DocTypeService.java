@@ -1,6 +1,7 @@
 package ru.rosatom.documentflow.services;
 
 import ru.rosatom.documentflow.models.DocType;
+import ru.rosatom.documentflow.models.DocTypeCreationRequest;
 
 import java.util.List;
 
@@ -9,9 +10,9 @@ public interface DocTypeService {
 
     DocType getDocTypeById(Long id);
 
-    DocType createDocType(DocType docType);
+    DocType createDocType(DocTypeCreationRequest docTypeCreationRequest);
 
-    DocType updateDocType(Long id, DocType docType);
+    DocType updateDocType(DocType docType);
 
     void deleteDocType(Long id);
 }
