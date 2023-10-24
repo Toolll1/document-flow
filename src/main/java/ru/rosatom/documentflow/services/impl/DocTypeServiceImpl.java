@@ -17,44 +17,44 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class DocTypeServiceImpl implements DocTypeService {
 
-  private final DocTypeRepository docTypeRepository;
+    private final DocTypeRepository docTypeRepository;
 
-  @Override
-  public List<DocType> getAllDocTypes() {
-    return docTypeRepository.findAll();
-  }
-
-  @Override
-  public DocType getDocTypeById(Long id) {
-    Optional<DocType> docType = docTypeRepository.findById(id);
-    if (docType.isPresent()) {
-      return docType.get();
+    @Override
+    public List<DocType> getAllDocTypes() {
+        return docTypeRepository.findAll();
     }
-    throw new ObjectNotFoundException("DocTyp e with ID " + id + " not found.");
-  }
 
-  @Override
-  public DocType createDocType(DocTypeCreationRequest docTypeCreationRequest) {
-    DocType docType = DocType.builder().name(docTypeCreationRequest.getName()).build();
-    return docTypeRepository.save(docType);
-  }
-
-  @Override
-  public DocType updateDocType(DocType docType) {
-
-    if (docTypeRepository.existsById(docType.getId())) {
-      return docTypeRepository.save(docType);
-    } else {
-      throw new ObjectNotFoundException("DocType with ID " + docType.getId() + " not found.");
+    @Override
+    public DocType getDocTypeById(Long id) {
+        Optional<DocType> docType = docTypeRepository.findById(id);
+        if (docType.isPresent()) {
+            return docType.get();
+        }
+        throw new ObjectNotFoundException("DocTyp e with ID " + id + " not found.");
     }
-  }
 
-  @Override
-  public void deleteDocType(Long id) {
-    if (docTypeRepository.existsById(id)) {
-      docTypeRepository.deleteById(id);
-    } else {
-      throw new ObjectNotFoundException("DocType with ID " + id + " not found.");
+    @Override
+    public DocType createDocType(DocTypeCreationRequest docTypeCreationRequest) {
+        DocType docType = DocType.builder().name(docTypeCreationRequest.getName()).build();
+        return docTypeRepository.save(docType);
     }
-  }
+
+    @Override
+    public DocType updateDocType(DocType docType) {
+
+        if (docTypeRepository.existsById(docType.getId())) {
+            return docTypeRepository.save(docType);
+        } else {
+            throw new ObjectNotFoundException("DocType with ID " + docType.getId() + " not found.");
+        }
+    }
+
+    @Override
+    public void deleteDocType(Long id) {
+        if (docTypeRepository.existsById(id)) {
+            docTypeRepository.deleteById(id);
+        } else {
+            throw new ObjectNotFoundException("DocType with ID " + id + " not found.");
+        }
+    }
 }
