@@ -21,53 +21,53 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class OrgController {
 
-    UserOrganizationService userOrganizationService;
-    ModelMapper modelMapper;
+  UserOrganizationService userOrganizationService;
+  ModelMapper modelMapper;
 
-    @GetMapping
-    public List<OrgDto> getAllOrgs() {
-        List<UserOrganization> organizations = userOrganizationService.getAllOrganizations();
-        return organizations.stream()
-                .map(o -> modelMapper.map(o, OrgDto.class))
-                .collect(Collectors.toList());
-    }
+  @GetMapping
+  public List<OrgDto> getAllOrgs() {
+    List<UserOrganization> organizations = userOrganizationService.getAllOrganizations();
+    return organizations.stream()
+        .map(o -> modelMapper.map(o, OrgDto.class))
+        .collect(Collectors.toList());
+  }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public OrgDto createOrg(@Valid @RequestBody OrgCreateRequestDto orgCreateRequestDto) {
-        OrgCreationRequest orgCreationRequest = modelMapper.map(orgCreateRequestDto, OrgCreationRequest.class);
-        UserOrganization organization = userOrganizationService.createOrganization(orgCreationRequest);
-        return modelMapper.map(organization, OrgDto.class);
-    }
+  @PostMapping
+  @ResponseStatus(HttpStatus.CREATED)
+  public OrgDto createOrg(@Valid @RequestBody OrgCreateRequestDto orgCreateRequestDto) {
+    OrgCreationRequest orgCreationRequest =
+        modelMapper.map(orgCreateRequestDto, OrgCreationRequest.class);
+    UserOrganization organization = userOrganizationService.createOrganization(orgCreationRequest);
+    return modelMapper.map(organization, OrgDto.class);
+  }
 
-    @GetMapping("/{orgId}")
-    public OrgDto getOrg(@PathVariable Long orgId) {
-        UserOrganization organization = userOrganizationService.getOrganization(orgId);
-        return modelMapper.map(organization, OrgDto.class);
-    }
+  @GetMapping("/{orgId}")
+  public OrgDto getOrg(@PathVariable Long orgId) {
+    UserOrganization organization = userOrganizationService.getOrganization(orgId);
+    return modelMapper.map(organization, OrgDto.class);
+  }
 
-    @GetMapping("/name/{name}")
-    public List<OrgDto> getOrgsByNameLike(@PathVariable String name) {
-        List<UserOrganization> organizations = userOrganizationService.getOrganizationsByNameLike(name);
-        return organizations.stream()
-                .map(o -> modelMapper.map(o, OrgDto.class))
-                .collect(Collectors.toList());
-    }
+  @GetMapping("/name/{name}")
+  public List<OrgDto> getOrgsByNameLike(@PathVariable String name) {
+    List<UserOrganization> organizations = userOrganizationService.getOrganizationsByNameLike(name);
+    return organizations.stream()
+        .map(o -> modelMapper.map(o, OrgDto.class))
+        .collect(Collectors.toList());
+  }
 
+  @RequestMapping(value = "/{orgId}", method = RequestMethod.PATCH)
+  public OrgDto updateOrg(
+      @PathVariable Long orgId, @Valid @RequestBody OrgUpdateRequestDto orgUpdateRequestDto) {
+    OrgUpdateRequest orgUpdateRequest =
+        modelMapper.map(orgUpdateRequestDto, OrgUpdateRequest.class);
+    UserOrganization organization =
+        userOrganizationService.updateOrganization(orgId, orgUpdateRequest);
+    return modelMapper.map(organization, OrgDto.class);
+  }
 
-    @RequestMapping(value = "/{orgId}", method = RequestMethod.PATCH)
-    public OrgDto updateOrg(@PathVariable Long orgId, @Valid @RequestBody OrgUpdateRequestDto orgUpdateRequestDto) {
-        OrgUpdateRequest orgUpdateRequest = modelMapper.map(orgUpdateRequestDto, OrgUpdateRequest.class);
-        UserOrganization organization = userOrganizationService.updateOrganization(orgId, orgUpdateRequest);
-        return modelMapper.map(organization, OrgDto.class);
-    }
-
-    @DeleteMapping("/{orgId}")
-    public OrgDto deleteOrg(@PathVariable Long orgId) {
-        UserOrganization organization = userOrganizationService.deleteOrganization(orgId);
-        return modelMapper.map(organization, OrgDto.class);
-
-    }
-
-
+  @DeleteMapping("/{orgId}")
+  public OrgDto deleteOrg(@PathVariable Long orgId) {
+    UserOrganization organization = userOrganizationService.deleteOrganization(orgId);
+    return modelMapper.map(organization, OrgDto.class);
+  }
 }
