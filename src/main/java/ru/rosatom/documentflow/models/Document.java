@@ -1,9 +1,10 @@
 package ru.rosatom.documentflow.models;
 
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,33 +13,31 @@ import java.util.List;
 @NoArgsConstructor(force = true)
 @Builder
 @Entity
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "documents")
 public class Document {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "document_id")
-    private final Long id;
-    @Column(name = "title", nullable = false, length = 100)
-    private String title;
+    final Long id;
+    @Column(name = "title", nullable = false, length = 256)
+    String title;
     @Column(name = "document_path", nullable = false, length = 1000)
-    private String documentPath;
+    String documentPath;
     @Column(name = "created_at")
-    private LocalDate date;
+    LocalDateTime date;
+    @Column(name = "organization_id")
+    Long idOrganization;
     @ToString.Exclude
-    @OneToOne
-    @JoinColumn(name = "creator_id")
-    private User owner;  //создатель файла
+    @JoinColumn(name = "owner_Id")
+    Long ownerId;  //создатель файла
     @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "type_id")
-    private DocType docType;  //тип файла
+    DocType docType;  //тип файла
     @ToString.Exclude
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "document_id")
-    private List<DocChanges> changes = new ArrayList<>(); //список изменений
-    @ToString.Exclude
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "document_id")
-    private List<DocAttributeValues> attributeValues = new ArrayList<>();  // список значений атрибутов
+    @Transient
+    List<DocAttributeValues> attributeValues = new ArrayList<>();  // список значений атрибутов
 }
