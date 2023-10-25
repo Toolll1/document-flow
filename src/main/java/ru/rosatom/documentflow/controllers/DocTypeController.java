@@ -35,7 +35,7 @@ public class DocTypeController {
   @GetMapping("/{docTypeId}")
   public DocTypeDto getDocType(@PathVariable Long docTypeId) {
     DocType docType = docTypeService.getDocTypeById(docTypeId);
-    log.info("Request received to get DocType with ID: {}", docTypeId);
+    log.info("Получен запрос на получение DocType с ID: {}", docTypeId);
     return convertToDto(docType);
   }
 
@@ -45,7 +45,7 @@ public class DocTypeController {
     DocTypeCreationRequest docTypeCreationRequest =
         modelMapper.map(docTypeCreateDto, DocTypeCreationRequest.class);
     DocType docType = docTypeService.createDocType(docTypeCreationRequest);
-    log.info("Request received to create a DocType: {}", docTypeCreateDto);
+    log.info("Получен запрос на создание DocType: {}", docTypeCreateDto);
 
     return convertToDto(docType);
   }
@@ -56,7 +56,7 @@ public class DocTypeController {
     docType = docTypeService.updateDocType(docType);
 
     log.info(
-        "Request received to update DocType with ID: {}. Updated DocType: {}",
+        "Получен запрос на обновление DocType с ID: {}. Обновлен DocType: {}",
         docTypeDto.getId(),
         docTypeDto);
     return convertToDto(docType);
@@ -65,7 +65,7 @@ public class DocTypeController {
   @DeleteMapping("/{docTypeId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteDocType(@PathVariable Long docTypeId) {
-    log.info("Request received to delete DocType with ID: {}", docTypeId);
+    log.info("Получен запрос на удаление DocType с ID: {}", docTypeId);
     docTypeService.deleteDocType(docTypeId);
   }
 

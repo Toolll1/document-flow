@@ -34,7 +34,7 @@ public class DocAttributeServiceImpl implements DocAttributeService {
         if (docAttribute.isPresent()) {
             return docAttribute.get();
         }
-        throw new ObjectNotFoundException("DocAttribute with ID " + id + " not found.");
+        throw new ObjectNotFoundException("DocAttribute c ID " + id + " не найден.");
     }
 
     @Override
@@ -53,7 +53,7 @@ public class DocAttributeServiceImpl implements DocAttributeService {
             return docAttributeRepository.save(docAttribute);
         } else {
             throw new ObjectNotFoundException(
-                    "DocAttribute with ID " + docAttribute.getId() + " not found.");
+                    "DocAttribute с ID " + docAttribute.getId() + " не найден.");
         }
     }
 
@@ -62,7 +62,7 @@ public class DocAttributeServiceImpl implements DocAttributeService {
         if (docAttributeRepository.existsById(id)) {
             docAttributeRepository.deleteById(id);
         } else {
-            throw new ObjectNotFoundException("DocAttribute with ID " + id + " not found.");
+            throw new ObjectNotFoundException("DocAttribute с ID " + id + " не найден.");
         }
     }
 

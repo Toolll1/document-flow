@@ -40,7 +40,7 @@ public class DocAttributeController {
     @GetMapping("/{docAttributeId}")
     public DocAttributeDto getAttribute(@PathVariable Long docAttributeId) {
         DocAttribute docAttribute = docAttributeService.getDocAttributeById(docAttributeId);
-        log.info("Request received to get DocAttribute with ID: {}", docAttributeId);
+        log.info("Получен запрос на получение DocAttribute с ID: {}", docAttributeId);
         return convertToDto(docAttribute);
     }
 
@@ -49,7 +49,7 @@ public class DocAttributeController {
     public DocAttributeDto createAttribute(@Valid @RequestBody DocAttributeCreateDto docAttributeCreateDto) {
         DocAttributeCreationRequest docAttributeCreationRequest = modelMapper.map(docAttributeCreateDto, DocAttributeCreationRequest.class);
         DocAttribute docAttribute = docAttributeService.createDocAttribute(docAttributeCreationRequest);
-        log.info("Request received to create a DocAttribute: {}", docAttributeCreateDto);
+        log.info("Получен запрос на создание DocAttribute: {}", docAttributeCreateDto);
         return convertToDto(docAttribute);
 
     }
@@ -59,7 +59,7 @@ public class DocAttributeController {
         DocAttribute docAttribute = convertToEntity(docAttributeDto);
         docAttribute = docAttributeService.updateDocAttribute(docAttribute);
         log.info(
-                "Request received to update DocAttribute with ID: {}. Updated DocAttribute: {}",
+                "Получен запрос на обновление DocAttribute с ID: {}. Обновлённый DocAttribute: {}",
                 docAttributeDto.getId(),
                 docAttributeDto);
         return convertToDto(docAttribute);
@@ -68,7 +68,7 @@ public class DocAttributeController {
     @DeleteMapping("/{docAttributeId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteAttribute(@PathVariable Long docAttributeId) {
-        log.info("Request received to delete DocAttribute with ID: {}", docAttributeId);
+        log.info("Получен запрос на удаление DocAttribute с ID: {}", docAttributeId);
         docAttributeService.deleteDocAttribute(docAttributeId);
     }
 
