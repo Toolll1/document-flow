@@ -16,7 +16,7 @@ public class UserReplyDto {
 
     private final Long id;
     private final String fullName;
-    private final String dateOfBird;
+    private final String dateOfBirth;
     private final String email;
     private final String phone;
     private final String post;

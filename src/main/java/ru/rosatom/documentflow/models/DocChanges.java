@@ -1,6 +1,7 @@
 package ru.rosatom.documentflow.models;
 
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -11,20 +12,25 @@ import java.time.LocalDate;
 @Builder
 @Entity
 @Table(name = "document_changes")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class DocChanges {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "changes_id")
-    private final Long id;
+    Long id;
+    @Column(name = "document_Id")
+    Long documentId;
     @Column(name = "date_of_change")
-    private LocalDate date;
-    @Column(name = "description", nullable = false, length = 1000)
-    private String description;
+    LocalDate dateChange;
+    @Column(name = "changes", nullable = false, length = 1000)
+    String changes;
     @Column(name = "previous_version", nullable = false, length = 1000)
-    private String previousVersion;
+    String previousVersion;
     @ToString.Exclude
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "user_Changer_Id")
+    Long userChangerId;
+    @ToString.Exclude
+    @JoinColumn(name = "user_Owner_Id")
+    Long userOwnerId;
 }
