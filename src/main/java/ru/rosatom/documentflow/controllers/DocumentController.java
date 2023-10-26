@@ -5,6 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.rosatom.documentflow.adapters.CustomPageRequest;
@@ -13,6 +16,7 @@ import ru.rosatom.documentflow.dto.DocumentDto;
 import ru.rosatom.documentflow.dto.DocumentUpdateDto;
 import ru.rosatom.documentflow.mappers.DocumentChangesMapper;
 import ru.rosatom.documentflow.mappers.DocumentMapper;
+import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.services.DocumentService;
 
 import javax.validation.Valid;
@@ -31,6 +35,7 @@ import static ru.rosatom.documentflow.adapters.CommonUtils.*;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @RequestMapping("/document/{userId}")
 @RequiredArgsConstructor
+@PreAuthorize("hasAuthority('USER')")
 public class DocumentController {
 
     final DocumentService documentService;
@@ -81,16 +86,18 @@ public class DocumentController {
     }
 
     // обновление документа
+    @PreAuthorize("#documentUpdateDto.ownerId == #user.id && hasAuthority('USER')")
     @PatchMapping("/{documentId}")
     public DocumentDto updateDocument(@PathVariable Long userId, @PathVariable Long documentId,
-                                      @RequestBody @Valid DocumentUpdateDto documentUpdateDto) {
+                                      @RequestBody @Valid DocumentUpdateDto documentUpdateDto, @AuthenticationPrincipal User user) {
         log.trace("Обновление информации о событии {} пользователем {}", documentId, userId);
         return dm.documentToDto(documentService.updateDocument(documentUpdateDto, documentId, userId));
     }
 
     //удаление документа
+    @PostAuthorize("#documentServiceImpl.findDocumentById(#documentId) == #user.id && hasAuthority('USER')")
     @DeleteMapping("/{documentId}")
-    public void deleteDocument(@PathVariable Long userId, @PathVariable Long documentId) {
+    public void deleteDocument(@PathVariable Long userId, @PathVariable Long documentId,@AuthenticationPrincipal User user) {
         log.trace("Удаление документа {} пользователем {}", documentId, userId);
         documentService.deleteDocumentById(documentId, userId);
     }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.rosatom.documentflow.dto.UserCreateDto;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/admin/users")
+@PreAuthorize("hasAuthority('ADMIN')")
 public class UserController {
 
     private final UserService userService;
@@ -58,8 +60,8 @@ public class UserController {
         return userMapper.objectToReplyDto(userService.updateUser(dto, userId));
     }
 
-    @PutMapping("/password/{userId}")
-    public ResponseEntity<?> setUserPassword(@Valid @Size(min = 8, message = "password is too short") @RequestParam(required = true, value = "password") String password,
+    @PatchMapping("/password/{userId}")
+    public ResponseEntity<?> setUserPassword(@Valid @Size(min = 8, message = "password is too short") @RequestParam(value = "password") String password,
                                              @PathVariable Long userId) {
         log.info("Received a request to set password to user with userId = {}", userId);
         if (userService.setPasswordToUser(password, userId)) {
@@ -69,6 +71,7 @@ public class UserController {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority({'ADMIN','USER'})")
     @GetMapping("/{userId}")
     public UserReplyDto getUser(@PathVariable Long userId) {
 
