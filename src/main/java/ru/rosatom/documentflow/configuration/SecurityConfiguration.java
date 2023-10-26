@@ -50,7 +50,6 @@ public class SecurityConfiguration {
                 .and().build();
     }
 
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity, JWTAuthFilter jwtAuthFilter) throws Exception {
 
@@ -65,7 +64,7 @@ public class SecurityConfiguration {
                 .and()
                 .authorizeHttpRequests()
                 .antMatchers("/auth/login").permitAll()
-                .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers("/admin/**").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

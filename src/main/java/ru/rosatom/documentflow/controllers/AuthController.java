@@ -1,4 +1,4 @@
-package ru.rosatom.documentflow.controllers.auth;
+package ru.rosatom.documentflow.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ public class AuthController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<?> login(@RequestBody UserCredentialsDto userCredentialsDto) {
         log.info("Received a request to login user with email = {}", userCredentialsDto.getEmail());
-        return authService.loginUser(userCredentialsDto);
+        return authService.loginUser(userCredentialsDto.getEmail(), userCredentialsDto.getPassword());
     }
 
     @GetMapping("/info")

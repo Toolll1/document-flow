@@ -30,7 +30,7 @@ public class UserUpdateDto {
     @Nullable
     @Pattern(regexp = "\\A(?!\\s*\\Z).+")
     @Size(min = 10, max = 10)
-    private final String dateOfBird;
+    private final String dateOfBirth;
     @Nullable
     @Email
     @Size(min = 6, max = 320)

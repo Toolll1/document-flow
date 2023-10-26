@@ -6,7 +6,7 @@ import ru.rosatom.documentflow.dto.UserCredentialsDto;
 
 public interface AuthService {
 
-    ResponseEntity<?> loginUser(UserCredentialsDto userCredentialsDto);
+    ResponseEntity<?> loginUser(String email,String password);
 
     ResponseEntity<?> userInfo(Authentication authentication);
 }
