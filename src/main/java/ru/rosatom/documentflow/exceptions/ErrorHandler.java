@@ -38,7 +38,7 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<Map<String, String>> handleRemainingErrors(final RuntimeException e) {
+    public ResponseEntity<Map<String, String>> handleRemainingErrors(final Exception e) {
 
         return new ResponseEntity<>(
                 Map.of("message", e.getMessage()),
