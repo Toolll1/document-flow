@@ -100,6 +100,11 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         docProcessRepository.save(docProcess);
     }
 
+    @Override
+    public void deleteProcess(Long processId) {
+        docProcessRepository.deleteById(processId);
+    }
+
 
     private DocProcess getProcessAndApplyRequest(ProcessUpdateRequest processUpdateRequest) {
         DocProcess docProcess = findProcessById(processUpdateRequest.getProcessId());

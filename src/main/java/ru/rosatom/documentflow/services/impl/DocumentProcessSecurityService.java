@@ -12,13 +12,18 @@ public class DocumentProcessSecurityService {
     DocumentProcessService documentProcessService;
     DocumentService documentService;
 
-    public boolean isCanCreateProcess(Long documentId, Long userId) {
+    public boolean isCanManageProcess(Long documentId, Long userId) {
         return documentService.findDocumentById(documentId).getOwnerId().equals(userId);
     }
 
     public boolean isHasAccess(Long processId, Long userId) {
         DocProcess docProcess = documentProcessService.findProcessById(processId);
         return docProcess.getSender().getId().equals(userId) || docProcess.getRecipient().getId().equals(userId);
+    }
+
+    public boolean isRecipient(Long processId, Long userId) {
+        DocProcess docProcess = documentProcessService.findProcessById(processId);
+        return docProcess.getRecipient().getId().equals(userId);
     }
 
 
