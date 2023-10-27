@@ -98,7 +98,7 @@ create table if not exists document_process
     document_id  bigint,
     sender_id    bigint        not null references users (user_id),
     recipient_id bigint        not null references users (user_id),
-    status       varchar(11)   not null,
+    status       varchar(20)   not null,
     comment      varchar(1000) not null
 );
 

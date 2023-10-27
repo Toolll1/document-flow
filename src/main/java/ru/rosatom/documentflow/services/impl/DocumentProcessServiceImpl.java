@@ -56,6 +56,11 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         docProcessRepository.save(docProcess);
     }
 
+    /**
+     * Согласовать документ. Статус процесса - APPROVED
+     * @param processId - id процесса
+     * @return DocProcess - процесс согласования с новым статусом
+     */
     @Override
     public void approve(Long processId) {
         DocProcess docProcess = findProcessById(processId);

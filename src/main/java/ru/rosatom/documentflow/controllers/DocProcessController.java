@@ -2,10 +2,7 @@ package ru.rosatom.documentflow.controllers;
 
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.rosatom.documentflow.dto.DocProcessDto;
 import ru.rosatom.documentflow.services.DocumentProcessService;
 
@@ -26,12 +23,14 @@ public class DocProcessController {
         );
     }
 
-    @PostMapping("/process/{processId}/send-to-approve")
-    public DocProcessDto sendToApprove(@PathVariable Long processId) {
-        return modelMapper.map(
-                documentProcessService.sendToApprove(processId),
-                DocProcessDto.class
-        );
+    @PatchMapping("/process/{processId}/send-to-approve")
+    public void sendToApprove(@PathVariable Long processId) {
+        documentProcessService.sendToApprove(processId);
+    }
+
+    @PatchMapping("/process/{processId}/approve")
+    public void approve(@PathVariable Long processId) {
+        documentProcessService.approve(processId);
     }
 
 }
