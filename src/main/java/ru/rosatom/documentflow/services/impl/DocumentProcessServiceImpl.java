@@ -2,12 +2,15 @@ package ru.rosatom.documentflow.services.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
+import ru.rosatom.documentflow.exceptions.IllegalProcessStatusException;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
 import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
 import ru.rosatom.documentflow.services.DocumentProcessService;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Component
@@ -18,6 +21,14 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     private final UserServiceImpl userService;
 
     private final static String EMPTY_COMMENT = "";
+
+    private final static Map<DocProcessStatus, List<DocProcessStatus>> ALLOWED_STATUS_CHANGES = Map.of(
+            DocProcessStatus.NEW, List.of(DocProcessStatus.WAITING_FOR_APPROVE),
+            DocProcessStatus.WAITING_FOR_APPROVE, List.of(DocProcessStatus.APPROVED, DocProcessStatus.REJECTED, DocProcessStatus.CORRECTING),
+            DocProcessStatus.CORRECTING, List.of(DocProcessStatus.WAITING_FOR_APPROVE),
+            DocProcessStatus.APPROVED, List.of(),
+            DocProcessStatus.REJECTED, List.of()
+    );
 
     private final DocProcessRepository docProcessRepository;
 
@@ -40,7 +51,6 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
                 .status(DocProcessStatus.NEW)
                 .comment(EMPTY_COMMENT)
                 .build();
-
         return docProcessRepository.save(docProcess);
     }
 
@@ -51,8 +61,15 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     @Override
     public void sendToApprove(ProcessUpdateRequest processUpdateRequest) {
         DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
+        throwIfStatusNotCorrect(docProcess, DocProcessStatus.WAITING_FOR_APPROVE);
         docProcess.setStatus(DocProcessStatus.WAITING_FOR_APPROVE);
         docProcessRepository.save(docProcess);
+    }
+
+    private void throwIfStatusNotCorrect(DocProcess docProcess, DocProcessStatus attemptStatus) {
+        if (!ALLOWED_STATUS_CHANGES.get(docProcess.getStatus()).contains(attemptStatus)) {
+            throw new IllegalProcessStatusException(docProcess, attemptStatus);
+        }
     }
 
     /**
@@ -62,6 +79,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     @Override
     public void approve(ProcessUpdateRequest processUpdateRequest) {
         DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
+        throwIfStatusNotCorrect(docProcess, DocProcessStatus.APPROVED);
         docProcess.setStatus(DocProcessStatus.APPROVED);
         docProcessRepository.save(docProcess);
     }
@@ -69,6 +87,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     @Override
     public void reject(ProcessUpdateRequest processUpdateRequest) {
         DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
+        throwIfStatusNotCorrect(docProcess, DocProcessStatus.REJECTED);
         docProcess.setStatus(DocProcessStatus.REJECTED);
         docProcessRepository.save(docProcess);
     }
@@ -76,6 +95,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     @Override
     public void sendToCorrection(ProcessUpdateRequest processUpdateRequest) {
         DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
+        throwIfStatusNotCorrect(docProcess, DocProcessStatus.CORRECTING);
         docProcess.setStatus(DocProcessStatus.CORRECTING);
         docProcessRepository.save(docProcess);
     }
