@@ -1,11 +1,11 @@
 package ru.rosatom.documentflow.mappers;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import ru.rosatom.documentflow.adapters.DateTimeAdapter;
 import ru.rosatom.documentflow.dto.UserCreateDto;
 import ru.rosatom.documentflow.models.UserPassport;
 
-@Service
+@Component
 public class UserPassportMapper {
 
     public UserPassport dtoToObject(UserCreateDto dto) {
