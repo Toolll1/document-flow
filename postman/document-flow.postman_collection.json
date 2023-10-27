@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "dae93f02-c3d7-426f-a0e3-a2ba5a27bf46",
+		"_postman_id": "c4007025-a6a6-4b98-a806-849af3f2c01a",
 		"name": "document-flow",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "27731801"
+		"_exporter_id": "26417847"
 	},
 	"item": [
 		{
@@ -3005,6 +3005,201 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Бизнес-процесс",
+			"item": [
+				{
+					"name": "Создать запрос на согласование",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/document/1/recipient/1/new-process",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"document",
+								"1",
+								"recipient",
+								"1",
+								"new-process"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Отправить документ на согласование",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/document/processes/4/send-to-approve?comment=hello world",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"document",
+								"processes",
+								"4",
+								"send-to-approve"
+							],
+							"query": [
+								{
+									"key": "comment",
+									"value": "hello world"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Согласовать документ",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/document/processes/3/approve?comment=ok",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"document",
+								"processes",
+								"3",
+								"approve"
+							],
+							"query": [
+								{
+									"key": "comment",
+									"value": "ok"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Отправить документ на доработку",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/document/processes/4/send-to-correction?comment=https://www.youtube.com/watch?v=zddj4BA_7OM",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"document",
+								"processes",
+								"4",
+								"send-to-correction"
+							],
+							"query": [
+								{
+									"key": "comment",
+									"value": "https://www.youtube.com/watch?v=zddj4BA_7OM"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Отклонить документ",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/document/processes/4/reject?comment=:(",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"document",
+								"processes",
+								"4",
+								"reject"
+							],
+							"query": [
+								{
+									"key": "comment",
+									"value": ":("
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Посмотреть все процессы по документу",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/document/1/processes",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"document",
+								"1",
+								"processes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Получить процесс по ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/document/processes/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"document",
+								"processes",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Удалить документ",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/document/processes/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"document",
+								"processes",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"auth": {
@@ -3023,7 +3218,6 @@
 			"script": {
 				"type": "text/javascript",
 				"exec": [
-					"",
 					"pm.sendRequest({",
 					"    url: 'http://localhost:8080/auth/login',",
 					"    method: 'POST',",
@@ -3050,6 +3244,13 @@
 					""
 				]
 			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
 		}
 	]
 }

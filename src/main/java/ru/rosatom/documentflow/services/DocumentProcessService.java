@@ -20,4 +20,6 @@ public interface DocumentProcessService {
     void reject(ProcessUpdateRequest processUpdateRequest);
 
     void sendToCorrection(ProcessUpdateRequest processUpdateRequest);
+
+    void deleteProcess(Long processId);
 }
