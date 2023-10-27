@@ -3,6 +3,7 @@ package ru.rosatom.documentflow.services.impl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.rosatom.documentflow.models.DocProcess;
+import ru.rosatom.documentflow.models.DocProcessStatus;
 import ru.rosatom.documentflow.services.DocumentProcessService;
 import ru.rosatom.documentflow.services.DocumentService;
 
@@ -26,6 +27,10 @@ public class DocumentProcessSecurityService {
         return docProcess.getRecipient().getId().equals(userId);
     }
 
+    public boolean isProcessDone(Long processId) {
+        DocProcess docProcess = documentProcessService.findProcessById(processId);
+        return docProcess.getStatus().equals(DocProcessStatus.APPROVED) || docProcess.getStatus().equals(DocProcessStatus.REJECTED);
+    }
 
 
 

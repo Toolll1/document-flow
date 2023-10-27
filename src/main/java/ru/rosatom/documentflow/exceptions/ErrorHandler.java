@@ -1,6 +1,7 @@
 package ru.rosatom.documentflow.exceptions;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -24,6 +25,11 @@ public class ErrorHandler {
 
     @ExceptionHandler
     public ResponseEntity<AppError> handleObjectNotFound(final ObjectNotFoundException e) {
+        return createAppError(e, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<AppError> emptyResultDataAccessException(final EmptyResultDataAccessException e) {
         return createAppError(e, HttpStatus.NOT_FOUND);
     }
 

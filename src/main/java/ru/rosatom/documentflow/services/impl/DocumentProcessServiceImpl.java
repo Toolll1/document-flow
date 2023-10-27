@@ -84,6 +84,10 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         docProcessRepository.save(docProcess);
     }
 
+    /**
+     * Отклонить документ. Статус процесса - REJECTED
+     * @param processUpdateRequest
+     */
     @Override
     public void reject(ProcessUpdateRequest processUpdateRequest) {
         DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
@@ -92,6 +96,10 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         docProcessRepository.save(docProcess);
     }
 
+    /**
+     * Отправить на доработку. Статус процесса - CORRECTING
+     * @param processUpdateRequest
+     */
     @Override
     public void sendToCorrection(ProcessUpdateRequest processUpdateRequest) {
         DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
@@ -100,6 +108,10 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         docProcessRepository.save(docProcess);
     }
 
+    /**
+     * Удалить запрос на согласование. Запрос может быть удален только если он не согласован или не отклонен
+     * @param processId
+     */
     @Override
     public void deleteProcess(Long processId) {
         docProcessRepository.deleteById(processId);
@@ -112,12 +124,22 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         return docProcess;
     }
 
+    /**
+     * Найти процесс согласования по id
+     * @param processId
+     * @return DocProcess - процесс согласования
+     */
     @Override
     public DocProcess findProcessById(Long processId) {
         return docProcessRepository.findById(processId)
                 .orElseThrow(() -> new ObjectNotFoundException("Процесс с id %d не найден".formatted(processId)));
     }
 
+    /**
+     * Найти все процессы согласования по id документа
+     * @param documentId
+     * @return Collection<DocProcess> - коллекция процессов согласования
+     */
     @Override
     public Collection<DocProcess> findProcessesByDocumentId(Long documentId) {
         return docProcessRepository.findAllByDocumentId(documentId);

@@ -47,7 +47,8 @@ public class DocProcessController {
     }
 
     @DeleteMapping("/processes/{processId}")
-    @PreAuthorize("@documentProcessSecurityService.isCanManageProcess(#processId, authentication.principal.id)")
+    @PreAuthorize("@documentProcessSecurityService.isCanManageProcess(#processId, authentication.principal.id) " +
+            "&& !@documentProcessSecurityService.isProcessDone(#processId)")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteProcess(@PathVariable Long processId) {
         documentProcessService.deleteProcess(processId);
