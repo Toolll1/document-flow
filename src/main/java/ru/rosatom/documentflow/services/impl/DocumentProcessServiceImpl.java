@@ -7,6 +7,7 @@ import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
 import ru.rosatom.documentflow.services.DocumentProcessService;
 
+import java.util.Collection;
 import java.util.Objects;
 
 @Component
@@ -65,6 +66,21 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         docProcessRepository.save(docProcess);
     }
 
+    @Override
+    public void reject(ProcessUpdateRequest processUpdateRequest) {
+        DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
+        docProcess.setStatus(DocProcessStatus.REJECTED);
+        docProcessRepository.save(docProcess);
+    }
+
+    @Override
+    public void sendToCorrection(ProcessUpdateRequest processUpdateRequest) {
+        DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
+        docProcess.setStatus(DocProcessStatus.CORRECTING);
+        docProcessRepository.save(docProcess);
+    }
+
+
     private DocProcess getProcessAndApplyRequest(ProcessUpdateRequest processUpdateRequest) {
         DocProcess docProcess = findProcessById(processUpdateRequest.getProcessId());
         docProcess.setComment(Objects.requireNonNullElse(processUpdateRequest.getComment(), docProcess.getComment()));
@@ -75,6 +91,11 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     public DocProcess findProcessById(Long processId) {
         return docProcessRepository.findById(processId)
                 .orElseThrow(() -> new ObjectNotFoundException("Процесс с id %d не найден".formatted(processId)));
+    }
+
+    @Override
+    public Collection<DocProcess> findProcessesByDocumentId(Long documentId) {
+        return null;
     }
 
 }

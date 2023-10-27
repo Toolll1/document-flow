@@ -37,4 +37,16 @@ public class DocProcessController {
         documentProcessService.approve(processUpdateRequest);
     }
 
+    @PatchMapping("/process/{processId}/reject")
+    public void reject(ProcessUpdateRequestDto processUpdateRequestDto) {
+        ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
+        documentProcessService.reject(processUpdateRequest);
+    }
+
+    @PatchMapping("/process/{processId}/send-to-correction")
+    public void sendToCorrection(ProcessUpdateRequestDto processUpdateRequestDto) {
+        ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
+        documentProcessService.sendToCorrection(processUpdateRequest);
+    }
+
 }
