@@ -3037,16 +3037,22 @@
 						"method": "PATCH",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/v1/document/process/1/send-to-approve",
+							"raw": "{{base_url}}/v1/document/processes/4/send-to-approve?comment=hello world",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"v1",
 								"document",
-								"process",
-								"1",
+								"processes",
+								"4",
 								"send-to-approve"
+							],
+							"query": [
+								{
+									"key": "comment",
+									"value": "hello world"
+								}
 							]
 						}
 					},
@@ -3058,16 +3064,22 @@
 						"method": "PATCH",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/v1/document/process/1/send-to-approve",
+							"raw": "{{base_url}}/v1/document/processes/3/approve?comment=ok",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"v1",
 								"document",
-								"process",
-								"1",
-								"send-to-approve"
+								"processes",
+								"3",
+								"approve"
+							],
+							"query": [
+								{
+									"key": "comment",
+									"value": "ok"
+								}
 							]
 						}
 					},
@@ -3079,16 +3091,22 @@
 						"method": "PATCH",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/v1/document/process/1/send-to-approve",
+							"raw": "{{base_url}}/v1/document/processes/4/send-to-correction?comment=https://www.youtube.com/watch?v=zddj4BA_7OM",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"v1",
 								"document",
-								"process",
-								"1",
-								"send-to-approve"
+								"processes",
+								"4",
+								"send-to-correction"
+							],
+							"query": [
+								{
+									"key": "comment",
+									"value": "https://www.youtube.com/watch?v=zddj4BA_7OM"
+								}
 							]
 						}
 					},
@@ -3100,16 +3118,22 @@
 						"method": "PATCH",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/v1/document/process/1/send-to-approve",
+							"raw": "{{base_url}}/v1/document/processes/4/reject?comment=:(",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"v1",
 								"document",
-								"process",
-								"1",
-								"send-to-approve"
+								"processes",
+								"4",
+								"reject"
+							],
+							"query": [
+								{
+									"key": "comment",
+									"value": ":("
+								}
 							]
 						}
 					},
@@ -3119,7 +3143,19 @@
 					"name": "Посмотреть все процессы по документу",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/document/1/processes",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"document",
+								"1",
+								"processes"
+							]
+						}
 					},
 					"response": []
 				},
@@ -3127,15 +3163,39 @@
 					"name": "Получить процесс по ID",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/document/processes/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"document",
+								"processes",
+								"1"
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Удалить документ",
 					"request": {
-						"method": "GET",
-						"header": []
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/document/processes/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"document",
+								"processes",
+								"1"
+							]
+						}
 					},
 					"response": []
 				}
