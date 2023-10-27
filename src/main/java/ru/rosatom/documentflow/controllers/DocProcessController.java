@@ -8,6 +8,9 @@ import ru.rosatom.documentflow.dto.ProcessUpdateRequestDto;
 import ru.rosatom.documentflow.models.ProcessUpdateRequest;
 import ru.rosatom.documentflow.services.DocumentProcessService;
 
+import java.util.Collection;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/v1/document")
 @AllArgsConstructor
@@ -25,28 +28,37 @@ public class DocProcessController {
         );
     }
 
-    @PatchMapping("/process/{processId}/send-to-approve")
+    @GetMapping("{documentId}/processes")
+    public Collection<DocProcessDto> findProcessByDocumentId(@PathVariable Long documentId) {
+        return documentProcessService.findProcessesByDocumentId(documentId)
+                .stream()
+                .map(docProcess -> modelMapper.map(docProcess, DocProcessDto.class))
+                .collect(Collectors.toList());
+    }
+
+    @PatchMapping("/processes/{processId}/send-to-approve")
     public void sendToApprove(ProcessUpdateRequestDto processUpdateRequestDto) {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
         documentProcessService.sendToApprove(processUpdateRequest);
     }
 
-    @PatchMapping("/process/{processId}/approve")
+    @PatchMapping("/processes/{processId}/approve")
     public void approve(ProcessUpdateRequestDto processUpdateRequestDto) {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
         documentProcessService.approve(processUpdateRequest);
     }
 
-    @PatchMapping("/process/{processId}/reject")
+    @PatchMapping("/processes/{processId}/reject")
     public void reject(ProcessUpdateRequestDto processUpdateRequestDto) {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
         documentProcessService.reject(processUpdateRequest);
     }
 
-    @PatchMapping("/process/{processId}/send-to-correction")
+    @PatchMapping("/processes/{processId}/send-to-correction")
     public void sendToCorrection(ProcessUpdateRequestDto processUpdateRequestDto) {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
         documentProcessService.sendToCorrection(processUpdateRequest);
     }
+
 
 }

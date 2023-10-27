@@ -95,7 +95,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
 
     @Override
     public Collection<DocProcess> findProcessesByDocumentId(Long documentId) {
-        return null;
+        return docProcessRepository.findAllByDocumentId(documentId);
     }
 
 }
