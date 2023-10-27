@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.web.bind.annotation.*;
 import ru.rosatom.documentflow.dto.DocProcessDto;
+import ru.rosatom.documentflow.dto.ProcessUpdateRequestDto;
+import ru.rosatom.documentflow.models.ProcessUpdateRequest;
 import ru.rosatom.documentflow.services.DocumentProcessService;
 
 @RestController
@@ -24,13 +26,15 @@ public class DocProcessController {
     }
 
     @PatchMapping("/process/{processId}/send-to-approve")
-    public void sendToApprove(@PathVariable Long processId) {
-        documentProcessService.sendToApprove(processId);
+    public void sendToApprove(ProcessUpdateRequestDto processUpdateRequestDto) {
+        ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
+        documentProcessService.sendToApprove(processUpdateRequest);
     }
 
     @PatchMapping("/process/{processId}/approve")
-    public void approve(@PathVariable Long processId) {
-        documentProcessService.approve(processId);
+    public void approve(ProcessUpdateRequestDto processUpdateRequestDto) {
+        ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
+        documentProcessService.approve(processUpdateRequest);
     }
 
 }

@@ -3,12 +3,11 @@ package ru.rosatom.documentflow.services.impl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
-import ru.rosatom.documentflow.models.DocProcess;
-import ru.rosatom.documentflow.models.DocProcessStatus;
-import ru.rosatom.documentflow.models.Document;
-import ru.rosatom.documentflow.models.User;
+import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
 import ru.rosatom.documentflow.services.DocumentProcessService;
+
+import java.util.Objects;
 
 @Component
 @AllArgsConstructor
@@ -46,26 +45,30 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
 
     /**
      * Отправляет процесс согласования на согласование. Статус процесса - WAITING_FOR_APPROVE
-     * @param processId - id процесса
-     * @return DocProcess - процесс согласования с новым статусом
+     * @param processUpdateRequest - запрос на обновление процесса
      */
     @Override
-    public void sendToApprove(Long processId) {
-        DocProcess docProcess = findProcessById(processId);
+    public void sendToApprove(ProcessUpdateRequest processUpdateRequest) {
+        DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
         docProcess.setStatus(DocProcessStatus.WAITING_FOR_APPROVE);
         docProcessRepository.save(docProcess);
     }
 
     /**
      * Согласовать документ. Статус процесса - APPROVED
-     * @param processId - id процесса
-     * @return DocProcess - процесс согласования с новым статусом
+     * @param processUpdateRequest - запрос на обновление процесса
      */
     @Override
-    public void approve(Long processId) {
-        DocProcess docProcess = findProcessById(processId);
+    public void approve(ProcessUpdateRequest processUpdateRequest) {
+        DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
         docProcess.setStatus(DocProcessStatus.APPROVED);
         docProcessRepository.save(docProcess);
+    }
+
+    private DocProcess getProcessAndApplyRequest(ProcessUpdateRequest processUpdateRequest) {
+        DocProcess docProcess = findProcessById(processUpdateRequest.getProcessId());
+        docProcess.setComment(Objects.requireNonNullElse(processUpdateRequest.getComment(), docProcess.getComment()));
+        return docProcess;
     }
 
     @Override
