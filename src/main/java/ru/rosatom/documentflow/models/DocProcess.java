@@ -17,6 +17,10 @@ public class DocProcess {
     @Column(name = "process_id")
     private final Long id;
     @ToString.Exclude
+    @ManyToOne
+    @JoinColumn(name = "document_id")
+    private final Document document;
+    @ToString.Exclude
     @OneToOne
     @JoinColumn(name = "sender_id")
     private User sender;  //отправитель

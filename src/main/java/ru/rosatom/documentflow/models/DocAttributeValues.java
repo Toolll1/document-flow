@@ -1,9 +1,6 @@
 package ru.rosatom.documentflow.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -19,8 +16,10 @@ public class DocAttributeValues {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "value_id")
     private final Long id;
-    @Column(name = "attribute_name", nullable = false, length = 320)
-    private String name;
     @Column(name = "attribute_value", nullable = false, length = 1000)
     private String value;
+    @ToString.Exclude
+    @ManyToOne
+    @JoinColumn(name = "attribute_id")
+    DocAttribute attribute;
 }
