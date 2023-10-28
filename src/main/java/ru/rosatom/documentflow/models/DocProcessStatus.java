@@ -2,8 +2,8 @@ package ru.rosatom.documentflow.models;
 
 public enum DocProcessStatus {
     NEW,
-    IN_PROGRESS,
+    WAITING_FOR_APPROVE,
     APPROVED,
     REJECTED,
-    TO_UPDATE
+    CORRECTING
 }

@@ -60,7 +60,7 @@ create table if not exists documents
     owner_Id        bigint                      not null references users (user_id),
     type_id         bigint references document_types (type_id),
     CONSTRAINT correct_document_date
-        CHECK (created_at < NOW())
+        CHECK (created_at <= NOW())
 );
 
 create table if not exists attributes
@@ -98,7 +98,7 @@ create table if not exists document_process
     document_id  bigint,
     sender_id    bigint        not null references users (user_id),
     recipient_id bigint        not null references users (user_id),
-    status       varchar(11)   not null,
+    status       varchar(20)   not null,
     comment      varchar(1000) not null
 );
 
