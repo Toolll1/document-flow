@@ -9,5 +9,4 @@ public class DocumentFlowApplication {
     public static void main(String[] args) {
         SpringApplication.run(DocumentFlowApplication.class, args);
     }
-
 }

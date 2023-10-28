@@ -1,6 +1,6 @@
 package ru.rosatom.documentflow.mappers;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import ru.rosatom.documentflow.adapters.DateTimeAdapter;
 import ru.rosatom.documentflow.dto.UserCreateDto;
 import ru.rosatom.documentflow.dto.UserReplyDto;
@@ -9,7 +9,7 @@ import ru.rosatom.documentflow.models.UserOrganization;
 import ru.rosatom.documentflow.models.UserPassport;
 import ru.rosatom.documentflow.models.UserRole;
 
-@Service
+@Component
 public class UserMapper {
 
     public UserReplyDto objectToReplyDto(User user) {
