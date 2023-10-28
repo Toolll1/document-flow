@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -35,7 +34,6 @@ import static ru.rosatom.documentflow.adapters.CommonUtils.*;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @RequestMapping("/document")
 @RequiredArgsConstructor
-@PreAuthorize("hasAuthority('USER')")
 public class DocumentController {
 
     final DocumentService documentService;
@@ -43,7 +41,7 @@ public class DocumentController {
     final DocumentChangesMapper cm;
 
     //создание нового документа
-    @PreAuthorize("#documentDto.ownerId==#user.id")
+    @PreAuthorize("#documentDto.ownerId==#user.id && hasAuthority('USER')")
     @PostMapping
     public DocumentDto createDocument(@RequestBody @Valid DocumentDto documentDto, @AuthenticationPrincipal User user) {
         log.trace("Создание документа пользователем {} : {}", user.getId(), documentDto);
@@ -87,7 +85,7 @@ public class DocumentController {
     }
 
     // обновление документа
-    @PostAuthorize("returnObject.ownerId == #user.id && hasAuthority('USER')")
+    @PreAuthorize("@documentProcessSecurityService.isCanManageProcess(#documentId,#user.id) && hasAuthority('USER')")
     @PatchMapping("/{documentId}")
     public DocumentDto updateDocument(@PathVariable Long documentId,
                                       @RequestBody @Valid DocumentUpdateDto documentUpdateDto, @AuthenticationPrincipal User user) {
@@ -96,6 +94,7 @@ public class DocumentController {
     }
 
     //удаление документа
+    @PreAuthorize("@documentProcessSecurityService.isCanManageProcess(#documentId,#user.id) && hasAuthority('USER')")
     @DeleteMapping("/{documentId}")
     public void deleteDocument(@PathVariable Long documentId, @AuthenticationPrincipal User user) {
         log.trace("Удаление документа {} пользователем {}", documentId, user.getId());

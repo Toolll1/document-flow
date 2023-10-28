@@ -60,18 +60,19 @@ public class UserController {
         return userMapper.objectToReplyDto(userService.updateUser(dto, userId));
     }
 
+    @PreAuthorize("(@userServiceImpl.getUserByEmail(authentication.name).getId()==userId && hasAuthority('USER')) || hasAuthority('ADMIN')")
     @PatchMapping("/password/{userId}")
     public ResponseEntity<?> setUserPassword(@Valid @Size(min = 8, message = "password is too short") @RequestParam(value = "password") String password,
                                              @PathVariable Long userId) {
         log.info("Received a request to set password to user with userId = {}", userId);
         if (userService.setPasswordToUser(password, userId)) {
-            return ResponseEntity.ok("Password has been set to user with id " + userId);
+            return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>("User with id " + userId + " not found", HttpStatus.BAD_REQUEST);
         }
     }
 
-    @PreAuthorize("hasAnyAuthority({'ADMIN','USER'})")
+    @PreAuthorize("(@userServiceImpl.getUserByEmail(authentication.name).getId()==userId && hasAuthority('USER')) || hasAuthority('ADMIN')")
     @GetMapping("/{userId}")
     public UserReplyDto getUser(@PathVariable Long userId) {
 
