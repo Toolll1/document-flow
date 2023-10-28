@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.rosatom.documentflow.dto.UserCreateDto;
@@ -60,10 +61,10 @@ public class UserController {
         return userMapper.objectToReplyDto(userService.updateUser(dto, userId));
     }
 
-    @PreAuthorize("(@userServiceImpl.getUserByEmail(authentication.name).getId()==userId && hasAuthority('USER')) || hasAuthority('ADMIN')")
+    @PreAuthorize("(#userId==#user.id && hasAuthority('USER')) || hasAuthority('ADMIN')")
     @PatchMapping("/password/{userId}")
     public ResponseEntity<?> setUserPassword(@Valid @Size(min = 8, message = "password is too short") @RequestParam(value = "password") String password,
-                                             @PathVariable Long userId) {
+                                             @PathVariable Long userId, @AuthenticationPrincipal User user) {
         log.info("Received a request to set password to user with userId = {}", userId);
         if (userService.setPasswordToUser(password, userId)) {
             return new ResponseEntity<>(HttpStatus.OK);
@@ -72,9 +73,9 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("(@userServiceImpl.getUserByEmail(authentication.name).getId()==userId && hasAuthority('USER')) || hasAuthority('ADMIN')")
+    @PreAuthorize("(#userId==#user.id && hasAuthority('USER')) || hasAuthority('ADMIN')")
     @GetMapping("/{userId}")
-    public UserReplyDto getUser(@PathVariable Long userId) {
+    public UserReplyDto getUser(@PathVariable Long userId, @AuthenticationPrincipal User user) {
 
         log.info("A request was received to search for a user with an id {}", userId);
 
