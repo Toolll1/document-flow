@@ -95,6 +95,11 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
+    public List<Document> getAllDocuments() {
+        return new ArrayList<>(documentRepository.findAll());
+    }
+
+    @Override
     public List<Document> findDocuments(Long userId,
                                         String text,
                                         LocalDateTime rangeStart,

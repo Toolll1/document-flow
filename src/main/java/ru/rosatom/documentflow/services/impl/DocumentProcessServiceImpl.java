@@ -8,10 +8,7 @@ import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
 import ru.rosatom.documentflow.services.DocumentProcessService;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Component
 @AllArgsConstructor
@@ -64,6 +61,16 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         throwIfStatusNotCorrect(docProcess, DocProcessStatus.WAITING_FOR_APPROVE);
         docProcess.setStatus(DocProcessStatus.WAITING_FOR_APPROVE);
         docProcessRepository.save(docProcess);
+    }
+
+    /**
+     * Возвращает список всех документов по заданному статусу.
+     * @param status - статус процесса
+     * @return список подходящих документов
+     */
+    @Override
+    public Set<Document> findDocumentsByProcessStatus(DocProcessStatus status) {
+        return docProcessRepository.findDocumentsByProcessStatus(status);
     }
 
     private void throwIfStatusNotCorrect(DocProcess docProcess, DocProcessStatus attemptStatus) {

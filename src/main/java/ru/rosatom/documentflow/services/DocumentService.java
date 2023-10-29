@@ -17,6 +17,8 @@ public interface DocumentService {
 
     Document findDocumentById(Long documentId);
 
+    List<Document> getAllDocuments();
+
     List<Document> findDocuments(Long userId,
                                  String text,
                                  LocalDateTime rangeStart,
