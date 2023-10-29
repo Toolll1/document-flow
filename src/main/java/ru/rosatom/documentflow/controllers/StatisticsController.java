@@ -18,8 +18,9 @@ public class StatisticsController {
     private DocumentProcessService processService;
 
     @Autowired
-    public StatisticsController(DocumentService documentService) {
+    public StatisticsController(DocumentService documentService, DocumentProcessService processService) {
         this.documentService = documentService;
+        this.processService = processService;
     }
 
     @GetMapping("/getCount")
