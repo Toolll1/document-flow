@@ -132,7 +132,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     @Override
     public DocProcess findProcessById(Long processId) {
         return docProcessRepository.findById(processId)
-                .orElseThrow(() -> new ObjectNotFoundException("Процесс с id %d не найден".formatted(processId)));
+                .orElseThrow(() -> new ObjectNotFoundException(String.format("Процесс с id %d не найден", processId)));
     }
 
     /**
