@@ -11,6 +11,7 @@ import ru.rosatom.documentflow.dto.DocumentUpdateDto;
 import ru.rosatom.documentflow.exceptions.BadRequestException;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
 import ru.rosatom.documentflow.models.DocChanges;
+import ru.rosatom.documentflow.models.DocProcessStatus;
 import ru.rosatom.documentflow.models.Document;
 import ru.rosatom.documentflow.models.QDocument;
 import ru.rosatom.documentflow.models.User;
@@ -25,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import static ru.rosatom.documentflow.adapters.CommonUtils.*;
 
@@ -89,6 +91,21 @@ public class DocumentServiceImpl implements DocumentService {
     public Document findDocumentById(Long documentId) {
         return documentRepository.findById(documentId)
                 .orElseThrow(() -> new ObjectNotFoundException("Не найден документ с id " + documentId));
+    }
+
+    @Override
+    public List<Document> getAllDocuments() {
+        return new ArrayList<>(documentRepository.findAll());
+    }
+
+    /**
+     * Возвращает список всех документов по заданному статусу.
+     * @param status - статус процесса
+     * @return список подходящих документов
+     */
+    @Override
+    public Set<Document> findDocumentsByProcessStatus(DocProcessStatus status) {
+        return documentRepository.findDocumentsByProcessStatus(status);
     }
 
     @Override

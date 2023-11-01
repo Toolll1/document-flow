@@ -3,10 +3,12 @@ package ru.rosatom.documentflow.services;
 import org.springframework.data.domain.Pageable;
 import ru.rosatom.documentflow.dto.DocumentUpdateDto;
 import ru.rosatom.documentflow.models.DocChanges;
+import ru.rosatom.documentflow.models.DocProcessStatus;
 import ru.rosatom.documentflow.models.Document;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public interface DocumentService {
     Document createDocument(Document document, Long userId);
@@ -16,6 +18,10 @@ public interface DocumentService {
     List<DocChanges> findDocChangesByDocumentId(Long id);
 
     Document findDocumentById(Long documentId);
+
+    List<Document> getAllDocuments();
+
+    Set<Document> findDocumentsByProcessStatus(DocProcessStatus status);
 
     List<Document> findDocuments(Long userId,
                                  String text,
