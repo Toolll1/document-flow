@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class DocStatisticDTO {
-    long count;
+    private long count;
 }

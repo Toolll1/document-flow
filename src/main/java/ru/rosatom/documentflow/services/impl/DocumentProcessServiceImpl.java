@@ -63,16 +63,6 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         docProcessRepository.save(docProcess);
     }
 
-    /**
-     * Возвращает список всех документов по заданному статусу.
-     * @param status - статус процесса
-     * @return список подходящих документов
-     */
-    @Override
-    public Set<Document> findDocumentsByProcessStatus(DocProcessStatus status) {
-        return docProcessRepository.findDocumentsByProcessStatus(status);
-    }
-
     private void throwIfStatusNotCorrect(DocProcess docProcess, DocProcessStatus attemptStatus) {
         if (!ALLOWED_STATUS_CHANGES.get(docProcess.getStatus()).contains(attemptStatus)) {
             throw new IllegalProcessStatusException(docProcess, attemptStatus);
