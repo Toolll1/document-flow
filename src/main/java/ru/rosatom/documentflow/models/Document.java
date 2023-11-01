@@ -35,9 +35,9 @@ public class Document {
     @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "type_id")
-    DocType docType;  //тип файла
+    DocType docType;
     @ToString.Exclude
     @OneToMany(cascade = CascadeType.ALL)
-    @Transient
-    List<DocAttributeValues> attributeValues = new ArrayList<>();  // список значений атрибутов
+    @JoinColumn(name = "document_id")
+    List<DocAttributeValues> attributeValues = new ArrayList<>();
 }

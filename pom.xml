@@ -15,6 +15,7 @@
 	<description>Система документооборота</description>
 	<properties>
 		<java.version>11</java.version>
+		<querydsl.version>5.0.0</querydsl.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -137,7 +138,15 @@
 					</dependency>
 				</dependencies>
 			</plugin>
-		</plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>15</source>
+                    <target>15</target>
+                </configuration>
+            </plugin>
+        </plugins>
 	</build>
 
 </project>
