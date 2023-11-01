@@ -52,9 +52,6 @@ public class DocumentServiceImpl implements DocumentService {
     public Document updateDocument(DocumentUpdateDto documentUpdateDto, Long id, Long userId) {
         Document document = documentRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Не найден документ с id " + id));
-        if (!Objects.equals(document.getOwnerId(), userId)) {
-            throw new BadRequestException("Нельзя изменять документ созданный другим пользователем");
-        }
         DocChanges docChanges = new DocChanges();
         docChanges.setDocumentId(id);
         docChanges.setDateChange(LocalDate.now());
