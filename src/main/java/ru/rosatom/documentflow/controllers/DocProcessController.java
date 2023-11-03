@@ -23,7 +23,7 @@ public class DocProcessController {
 
 
     @PostMapping("/{documentId}/recipient/{recipientId}/new-process")
-    @PreAuthorize("@documentProcessSecurityService.isCanManageProcess(#documentId, authentication.principal.id)")
+    @PreAuthorize("@documentProcessSecurityService.isCanManageProcess(#documentId, authentication.principal.id) && hasAuthority('USER')")
     public DocProcessDto createNewProcess(@PathVariable Long documentId, @PathVariable Long recipientId) {
         return modelMapper.map(
                 documentProcessService.createNewProcess(documentId, recipientId),
@@ -32,7 +32,7 @@ public class DocProcessController {
     }
 
     @GetMapping("{documentId}/processes")
-    @PreAuthorize("@documentProcessSecurityService.isHasAccess(#documentId, authentication.principal.id)")
+    @PreAuthorize("@documentProcessSecurityService.isHasAccess(#documentId, authentication.principal.id) && hasAuthority('USER')")
     public Collection<DocProcessDto> findProcessByDocumentId(@PathVariable Long documentId) {
         return documentProcessService.findProcessesByDocumentId(documentId)
                 .stream()
@@ -48,35 +48,35 @@ public class DocProcessController {
 
     @DeleteMapping("/processes/{processId}")
     @PreAuthorize("@documentProcessSecurityService.isCanManageProcess(#processId, authentication.principal.id) " +
-            "&& !@documentProcessSecurityService.isProcessDone(#processId)")
+            "&& !@documentProcessSecurityService.isProcessDone(#processId) && hasAuthority('USER')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteProcess(@PathVariable Long processId) {
         documentProcessService.deleteProcess(processId);
     }
 
     @PatchMapping("/processes/{processId}/send-to-approve")
-    @PreAuthorize("@documentProcessSecurityService.isHasAccess(#processUpdateRequestDto.processId, authentication.principal.id)")
+    @PreAuthorize("@documentProcessSecurityService.isHasAccess(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('USER')")
     public void sendToApprove(ProcessUpdateRequestDto processUpdateRequestDto) {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
         documentProcessService.sendToApprove(processUpdateRequest);
     }
 
     @PatchMapping("/processes/{processId}/approve")
-    @PreAuthorize("@documentProcessSecurityService.isRecipient(#processUpdateRequestDto.processId, authentication.principal.id)")
+    @PreAuthorize("@documentProcessSecurityService.isRecipient(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('USER')")
     public void approve(ProcessUpdateRequestDto processUpdateRequestDto) {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
         documentProcessService.approve(processUpdateRequest);
     }
 
     @PatchMapping("/processes/{processId}/reject")
-    @PreAuthorize("@documentProcessSecurityService.isRecipient(#processUpdateRequestDto.processId, authentication.principal.id)")
+    @PreAuthorize("@documentProcessSecurityService.isRecipient(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('USER')")
     public void reject(ProcessUpdateRequestDto processUpdateRequestDto) {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
         documentProcessService.reject(processUpdateRequest);
     }
 
     @PatchMapping("/processes/{processId}/send-to-correction")
-    @PreAuthorize("@documentProcessSecurityService.isRecipient(#processUpdateRequestDto.processId, authentication.principal.id)")
+    @PreAuthorize("@documentProcessSecurityService.isRecipient(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('USER')")
     public void sendToCorrection(ProcessUpdateRequestDto processUpdateRequestDto) {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
         documentProcessService.sendToCorrection(processUpdateRequest);

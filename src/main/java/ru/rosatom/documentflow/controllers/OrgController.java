@@ -3,6 +3,7 @@ package ru.rosatom.documentflow.controllers;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.rosatom.documentflow.dto.OrgCreateRequestDto;
 import ru.rosatom.documentflow.dto.OrgDto;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/v1/org")
 @AllArgsConstructor
+@PreAuthorize("hasAuthority('ADMIN')")
 public class OrgController {
 
   UserOrganizationService userOrganizationService;

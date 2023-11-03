@@ -12,9 +12,9 @@ import ru.rosatom.documentflow.dto.DocAttributeValueCreateDto;
 import ru.rosatom.documentflow.dto.DocParams;
 import ru.rosatom.documentflow.dto.DocumentUpdateDto;
 import ru.rosatom.documentflow.exceptions.BadRequestException;
-import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
+import ru.rosatom.documentflow.exceptions.ObjectNotFoundException; 
 import ru.rosatom.documentflow.models.*;
-import ru.rosatom.documentflow.repositories.DocAttributeValuesRepository;
+import ru.rosatom.documentflow.repositories.DocAttributeValuesRepository; 
 import ru.rosatom.documentflow.repositories.DocChangesRepository;
 import ru.rosatom.documentflow.repositories.DocumentRepository;
 import ru.rosatom.documentflow.services.*;
@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import static ru.rosatom.documentflow.adapters.CommonUtils.*;
 
@@ -55,9 +56,6 @@ public class DocumentServiceImpl implements DocumentService {
     public Document updateDocument(DocumentUpdateDto documentUpdateDto, Long id, Long userId) {
         Document document = documentRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Не найден документ с id " + id));
-        if (!Objects.equals(document.getOwnerId(), userId)) {
-            throw new BadRequestException("Нельзя изменять документ созданный другим пользователем");
-        }
         DocChanges docChanges = new DocChanges();
         docChanges.setDocumentId(id);
         docChanges.setDateChange(LocalDate.now());
@@ -102,6 +100,21 @@ public class DocumentServiceImpl implements DocumentService {
     public Document findDocumentById(Long documentId) {
         return documentRepository.findById(documentId)
                 .orElseThrow(() -> new ObjectNotFoundException("Не найден документ с id " + documentId));
+    }
+
+    @Override
+    public List<Document> getAllDocuments() {
+        return new ArrayList<>(documentRepository.findAll());
+    }
+
+    /**
+     * Возвращает список всех документов по заданному статусу.
+     * @param status - статус процесса
+     * @return список подходящих документов
+     */
+    @Override
+    public Set<Document> findDocumentsByProcessStatus(DocProcessStatus status) {
+        return documentRepository.findDocumentsByProcessStatus(status);
     }
 
     @Override
