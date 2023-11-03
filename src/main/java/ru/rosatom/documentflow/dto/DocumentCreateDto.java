@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import ru.rosatom.documentflow.adapters.CommonUtils;
-import ru.rosatom.documentflow.models.DocAttributeValues;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -16,8 +15,7 @@ import java.util.List;
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class DocumentDto {
-
+public class DocumentCreateDto {
     Long id;
     @NotNull
     @NotEmpty
@@ -30,9 +28,8 @@ public class DocumentDto {
     LocalDateTime date;
     @NotNull
     Long idOrganization;
-    Long ownerId;
     @NotNull
-    DocTypeDto docTypeDto;
+    Long docTypId;
     @NotNull
-    List<DocAttributeValues> attributeValues;
+    List<DocAttributeValueCreateDto> docAttributeValueCreateDtos;
 }

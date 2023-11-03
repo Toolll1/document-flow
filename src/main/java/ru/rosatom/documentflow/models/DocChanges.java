@@ -27,10 +27,6 @@ public class DocChanges {
     String changes;
     @Column(name = "previous_version", nullable = false, length = 1000)
     String previousVersion;
-    @ToString.Exclude
     @JoinColumn(name = "user_Changer_Id")
     Long userChangerId;
-    @ToString.Exclude
-    @JoinColumn(name = "user_Owner_Id")
-    Long userOwnerId;
 }

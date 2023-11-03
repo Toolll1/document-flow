@@ -18,5 +18,4 @@ public class DocumentChangesDto {
     String changes;
     String previousVersion;
     Long userChangerId;
-    Long userOwnerId;
 }

@@ -1,10 +1,10 @@
 package ru.rosatom.documentflow.mappers;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import ru.rosatom.documentflow.dto.DocumentChangesDto;
 import ru.rosatom.documentflow.models.DocChanges;
 
-@Service
+@Component
 public class DocumentChangesMapper {
 
     public DocChanges changesFromDto(DocumentChangesDto dto) {
@@ -15,7 +15,6 @@ public class DocumentChangesMapper {
                 .changes(dto.getChanges())
                 .previousVersion(dto.getPreviousVersion())
                 .userChangerId(dto.getUserChangerId())
-                .userOwnerId(dto.getUserOwnerId())
                 .build();
     }
 
@@ -27,7 +26,6 @@ public class DocumentChangesMapper {
                 .changes(docChanges.getChanges())
                 .previousVersion(docChanges.getPreviousVersion())
                 .userChangerId(docChanges.getUserChangerId())
-                .userOwnerId(docChanges.getUserOwnerId())
                 .build();
     }
 }

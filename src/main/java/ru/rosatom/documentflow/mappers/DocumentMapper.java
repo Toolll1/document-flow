@@ -1,22 +1,48 @@
 package ru.rosatom.documentflow.mappers;
 
-import org.springframework.stereotype.Service;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Component;
+import ru.rosatom.documentflow.dto.DocAttributeValueCreateDto;
+import ru.rosatom.documentflow.dto.DocTypeDto;
+import ru.rosatom.documentflow.dto.DocumentCreateDto;
 import ru.rosatom.documentflow.dto.DocumentDto;
+import ru.rosatom.documentflow.models.DocAttributeValues;
 import ru.rosatom.documentflow.models.Document;
+import ru.rosatom.documentflow.services.DocAttributeService;
+import ru.rosatom.documentflow.services.DocTypeService;
 
-@Service
+import java.util.ArrayList;
+import java.util.List;
+
+@Component
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class DocumentMapper {
 
-    public Document documentFromDto(DocumentDto dto) {
+    final DocTypeService docTypeService;
+    final ModelMapper modelMapper;
+    final DocAttributeService docAttributeService;
+
+    public Document documentFromCreateDto(DocumentCreateDto dto) {
+        List<DocAttributeValues> attributeValues = new ArrayList<>();
+        List<DocAttributeValueCreateDto> listDto = dto.getDocAttributeValueCreateDtos();
+        for (DocAttributeValueCreateDto createDto : listDto) {
+            DocAttributeValues values = new DocAttributeValues();
+            values.setValue(createDto.getValue());
+            values.setAttribute(docAttributeService.getDocAttributeById(createDto.getAttributeId()));
+            attributeValues.add(values);
+        }
         return Document.builder()
                 .id(dto.getId())
                 .title(dto.getTitle())
                 .documentPath(dto.getDocumentPath())
                 .date(dto.getDate())
                 .idOrganization(dto.getIdOrganization())
-                .ownerId(dto.getOwnerId())
-                .docType(dto.getDocType())
-                .attributeValues(dto.getAttributeValues())
+                .docType(docTypeService.getDocTypeById(dto.getDocTypId()))
+                .attributeValues(attributeValues)
                 .build();
     }
 
@@ -28,7 +54,7 @@ public class DocumentMapper {
                 .date(document.getDate())
                 .idOrganization(document.getIdOrganization())
                 .ownerId(document.getOwnerId())
-                .docType(document.getDocType())
+                .docTypeDto(modelMapper.map(document.getDocType(), DocTypeDto.class))
                 .attributeValues(document.getAttributeValues())
                 .build();
     }

@@ -10,9 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.rosatom.documentflow.adapters.CustomPageRequest;
-import ru.rosatom.documentflow.dto.DocumentChangesDto;
-import ru.rosatom.documentflow.dto.DocumentDto;
-import ru.rosatom.documentflow.dto.DocumentUpdateDto;
+import ru.rosatom.documentflow.dto.*;
 import ru.rosatom.documentflow.mappers.DocumentChangesMapper;
 import ru.rosatom.documentflow.mappers.DocumentMapper;
 import ru.rosatom.documentflow.models.User;
@@ -49,9 +47,9 @@ public class DocumentController {
     }
 
     //поиск документа по id
-    @GetMapping("/{documentId}")
+    @GetMapping("/{documentId}") 
     public DocumentDto getDocumentById(@PathVariable Long documentId, @AuthenticationPrincipal User user) {
-        log.trace("Запрос информации о документе {} от пользователя {}", documentId, user.getId());
+        log.trace("Запрос информации о документе {} от пользователя {}", documentId, user.getId()); 
         return dm.documentToDto(documentService.findDocumentById(documentId));
     }
 
@@ -65,20 +63,25 @@ public class DocumentController {
                                            @RequestParam(required = false) Long creatorId,
                                            @RequestParam(defaultValue = PAGINATION_DEFAULT_FROM) @PositiveOrZero Integer from,
                                            @RequestParam(defaultValue = PAGINATION_DEFAULT_SIZE) @Positive Integer size,
+                                           @RequestParam(required = false) Long typeId,
+                                           @RequestParam(required = false) Long attributeId,
+                                           @RequestParam(required = false) String attributeValue,
                                            @AuthenticationPrincipal User user) {
-        log.trace("Запрос информации о документах своей организации от пользователя {}", user.getId());
-        return documentService.findDocuments(user.getId(), text, rangeStart,
-                        rangeEnd, creatorId, new CustomPageRequest(from, size))
+        log.trace("Запрос информации о документах своей организации от пользователя {}",  user.getId());
+        return documentService.findDocuments( user.getId(),
+                        new DocParams(text, rangeStart, rangeEnd, creatorId, typeId, attributeId, attributeValue),
+                        new CustomPageRequest(from, size))  
                 .stream()
                 .map(dm::documentToDto)
                 .collect(Collectors.toList());
     }
 
     //поиск истории изменений по id документа
-    @GetMapping("/{documentId}/changes")
-    public List<DocumentChangesDto> findDocChangesByDocumentId(@PathVariable Long documentId, @AuthenticationPrincipal User user) {
+    @GetMapping("/{documentId}/changes") 
+    public List<DocumentChangesDto> findDocChangesByDocumentId(@PathVariable Long documentId, 
+                                                               @AuthenticationPrincipal User user) {
         log.trace("Запрос информации о истории изменений документа {} от пользователя {}", documentId, user.getId());
-        return documentService.findDocChangesByDocumentId(documentId)
+        return documentService.findDocChangesByDocumentId(documentId) 
                 .stream()
                 .map(cm::changesToDto)
                 .collect(Collectors.toList());
@@ -86,33 +89,37 @@ public class DocumentController {
 
     // обновление документа
     @PreAuthorize("@documentProcessSecurityService.isCanManageProcess(#documentId,#user.id) && hasAuthority('USER')")
-    @PatchMapping("/{documentId}")
+    @PatchMapping("/{documentId}") 
     public DocumentDto updateDocument(@PathVariable Long documentId,
-                                      @RequestBody @Valid DocumentUpdateDto documentUpdateDto, @AuthenticationPrincipal User user) {
+                                      @RequestBody @Valid DocumentUpdateDto documentUpdateDto, 
+                                      @AuthenticationPrincipal User user) {
         log.trace("Обновление информации о событии {} пользователем {}", documentId, user.getId());
-        return dm.documentToDto(documentService.updateDocument(documentUpdateDto, documentId, user.getId()));
+        return dm.documentToDto(documentService.updateDocument(documentUpdateDto, documentId, user.getId())); 
     }
 
     //удаление документа
     @PreAuthorize("@documentProcessSecurityService.isCanManageProcess(#documentId,#user.id) && hasAuthority('USER')")
-    @DeleteMapping("/{documentId}")
-    public void deleteDocument(@PathVariable Long documentId, @AuthenticationPrincipal User user) {
+    @DeleteMapping("/{documentId}") 
+    public void deleteDocument(@PathVariable Long documentId, 
+                               @AuthenticationPrincipal User user) {
         log.trace("Удаление документа {} пользователем {}", documentId, user.getId());
-        documentService.deleteDocumentById(documentId, user.getId());
+        documentService.deleteDocumentById(documentId, user.getId()); 
     }
 
     //поиск изменения по id
-    @GetMapping("/changesById/{documentChangesId}")
-    public DocumentChangesDto findDocChangesById(@PathVariable Long documentChangesId, @AuthenticationPrincipal User user) {
+    @GetMapping("/changesById/{documentChangesId}") 
+    public DocumentChangesDto findDocChangesById(@PathVariable Long documentChangesId,
+                                                 @AuthenticationPrincipal User user) {
         log.trace("Запрос информации о изменений {} от пользователя {}", documentChangesId, user.getId());
-        return cm.changesToDto(documentService.findDocChangesById(documentChangesId));
+        return cm.changesToDto(documentService.findDocChangesById(documentChangesId)); 
     }
 
     //поиск документов измененных пользователем
-    @GetMapping("/changesByCreator/{creatorId}")
-    public List<DocumentChangesDto> findDocChangesByUserId(@PathVariable Long creatorId, @AuthenticationPrincipal User user) {
+    @GetMapping("/changesByCreator/{creatorId}") 
+    public List<DocumentChangesDto> findDocChangesByUserId(@PathVariable Long creatorId, 
+                                                           @AuthenticationPrincipal User user) {
         log.trace("Запрос информации о документах измененных пользователем {} от пользователя {}", creatorId, user.getId());
-        return documentService.findDocChangesByUserId(creatorId)
+        return documentService.findDocChangesByUserId(creatorId) 
                 .stream()
                 .map(cm::changesToDto)
                 .collect(Collectors.toList());
