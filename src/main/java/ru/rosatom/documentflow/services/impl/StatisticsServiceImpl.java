@@ -36,7 +36,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public StatisticUsersAndOrg statisticsUserAndOrganization(){
+    public StatisticUsersAndOrg statisticsUserAndOrganization() {
         int countUser = userService.getAllUsers().size();
         int countOrganization = userOrganizationService.getAllOrganizations().size();
         return new StatisticUsersAndOrg(countUser, countOrganization);

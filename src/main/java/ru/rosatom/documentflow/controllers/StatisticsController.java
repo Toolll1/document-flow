@@ -26,7 +26,7 @@ public class StatisticsController {
     }
 
     @GetMapping("/userAndOrganisation")
-    public StatisticUsersAndOrg statisticsUserAndOrganization(){
+    public StatisticUsersAndOrg statisticsUserAndOrganization() {
         return statisticsService.statisticsUserAndOrganization();
     }
 }

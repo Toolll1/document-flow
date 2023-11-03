@@ -11,9 +11,9 @@ import ru.rosatom.documentflow.models.Document;
 import java.util.Set;
 
 @Repository
-public interface DocumentRepository extends JpaRepository<Document, Long>, QuerydslPredicateExecutor<Document> { 
-    @Query("select * from documents d " +
-            "left join document_process dp on dp.document_id=d.document_id " +
+public interface DocumentRepository extends JpaRepository<Document, Long>, QuerydslPredicateExecutor<Document> {
+    @Query("select d from Document d " +
+            "left join DocProcess dp on dp.document.id=d.id " +
             "where dp.status = :status")
-    Set<Document> findDocumentsByProcessStatus(@Param("status") DocProcessStatus status); 
+    Set<Document> findDocumentsByProcessStatus(@Param("status") DocProcessStatus status);
 }

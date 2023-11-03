@@ -6,7 +6,7 @@ import ru.rosatom.documentflow.models.UserOrganization;
 
 import java.util.List;
 
-public interface  UserOrganizationService {
+public interface UserOrganizationService {
 
     UserOrganization getOrganization(Long orgId);
 

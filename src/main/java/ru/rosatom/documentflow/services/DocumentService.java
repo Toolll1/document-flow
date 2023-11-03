@@ -31,5 +31,7 @@ public interface DocumentService {
 
     DocChanges findDocChangesById(Long id, Long userId);
 
-    List<DocChanges> findDocChangesByUserId(Long userId, Long id);
+    List<DocChanges> findDocChangesByUserId(Long userId);
+
+    void updateFinalStatus(Document document, DocProcessStatus status);
 }

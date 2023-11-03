@@ -34,6 +34,7 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
 
     /**
      * Получить все организации
+     *
      * @return List<UserOrganization> список организаций
      */
     @Override
@@ -43,11 +44,12 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
 
     /**
      * Создать организацию
+     *
      * @param orgCreationRequest запрос на создание организации
      * @return UserOrganization созданная организация
      */
     @Override
-    public UserOrganization createOrganization(OrgCreationRequest orgCreationRequest){
+    public UserOrganization createOrganization(OrgCreationRequest orgCreationRequest) {
         throwIfOrganizationExists(orgCreationRequest.getName());
         UserOrganization organization = UserOrganization.builder()
                 .name(orgCreationRequest.getName())
@@ -58,7 +60,8 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
 
     /**
      * Обновить организацию
-     * @param orgId id организации
+     *
+     * @param orgId            id организации
      * @param orgUpdateRequest запрос на обновление организации
      * @return UserOrganization обновленная организация
      */
@@ -72,6 +75,7 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
 
     /**
      * Удалить организацию
+     *
      * @param orgId id организации
      * @return UserOrganization удаленная организация
      */
@@ -81,14 +85,15 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
         try {
             repository.delete(organization);
         } catch (DataIntegrityViolationException e) {
-        throw new DataIntegrityViolationException("Cannot delete organization " +
-                "with id " + orgId + " because users are associated with it. Please delete users or change their organization first.");
+            throw new DataIntegrityViolationException("Cannot delete organization " +
+                    "with id " + orgId + " because users are associated with it. Please delete users or change their organization first.");
         }
         return organization;
     }
 
     /**
      * Получить организацию по имени
+     *
      * @param name подстрока имени организации
      * @return UserOrganization организация
      */
@@ -108,8 +113,6 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
     private void throwIfOrganizationExists(String name) {
         throwIfOrganizationExists(-1L, name);
     }
-
-
 
 
 }

@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import ru.rosatom.documentflow.adapters.CommonUtils;
 import ru.rosatom.documentflow.models.DocAttributeValues;
+import ru.rosatom.documentflow.models.DocProcessStatus;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -35,4 +36,5 @@ public class DocumentDto {
     DocTypeDto docTypeDto;
     @NotNull
     List<DocAttributeValues> attributeValues;
+    DocProcessStatus finalDocStatus;
 }

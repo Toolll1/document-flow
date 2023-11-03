@@ -25,57 +25,57 @@ import java.util.stream.Collectors;
 @PreAuthorize("hasAuthority('ADMIN')")
 public class DocTypeController {
 
-  private final DocTypeService docTypeService;
-  ModelMapper modelMapper;
+    private final DocTypeService docTypeService;
+    ModelMapper modelMapper;
 
-  @GetMapping
-  public List<DocTypeDto> getAllDocTypes() {
-    List<DocType> docTypes = docTypeService.getAllDocTypes();
-    return docTypes.stream().map(this::convertToDto).collect(Collectors.toList());
-  }
+    @GetMapping
+    public List<DocTypeDto> getAllDocTypes() {
+        List<DocType> docTypes = docTypeService.getAllDocTypes();
+        return docTypes.stream().map(this::convertToDto).collect(Collectors.toList());
+    }
 
-  @GetMapping("/{docTypeId}")
-  public DocTypeDto getDocType(@PathVariable Long docTypeId) {
-    DocType docType = docTypeService.getDocTypeById(docTypeId);
-    log.info("Получен запрос на получение DocType с ID: {}", docTypeId);
-    return convertToDto(docType);
-  }
+    @GetMapping("/{docTypeId}")
+    public DocTypeDto getDocType(@PathVariable Long docTypeId) {
+        DocType docType = docTypeService.getDocTypeById(docTypeId);
+        log.info("Получен запрос на получение DocType с ID: {}", docTypeId);
+        return convertToDto(docType);
+    }
 
-  @PostMapping
-  @ResponseStatus(HttpStatus.CREATED)
-  public DocTypeDto createDocType(@Valid @RequestBody DocTypeCreateDto docTypeCreateDto) {
-    DocTypeCreationRequest docTypeCreationRequest =
-        modelMapper.map(docTypeCreateDto, DocTypeCreationRequest.class);
-    DocType docType = docTypeService.createDocType(docTypeCreationRequest);
-    log.info("Получен запрос на создание DocType: {}", docTypeCreateDto);
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public DocTypeDto createDocType(@Valid @RequestBody DocTypeCreateDto docTypeCreateDto) {
+        DocTypeCreationRequest docTypeCreationRequest =
+                modelMapper.map(docTypeCreateDto, DocTypeCreationRequest.class);
+        DocType docType = docTypeService.createDocType(docTypeCreationRequest);
+        log.info("Получен запрос на создание DocType: {}", docTypeCreateDto);
 
-    return convertToDto(docType);
-  }
+        return convertToDto(docType);
+    }
 
-  @PutMapping("/{docTypeId}")
-  public DocTypeDto updateDocType(@Valid @RequestBody DocTypeDto docTypeDto) {
-    DocType docType = convertToEntity(docTypeDto);
-    docType = docTypeService.updateDocType(docType);
+    @PutMapping("/{docTypeId}")
+    public DocTypeDto updateDocType(@Valid @RequestBody DocTypeDto docTypeDto) {
+        DocType docType = convertToEntity(docTypeDto);
+        docType = docTypeService.updateDocType(docType);
 
-    log.info(
-        "Получен запрос на обновление DocType с ID: {}. Обновлен DocType: {}",
-        docTypeDto.getId(),
-        docTypeDto);
-    return convertToDto(docType);
-  }
+        log.info(
+                "Получен запрос на обновление DocType с ID: {}. Обновлен DocType: {}",
+                docTypeDto.getId(),
+                docTypeDto);
+        return convertToDto(docType);
+    }
 
-  @DeleteMapping("/{docTypeId}")
-  @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deleteDocType(@PathVariable Long docTypeId) {
-    log.info("Получен запрос на удаление DocType с ID: {}", docTypeId);
-    docTypeService.deleteDocType(docTypeId);
-  }
+    @DeleteMapping("/{docTypeId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteDocType(@PathVariable Long docTypeId) {
+        log.info("Получен запрос на удаление DocType с ID: {}", docTypeId);
+        docTypeService.deleteDocType(docTypeId);
+    }
 
-  private DocTypeDto convertToDto(DocType docType) {
-    return modelMapper.map(docType, DocTypeDto.class);
-  }
+    private DocTypeDto convertToDto(DocType docType) {
+        return modelMapper.map(docType, DocTypeDto.class);
+    }
 
-  private DocType convertToEntity(DocTypeDto docTypeDto) {
-    return modelMapper.map(docTypeDto, DocType.class);
-  }
+    private DocType convertToEntity(DocTypeDto docTypeDto) {
+        return modelMapper.map(docTypeDto, DocType.class);
+    }
 }
