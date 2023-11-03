@@ -56,6 +56,7 @@ public class DocumentMapper {
                 .ownerId(document.getOwnerId())
                 .docTypeDto(modelMapper.map(document.getDocType(), DocTypeDto.class))
                 .attributeValues(document.getAttributeValues())
+                .finalDocStatus(document.getFinalDocStatus())
                 .build();
     }
 }

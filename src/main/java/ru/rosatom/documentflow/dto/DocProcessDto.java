@@ -12,6 +12,6 @@ public class DocProcessDto {
     private Long document;
     private Long sender;
     private Long recipient;
-    private String  status;
+    private String status;
     private String comment;
 }

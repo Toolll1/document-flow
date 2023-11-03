@@ -34,9 +34,6 @@ public class UserCreateDto {
     @Size(min = 11, max = 11)
     private final String phone;
     @NotBlank
-    @Size(min = 1, max = 320)
-    private String post;
-    @NotBlank
     @Size(min = 4, max = 4)
     private final String passportSeries;
     @NotBlank
@@ -55,4 +52,7 @@ public class UserCreateDto {
     private final Long organizationId;
     @NotNull
     private final String role;
+    @NotBlank
+    @Size(min = 1, max = 320)
+    private String post;
 }

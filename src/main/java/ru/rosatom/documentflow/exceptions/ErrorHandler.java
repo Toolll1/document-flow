@@ -48,10 +48,10 @@ public class ErrorHandler {
     private ResponseEntity<AppError> createAppError(Throwable e, HttpStatus status) {
         return new ResponseEntity<>(
                 AppError.builder()
-                    .message(e.getMessage())
-                    .build(),
+                        .message(e.getMessage())
+                        .build(),
                 status
-                );
+        );
     }
 
 

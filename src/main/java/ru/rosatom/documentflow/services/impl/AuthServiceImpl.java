@@ -11,7 +11,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.rosatom.documentflow.configuration.JWT.JWTUtil;
-import ru.rosatom.documentflow.dto.UserCredentialsDto;
 import ru.rosatom.documentflow.mappers.UserMapper;
 import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.services.AuthService;
@@ -35,7 +34,7 @@ public class AuthServiceImpl implements AuthService {
 
 
     @Override
-    public ResponseEntity<?> loginUser(String email,String password) {
+    public ResponseEntity<?> loginUser(String email, String password) {
         try {
             final Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, password));

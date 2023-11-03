@@ -13,17 +13,13 @@ import java.util.Date;
 
 @Component
 public class JWTUtil {
+    private final SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS256;
     @Value("${jwt.issuer}")
     private String appName;
-
     @Value("${jwt.secret_key}")
     private String secretKey;
-
     @Value("${jwt.expires_in}")
     private int expiresIn;
-
-    private final SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS256;
-
 
     private Claims getAllClaimsFromToken(String token) {
         Claims claims;

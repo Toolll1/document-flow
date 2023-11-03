@@ -40,4 +40,8 @@ public class Document {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "document_id")
     List<DocAttributeValues> attributeValues = new ArrayList<>();
+    @ToString.Exclude
+    @Enumerated(EnumType.STRING)
+    @Column(name = "final_doc_status")
+    DocProcessStatus finalDocStatus;
 }
