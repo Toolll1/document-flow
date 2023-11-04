@@ -12,9 +12,9 @@ import ru.rosatom.documentflow.dto.DocAttributeValueCreateDto;
 import ru.rosatom.documentflow.dto.DocParams;
 import ru.rosatom.documentflow.dto.DocumentUpdateDto;
 import ru.rosatom.documentflow.exceptions.BadRequestException;
-import ru.rosatom.documentflow.exceptions.ObjectNotFoundException; 
+import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
 import ru.rosatom.documentflow.models.*;
-import ru.rosatom.documentflow.repositories.DocAttributeValuesRepository; 
+import ru.rosatom.documentflow.repositories.DocAttributeValuesRepository;
 import ru.rosatom.documentflow.repositories.DocChangesRepository;
 import ru.rosatom.documentflow.repositories.DocumentRepository;
 import ru.rosatom.documentflow.services.*;
@@ -109,6 +109,7 @@ public class DocumentServiceImpl implements DocumentService {
 
     /**
      * Возвращает список всех документов по заданному статусу.
+     *
      * @param status - статус процесса
      * @return список подходящих документов
      */
@@ -178,7 +179,13 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public List<DocChanges> findDocChangesByUserId(Long userId, Long id) {
+    public List<DocChanges> findDocChangesByUserId(Long userId) {
         return docChangesRepository.findAllByUserChangerId(userId);
+    }
+
+    @Override
+    public void updateFinalStatus(Document document, DocProcessStatus status) {
+        document.setFinalDocStatus(status);
+        documentRepository.save(document);
     }
 }

@@ -40,10 +40,6 @@ public class UserUpdateDto {
     @Size(min = 11, max = 11)
     private final String phone;
     @Nullable
-    @Pattern(regexp = "\\A(?!\\s*\\Z).+")
-    @Size(min = 1, max = 320)
-    private String post;
-    @Nullable
     @Pattern(regexp = "\\d+")
     @Size(min = 4, max = 4)
     private final String passportSeries;
@@ -68,4 +64,8 @@ public class UserUpdateDto {
     @Nullable
     @Pattern(regexp = "\\A(?!\\s*\\Z).+")
     private final String role;
+    @Nullable
+    @Pattern(regexp = "\\A(?!\\s*\\Z).+")
+    @Size(min = 1, max = 320)
+    private String post;
 }
