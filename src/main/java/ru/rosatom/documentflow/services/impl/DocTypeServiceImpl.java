@@ -74,25 +74,4 @@ public class DocTypeServiceImpl implements DocTypeService {
   public List<DocType> getDocTypesByName(String name) {
     return docTypeRepository.findByNameContains(name);
   }
-
-  @Override
-  public DocType getDocTypeByName(String name) {
-    return null;
-  }
-
-  private PageRequest pageableCreator(Integer from, Integer size, String sort) {
-
-    if (sort == null || sort.isEmpty()) {
-      return PageRequest.of(from / size, size);
-    }
-
-    switch (sort) {
-      case "ID":
-        return PageRequest.of(from / size, size, Sort.by("id"));
-      case "LAST_NAME":
-        return PageRequest.of(from / size, size, Sort.by("lastName"));
-      default:
-        throw new BadRequestException("Unknown sort: " + sort);
-    }
-  }
 }

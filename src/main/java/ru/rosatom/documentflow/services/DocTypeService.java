@@ -21,5 +21,4 @@ public interface DocTypeService {
   void deleteDocType(Long id);
 
   List<DocType> getDocTypesByName(String name);
-  DocType getDocTypeByName(String name);
 }
