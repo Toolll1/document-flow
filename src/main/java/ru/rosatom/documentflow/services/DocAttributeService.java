@@ -8,14 +8,16 @@ import ru.rosatom.documentflow.models.DocAttributeCreationRequest;
 import ru.rosatom.documentflow.models.DocAttributeUpdateRequest;
 
 public interface DocAttributeService {
-    Page<DocAttribute> getAllDocAttributes(Optional<Integer> page, Optional<String> sortBy);
+  Page<DocAttribute> getAllDocAttributes(Optional<Integer> page, Optional<String> sortBy);
 
-    DocAttribute createDocAttribute(DocAttributeCreationRequest docAttributeCreationRequest);
+  DocAttribute createDocAttribute(DocAttributeCreationRequest docAttributeCreationRequest);
 
-    DocAttribute updateDocAttribute(Long docAttributeId, DocAttributeUpdateRequest docAttributeUpdateRequest);
+  DocAttribute updateDocAttribute(
+      Long docAttributeId, DocAttributeUpdateRequest docAttributeUpdateRequest);
 
-    void deleteDocAttribute(Long id);
+  void deleteDocAttribute(Long id);
 
-    List<DocAttribute> getDocAttributesByName(String name);
-    DocAttribute getDocAttributeById(Long id);
+  List<DocAttribute> getDocAttributesByName(String name);
+
+  DocAttribute getDocAttributeById(Long id);
 }

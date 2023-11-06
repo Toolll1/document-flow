@@ -32,10 +32,10 @@ public class DocAttributeController {
 
   @GetMapping
   List<DocAttributeDto> getAllDocTypes(
-          @RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy) {
+      @RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy) {
     return docAttributeService.getAllDocAttributes(page, sortBy).stream()
-            .map(this::convertToDto)
-            .collect(Collectors.toList());
+        .map(this::convertToDto)
+        .collect(Collectors.toList());
   }
 
   @GetMapping("/{docAttributeId}")

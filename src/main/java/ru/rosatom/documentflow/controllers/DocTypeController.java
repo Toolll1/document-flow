@@ -34,8 +34,6 @@ public class DocTypeController {
         .collect(Collectors.toList());
   }
 
-
-
   @GetMapping("/{docTypeId}")
   public DocTypeDto getDocType(@PathVariable Long docTypeId) {
     DocType docType = docTypeService.getDocTypeById(docTypeId);
