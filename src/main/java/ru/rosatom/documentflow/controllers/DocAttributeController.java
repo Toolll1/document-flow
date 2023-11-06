@@ -1,5 +1,9 @@
 package ru.rosatom.documentflow.controllers;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -15,10 +19,6 @@ import ru.rosatom.documentflow.models.DocAttributeCreationRequest;
 import ru.rosatom.documentflow.models.DocAttributeUpdateRequest;
 import ru.rosatom.documentflow.services.DocAttributeService;
 
-import javax.validation.Valid;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Slf4j
 @Validated
 @RestController
@@ -31,11 +31,11 @@ public class DocAttributeController {
   private final ModelMapper modelMapper;
 
   @GetMapping
-  public List<DocAttributeDto> getAllDocTypes() {
-    log.info("Получен запрос на получение всех атрибутов документа");
-    return docAttributeService.getAllDocAttributes().stream()
-        .map(this::convertToDto)
-        .collect(Collectors.toList());
+  List<DocAttributeDto> getAllDocTypes(
+          @RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy) {
+    return docAttributeService.getAllDocAttributes(page, sortBy).stream()
+            .map(this::convertToDto)
+            .collect(Collectors.toList());
   }
 
   @GetMapping("/{docAttributeId}")

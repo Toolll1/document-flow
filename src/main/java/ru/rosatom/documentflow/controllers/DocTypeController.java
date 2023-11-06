@@ -34,13 +34,7 @@ public class DocTypeController {
         .collect(Collectors.toList());
   }
 
-  //  @GetMapping
-  //  public List<DocTypeDto> getAllDocTypes() {
-  //    log.info("Получен запрос на получение всех типов документа");
-  //    return
-  // docTypeService.getAllDocTypes().stream().map(this::convertToDto).collect(Collectors.toList());
 
-  //  }
 
   @GetMapping("/{docTypeId}")
   public DocTypeDto getDocType(@PathVariable Long docTypeId) {
