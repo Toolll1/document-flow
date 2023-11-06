@@ -14,6 +14,7 @@ import java.util.Optional;
 @Repository
 public interface DocTypeRepository extends JpaRepository<DocType, Long> {
 
+
   Optional<DocType> findByName(String name);
 
   List<DocType> findByNameContains(String name);

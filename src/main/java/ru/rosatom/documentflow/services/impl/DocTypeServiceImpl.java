@@ -1,7 +1,9 @@
 package ru.rosatom.documentflow.services.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,20 +30,6 @@ public class DocTypeServiceImpl implements DocTypeService {
   @Override
   public List<DocType> getAllDocTypes() {
     return docTypeRepository.findAll();
-  }
-
-  @Override
-  public List<DocType> getDocTypes(List<Long> ids, String sort, Integer from, Integer size) {
-    PageRequest pageable = pageableCreator(from, size, sort);
-
-    if (ids == null || ids.isEmpty()) {
-      return docTypeRepository.findAll(pageable)
-              .stream()
-              .collect(Collectors.toList());
-    } else {
-      System.out.println(docTypeRepository.findAllByIdIn(ids, pageable));
-      return docTypeRepository.findAllByIdIn(ids, pageable);
-    }
   }
 
   @Override

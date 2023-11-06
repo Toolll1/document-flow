@@ -1,5 +1,7 @@
 package ru.rosatom.documentflow.services;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import ru.rosatom.documentflow.models.DocType;
 import ru.rosatom.documentflow.models.DocTypeCreationRequest;
 import ru.rosatom.documentflow.models.DocTypeUpdateRequest;
@@ -9,7 +11,6 @@ import java.util.List;
 
 public interface DocTypeService {
   List<DocType> getAllDocTypes();
-  List<DocType> getDocTypes(List<Long> ids,String sort, Integer from, Integer size);
 
   DocType getDocTypeById(Long id);
 

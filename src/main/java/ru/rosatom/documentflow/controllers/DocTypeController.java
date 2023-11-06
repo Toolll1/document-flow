@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -28,22 +29,10 @@ public class DocTypeController {
   private final DocTypeService docTypeService;
   private final ModelMapper modelMapper;
 
-//  @GetMapping
-//  public List<DocTypeDto> getAllDocTypes() {
-//    log.info("Получен запрос на получение всех типов документа");
-//    return docTypeService.getAllDocTypes().stream().map(this::convertToDto).collect(Collectors.toList());
-//  }
-
   @GetMapping
-  public Page<DocTypeDto> getDocTypes(
-                                      @RequestParam(value = "offset", defaultValue = "0") Integer offset,
-                                      @RequestParam(value = "limit", defaultValue = "20") Integer limit){
-    return
-//    log.info("Received a request to search for all users for params: ids {}, sort {}, from {}, size {}", ids, sort, from, size);
-//
-//    return docTypeService.getDocTypes(ids, sort.toUpperCase(), from, size).stream()
-//            .map(o -> modelMapper.map(o, DocTypeDto.class))
-//            .collect(Collectors.toList());
+  public List<DocTypeDto> getAllDocTypes() {
+    log.info("Получен запрос на получение всех типов документа");
+    return docTypeService.getAllDocTypes().stream().map(this::convertToDto).collect(Collectors.toList());
   }
 
   @GetMapping("/{docTypeId}")
