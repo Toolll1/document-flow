@@ -7,7 +7,10 @@ import javax.validation.constraints.Size;
 
 @Data
 @NoArgsConstructor
-public class DocTypeUpdateRequestDto {
+public class DocAttributeUpdateRequestDto {
   @Size(min = 1, max = 255)
   private String name;
+
+  @Size(min = 1, max = 255)
+  private String type;
 }

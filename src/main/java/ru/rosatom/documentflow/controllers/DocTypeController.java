@@ -67,7 +67,7 @@ public class DocTypeController {
   }
 
   @GetMapping("/name/{name}")
-  public List<DocTypeDto> getOrgsByNameLike(@PathVariable String name) {
+  public List<DocTypeDto> getDocTypesByNameLike(@PathVariable String name) {
     List<DocType> docTypes = docTypeService.getDocTypesByName(name);
     return docTypes.stream()
             .map(o -> modelMapper.map(o, DocTypeDto.class))

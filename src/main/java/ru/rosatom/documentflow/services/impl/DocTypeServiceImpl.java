@@ -38,7 +38,7 @@ public class DocTypeServiceImpl implements DocTypeService {
     if (docType.isPresent()) {
       return docType.get();
     }
-    throw new ObjectNotFoundException("DocTyp e with ID " + id + " not found.");
+    throw new ObjectNotFoundException("Тип документа с ID " + id + " не найден.");
   }
 
   @Override
@@ -57,7 +57,7 @@ public class DocTypeServiceImpl implements DocTypeService {
 
       return docTypeRepository.save(docType);
     } else {
-      throw new ObjectNotFoundException("DocType with ID " + docTypeId + " not found.");
+      throw new ObjectNotFoundException("Тип документа с ID " + docTypeId + " не найден.");
     }
   }
 
@@ -66,7 +66,7 @@ public class DocTypeServiceImpl implements DocTypeService {
     if (docTypeRepository.existsById(id)) {
       docTypeRepository.deleteById(id);
     } else {
-      throw new ObjectNotFoundException("DocType with ID " + id + " not found.");
+      throw new ObjectNotFoundException("Тип документа с ID " + id + " не найден.");
     }
   }
 
