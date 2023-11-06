@@ -38,18 +38,6 @@ public class DocAttributeController {
         .collect(Collectors.toList());
   }
 
-  //    @GetMapping
-  //    public Page<DocAttributeDto> getAllDocAttributes(
-  //            @RequestParam(name = "page", defaultValue = "0") Integer page,
-  //            @RequestParam(name = "size", defaultValue = "10") Integer size,
-  //            @RequestParam(name = "sort", required = false) String sort) {
-  //
-  //        Page<DocAttribute> attributes = docAttributeService.getAllDocAttributes(page, size,
-  // sort);
-  //
-  //        return attributes.map(attr -> modelMapper.map(attr, DocAttributeDto.class));
-  //    }
-
   @GetMapping("/{docAttributeId}")
   public DocAttributeDto getAttribute(@PathVariable Long docAttributeId) {
     DocAttribute docAttribute = docAttributeService.getDocAttributeById(docAttributeId);
@@ -88,8 +76,8 @@ public class DocAttributeController {
   public List<DocAttributeDto> getDocAttributesByNameLike(@PathVariable String name) {
     List<DocAttribute> docAttributes = docAttributeService.getDocAttributesByName(name);
     return docAttributes.stream()
-            .map(o -> modelMapper.map(o, DocAttributeDto.class))
-            .collect(Collectors.toList());
+        .map(o -> modelMapper.map(o, DocAttributeDto.class))
+        .collect(Collectors.toList());
   }
 
   @DeleteMapping("/{docAttributeId}")

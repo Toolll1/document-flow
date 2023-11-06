@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
@@ -21,8 +24,9 @@ public class DocTypeServiceImpl implements DocTypeService {
   private final DocTypeRepository docTypeRepository;
 
   @Override
-  public List<DocType> getAllDocTypes() {
-    return docTypeRepository.findAll();
+  public Page<DocType> getAllDocTypes(Optional<Integer> page, Optional<String> sortBy) {
+    return docTypeRepository.findAll(
+        PageRequest.of(page.orElse(0), 20, Sort.Direction.ASC, sortBy.orElse("id")));
   }
 
   @Override

@@ -1,9 +1,12 @@
 package ru.rosatom.documentflow.controllers;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -11,10 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.rosatom.documentflow.dto.*;
 import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.services.DocTypeService;
-
-import javax.validation.Valid;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Validated
@@ -28,10 +27,20 @@ public class DocTypeController {
   private final ModelMapper modelMapper;
 
   @GetMapping
-  public List<DocTypeDto> getAllDocTypes() {
-    log.info("Получен запрос на получение всех типов документа");
-    return docTypeService.getAllDocTypes().stream().map(this::convertToDto).collect(Collectors.toList());
+  List<DocTypeDto> getAllDocTypes(
+      @RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy) {
+    return docTypeService.getAllDocTypes(page, sortBy).stream()
+        .map(this::convertToDto)
+        .collect(Collectors.toList());
   }
+
+  //  @GetMapping
+  //  public List<DocTypeDto> getAllDocTypes() {
+  //    log.info("Получен запрос на получение всех типов документа");
+  //    return
+  // docTypeService.getAllDocTypes().stream().map(this::convertToDto).collect(Collectors.toList());
+
+  //  }
 
   @GetMapping("/{docTypeId}")
   public DocTypeDto getDocType(@PathVariable Long docTypeId) {
@@ -68,8 +77,8 @@ public class DocTypeController {
   public List<DocTypeDto> getDocTypesByNameLike(@PathVariable String name) {
     List<DocType> docTypes = docTypeService.getDocTypesByName(name);
     return docTypes.stream()
-            .map(o -> modelMapper.map(o, DocTypeDto.class))
-            .collect(Collectors.toList());
+        .map(o -> modelMapper.map(o, DocTypeDto.class))
+        .collect(Collectors.toList());
   }
 
   @DeleteMapping("/{docTypeId}")
