@@ -20,4 +20,6 @@ public interface UserOrganizationService {
 
     List<UserOrganization> getOrganizationsByNameLike(String name);
 
+    List<UserOrganization> getAllActiveOrganization();
+
 }
