@@ -77,22 +77,5 @@ public class DocAttributeServiceImpl implements DocAttributeService {
     return docAttributeRepository.findByNameContains(name);
   }
 
-  //    @Override
-  //    public List<DocAttribute> getDocTypesByName(String name) {
-  //        return null;
-  //    }
-  //
-  //    private Pageable createPageable(Integer page, Integer size, String sort) {
-  //        Sort sorted = Sort.unsorted();
-  //
-  //        if (sort != null) {
-  //            if (sort.equals("name")) {
-  //                sorted = Sort.by("name");
-  //            } else if (sort.equals("type")) {
-  //                sorted = Sort.by("type");
-  //            }
-  //        }
-  //
-  //        return PageRequest.of(page, size, sorted);
-  //    }
+
 }
