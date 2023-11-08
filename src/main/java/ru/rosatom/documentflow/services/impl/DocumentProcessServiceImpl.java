@@ -203,4 +203,17 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         }
     }
 
+    /**
+     * Делегировать согласование другому пользователю. Статус процесса - DELEGATED
+     *
+     * @param processUpdateRequest - запрос на обновление процесса
+     * @param recipientId - id получателя, которому делегировано согласование
+     */
+    @Override
+    public DocProcess delegateToOtherUser(ProcessUpdateRequest processUpdateRequest, Long recipientId) {
+        DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
+        docProcess.setStatus(DELEGATED);
+        docProcessRepository.save(docProcess);
+        return createNewProcess(docProcess.getDocument().getId(), recipientId);
+    }
 }

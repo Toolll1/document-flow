@@ -82,5 +82,14 @@ public class DocProcessController {
         documentProcessService.sendToCorrection(processUpdateRequest);
     }
 
-
+    @PatchMapping("/processes/{processId}/delegate-to-other-user")
+    @PreAuthorize("@documentProcessSecurityService.isRecipient(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('USER')")
+    public DocProcessDto delegateToOtherUser(ProcessUpdateRequestDto processUpdateRequestDto,
+                                    @RequestParam Long recipientId) {
+        ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
+        return modelMapper.map(
+                documentProcessService.delegateToOtherUser(processUpdateRequest, recipientId),
+                DocProcessDto.class
+        );
+    }
 }

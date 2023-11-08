@@ -22,4 +22,6 @@ public interface DocumentProcessService {
     void sendToCorrection(ProcessUpdateRequest processUpdateRequest);
 
     void deleteProcess(Long processId);
+
+    DocProcess delegateToOtherUser(ProcessUpdateRequest processUpdateRequest, Long recipientId);
 }
