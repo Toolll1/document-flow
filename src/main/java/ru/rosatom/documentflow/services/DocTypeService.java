@@ -19,4 +19,6 @@ public interface DocTypeService {
   void deleteDocType(Long id);
 
   List<DocType> getDocTypesByName(String name);
+
+  DocType attributeToType(Long docTypeId, Long docAttributeId);
 }

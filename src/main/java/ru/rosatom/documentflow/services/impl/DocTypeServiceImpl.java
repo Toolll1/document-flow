@@ -10,9 +10,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
+import ru.rosatom.documentflow.models.DocAttribute;
 import ru.rosatom.documentflow.models.DocType;
 import ru.rosatom.documentflow.models.DocTypeCreationRequest;
 import ru.rosatom.documentflow.models.DocTypeUpdateRequest;
+import ru.rosatom.documentflow.repositories.DocAttributeRepository;
 import ru.rosatom.documentflow.repositories.DocTypeRepository;
 import ru.rosatom.documentflow.services.DocTypeService;
 
@@ -22,6 +24,7 @@ import ru.rosatom.documentflow.services.DocTypeService;
 public class DocTypeServiceImpl implements DocTypeService {
 
   private final DocTypeRepository docTypeRepository;
+  private final DocAttributeRepository docAttributeRepository;
 
   @Override
   public Page<DocType> getAllDocTypes(Optional<Integer> page, Optional<String> sortBy) {
@@ -70,5 +73,15 @@ public class DocTypeServiceImpl implements DocTypeService {
   @Override
   public List<DocType> getDocTypesByName(String name) {
     return docTypeRepository.findByNameContains(name);
+  }
+
+  @Override
+  public DocType attributeToType(Long docTypeId, Long docAttributeId) {
+    DocType docType = docTypeRepository.findById(docTypeId).get();
+    DocAttribute docAttribute = docAttributeRepository.findById(docAttributeId).get();
+
+    docType.addAttributes(docAttribute);
+
+    return docTypeRepository.save(docType);
   }
 }

@@ -13,8 +13,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.rosatom.documentflow.dto.*;
 import ru.rosatom.documentflow.models.*;
-import ru.rosatom.documentflow.repositories.DocAttributeRepository;
-import ru.rosatom.documentflow.repositories.DocTypeRepository;
 import ru.rosatom.documentflow.services.DocTypeService;
 
 @Slf4j
@@ -27,10 +25,6 @@ public class DocTypeController {
 
   private final DocTypeService docTypeService;
   private final ModelMapper modelMapper;
-  private final DocTypeRepository docTypeRepository;
-  private final DocAttributeRepository docAttributeRepository;
-
-
 
   @GetMapping
   List<DocTypeDto> getAllDocTypes(
@@ -85,16 +79,14 @@ public class DocTypeController {
     log.info("Получен запрос на удаление DocType с ID: {}", docTypeId);
     docTypeService.deleteDocType(docTypeId);
   }
-  @RequestMapping(value = "/{docTypeId}/attributes/{docAttributeId}", method = RequestMethod.PUT)
-//  @PutMapping("/{docTypeId}/attributes/{docAttributeId}")
-  public DocType addAttributeToType(@PathVariable Long docTypeId,
-                                    @PathVariable Long docAttributeId) {
-    DocType docType = docTypeRepository.findById(docTypeId).get();
-    DocAttribute docAttribute = docAttributeRepository.findById(docAttributeId).get();
-    docType.addAttributes(docAttribute);
-    return docTypeRepository.save(docType);
-  }
 
+  @RequestMapping(value = "/{docTypeId}/attributes/{docAttributeId}", method = RequestMethod.PUT)
+  public DocTypeDto addAttributeToType(
+      @PathVariable Long docTypeId, @PathVariable Long docAttributeId) {
+    log.info("Добавлен атрибут с ID: {} к документу с ID: {}", docAttributeId, docTypeId);
+
+    return convertToDto(docTypeService.attributeToType(docTypeId, docAttributeId));
+  }
   private DocTypeDto convertToDto(DocType docType) {
     return modelMapper.map(docType, DocTypeDto.class);
   }
