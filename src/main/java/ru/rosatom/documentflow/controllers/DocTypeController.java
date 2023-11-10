@@ -1,5 +1,9 @@
 package ru.rosatom.documentflow.controllers;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -7,15 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.rosatom.documentflow.dto.DocTypeCreateDto;
-import ru.rosatom.documentflow.dto.DocTypeDto;
-import ru.rosatom.documentflow.models.DocType;
-import ru.rosatom.documentflow.models.DocTypeCreationRequest;
+import ru.rosatom.documentflow.dto.*;
+import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.services.DocTypeService;
-
-import javax.validation.Valid;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Validated
@@ -25,57 +23,71 @@ import java.util.stream.Collectors;
 @PreAuthorize("hasAuthority('ADMIN')")
 public class DocTypeController {
 
-    private final DocTypeService docTypeService;
-    ModelMapper modelMapper;
+  private final DocTypeService docTypeService;
+  private final ModelMapper modelMapper;
 
-    @GetMapping
-    public List<DocTypeDto> getAllDocTypes() {
-        List<DocType> docTypes = docTypeService.getAllDocTypes();
-        return docTypes.stream().map(this::convertToDto).collect(Collectors.toList());
-    }
+  @GetMapping
+  List<DocTypeDto> getAllDocTypes(
+      @RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy) {
+    return docTypeService.getAllDocTypes(page, sortBy).stream()
+        .map(this::convertToDto)
+        .collect(Collectors.toList());
+  }
 
-    @GetMapping("/{docTypeId}")
-    public DocTypeDto getDocType(@PathVariable Long docTypeId) {
-        DocType docType = docTypeService.getDocTypeById(docTypeId);
-        log.info("Получен запрос на получение DocType с ID: {}", docTypeId);
-        return convertToDto(docType);
-    }
+  @GetMapping("/{docTypeId}")
+  public DocTypeDto getDocType(@PathVariable Long docTypeId) {
+    DocType docType = docTypeService.getDocTypeById(docTypeId);
+    log.info("Получен запрос на получение DocType с ID: {}", docTypeId);
+    return convertToDto(docType);
+  }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public DocTypeDto createDocType(@Valid @RequestBody DocTypeCreateDto docTypeCreateDto) {
-        DocTypeCreationRequest docTypeCreationRequest =
-                modelMapper.map(docTypeCreateDto, DocTypeCreationRequest.class);
-        DocType docType = docTypeService.createDocType(docTypeCreationRequest);
-        log.info("Получен запрос на создание DocType: {}", docTypeCreateDto);
+  @PostMapping
+  @ResponseStatus(HttpStatus.CREATED)
+  public DocTypeDto createDocType(@Valid @RequestBody DocTypeCreateDto docTypeCreateDto) {
+    DocTypeCreationRequest docTypeCreationRequest =
+        modelMapper.map(docTypeCreateDto, DocTypeCreationRequest.class);
+    DocType docType = docTypeService.createDocType(docTypeCreationRequest);
+    log.info("Получен запрос на создание DocType: {}", docTypeCreateDto);
 
-        return convertToDto(docType);
-    }
+    return convertToDto(docType);
+  }
 
-    @PutMapping("/{docTypeId}")
-    public DocTypeDto updateDocType(@Valid @RequestBody DocTypeDto docTypeDto) {
-        DocType docType = convertToEntity(docTypeDto);
-        docType = docTypeService.updateDocType(docType);
+  @RequestMapping(value = "/{docTypeId}", method = RequestMethod.PATCH)
+  public DocTypeDto updateDocType(
+      @PathVariable Long docTypeId,
+      @Valid @RequestBody DocTypeUpdateRequestDto docTypeUpdateRequestDto) {
+    DocTypeUpdateRequest docTypeUpdateRequest =
+        modelMapper.map(docTypeUpdateRequestDto, DocTypeUpdateRequest.class);
+    DocType docType = docTypeService.updateDocType(docTypeId, docTypeUpdateRequest);
 
-        log.info(
-                "Получен запрос на обновление DocType с ID: {}. Обновлен DocType: {}",
-                docTypeDto.getId(),
-                docTypeDto);
-        return convertToDto(docType);
-    }
+    log.info(
+        "Получен запрос на обновление DocType с ID: {}. Обновлен DocType: {}", docTypeId, docType);
+    return convertToDto(docType);
+  }
 
-    @DeleteMapping("/{docTypeId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteDocType(@PathVariable Long docTypeId) {
-        log.info("Получен запрос на удаление DocType с ID: {}", docTypeId);
-        docTypeService.deleteDocType(docTypeId);
-    }
+  @GetMapping("/name/{name}")
+  public List<DocTypeDto> getDocTypesByNameLike(@PathVariable String name) {
+    List<DocType> docTypes = docTypeService.getDocTypesByName(name);
+    return docTypes.stream()
+        .map(o -> modelMapper.map(o, DocTypeDto.class))
+        .collect(Collectors.toList());
+  }
 
-    private DocTypeDto convertToDto(DocType docType) {
-        return modelMapper.map(docType, DocTypeDto.class);
-    }
+  @DeleteMapping("/{docTypeId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void deleteDocType(@PathVariable Long docTypeId) {
+    log.info("Получен запрос на удаление DocType с ID: {}", docTypeId);
+    docTypeService.deleteDocType(docTypeId);
+  }
 
-    private DocType convertToEntity(DocTypeDto docTypeDto) {
-        return modelMapper.map(docTypeDto, DocType.class);
-    }
+  @RequestMapping(value = "/{docTypeId}/attributes/{docAttributeId}", method = RequestMethod.PUT)
+  public DocTypeDto addAttributeToType(
+      @PathVariable Long docTypeId, @PathVariable Long docAttributeId) {
+    log.info("Добавлен атрибут с ID: {} к документу с ID: {}", docAttributeId, docTypeId);
+
+    return convertToDto(docTypeService.attributeToType(docTypeId, docAttributeId));
+  }
+  private DocTypeDto convertToDto(DocType docType) {
+    return modelMapper.map(docType, DocTypeDto.class);
+  }
 }
