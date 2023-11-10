@@ -8,6 +8,7 @@ class DocumentFlowApplicationTests {
 
 	@Test
 	void contextLoads() {
+		throw new RuntimeException("fail");
 	}
 
 }
