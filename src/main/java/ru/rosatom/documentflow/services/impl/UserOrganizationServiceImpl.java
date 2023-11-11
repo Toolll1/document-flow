@@ -102,6 +102,11 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
         return repository.findByNameContains(name);
     }
 
+    @Override
+    public List<UserOrganization> getAllActiveOrganization() {
+        return repository.findActiveOrganization();
+    }
+
 
     private void throwIfOrganizationExists(Long ignoreId, String name) {
         Optional<UserOrganization> organization = repository.findByName(name);
