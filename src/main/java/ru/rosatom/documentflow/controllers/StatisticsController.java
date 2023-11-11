@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.rosatom.documentflow.dto.DocStatisticDTO;
 import ru.rosatom.documentflow.dto.StatisticUsersAndOrg;
+import ru.rosatom.documentflow.dto.UserRatingDto;
 import ru.rosatom.documentflow.models.UserOrganization;
 import ru.rosatom.documentflow.services.StatisticsService;
 
 import java.util.List;
-
 
 @RestController
 @RequiredArgsConstructor
@@ -32,6 +32,11 @@ public class StatisticsController {
     @GetMapping("/userAndOrganisation")
     public StatisticUsersAndOrg statisticsUserAndOrganization() {
         return statisticsService.statisticsUserAndOrganization();
+    }
+
+    @GetMapping("/userRating/{orgId}")
+    public List<UserRatingDto> getRating(@PathVariable Long orgId) {
+        return statisticsService.getRatingAllUsersByOrgId(orgId);
     }
     @GetMapping("/getActiveOrganization")
     public List<UserOrganization> getActiveOrganization(){
