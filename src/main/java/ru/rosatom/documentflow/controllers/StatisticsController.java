@@ -1,5 +1,6 @@
 package ru.rosatom.documentflow.controllers;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +17,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/statistic")
+@Tag(name = "Статистика", description = "Управляет статистикой")
 public class StatisticsController {
     private final StatisticsService statisticsService;
 

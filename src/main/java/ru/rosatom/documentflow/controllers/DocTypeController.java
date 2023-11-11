@@ -1,5 +1,6 @@
 package ru.rosatom.documentflow.controllers;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,6 +22,7 @@ import ru.rosatom.documentflow.services.DocTypeService;
 @RequiredArgsConstructor
 @RequestMapping(path = "/v1/doctypes")
 @PreAuthorize("hasAuthority('ADMIN')")
+@Tag(name = "Тип документа", description = "Управляет типами документа")
 public class DocTypeController {
 
   private final DocTypeService docTypeService;

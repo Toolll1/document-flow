@@ -1,5 +1,6 @@
 package ru.rosatom.documentflow.controllers;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/v1/org")
 @AllArgsConstructor
 @PreAuthorize("hasAuthority('ADMIN')")
+@Tag(name = "Организации", description = "Управляет организациями")
 public class OrgController {
 
     UserOrganizationService userOrganizationService;

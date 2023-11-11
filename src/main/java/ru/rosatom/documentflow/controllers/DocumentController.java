@@ -1,5 +1,6 @@
 package ru.rosatom.documentflow.controllers;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -32,6 +33,7 @@ import static ru.rosatom.documentflow.adapters.CommonUtils.*;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @RequestMapping("/document")
 @RequiredArgsConstructor
+@Tag(name = "Документы", description = "Управляет документами")
 public class DocumentController {
 
     final DocumentService documentService;

@@ -1,5 +1,6 @@
 package ru.rosatom.documentflow.controllers;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/v1/document")
 @AllArgsConstructor
+@Tag(name = "Процессы документа", description = "Управляет процессами документов")
 public class DocProcessController {
 
     private final DocumentProcessService documentProcessService;

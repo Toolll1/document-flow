@@ -1,5 +1,6 @@
 package ru.rosatom.documentflow.controllers;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RequestMapping(path = "/admin/users")
 @PreAuthorize("hasAuthority('ADMIN')")
+@Tag(name = "Пользователи", description = "Управляет пользователями")
 public class UserController {
 
     private final UserService userService;

@@ -1,5 +1,6 @@
 package ru.rosatom.documentflow.controllers;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,6 +26,7 @@ import ru.rosatom.documentflow.services.DocAttributeService;
 @RequiredArgsConstructor
 @RequestMapping(path = "/v1/docattributes")
 @PreAuthorize("hasAuthority('ADMIN')")
+@Tag(name = "Атрибуты документа", description = "Управляет атрибутами документа")
 public class DocAttributeController {
 
   private final DocAttributeService docAttributeService;
