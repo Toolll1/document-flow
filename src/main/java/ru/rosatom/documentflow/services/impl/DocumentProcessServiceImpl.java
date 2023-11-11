@@ -74,6 +74,24 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         docProcessRepository.save(docProcess);
     }
 
+    /**
+     * Получить список процессов по id получателя
+     * @param userId - id получателя
+     * @return Список процессов
+     */
+    public List<DocProcess> getIncomingProcessesByUserId(Long userId){
+        return docProcessRepository.findAllByRecipientId(userId);
+    }
+
+    /**
+     * Получить список процессов по id отправителя
+     * @param userId - id отправителя
+     * @return Список процессов
+     */
+    public List<DocProcess> getOutgoingProcessesByUserId(Long userId){
+        return docProcessRepository.findAllBySenderId(userId);
+    }
+
     private void throwIfStatusNotCorrect(DocProcess docProcess, DocProcessStatus attemptStatus) {
         if (!ALLOWED_STATUS_CHANGES.get(docProcess.getStatus()).contains(attemptStatus)) {
             throw new IllegalProcessStatusException(docProcess, attemptStatus);
