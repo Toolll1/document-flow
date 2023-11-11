@@ -63,6 +63,7 @@ public class SecurityConfiguration {
                 .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
                 .and()
                 .authorizeHttpRequests()
+                .antMatchers("/**").permitAll()
                 .antMatchers("/auth/login").permitAll()
                 .anyRequest().authenticated()
                 .and()
