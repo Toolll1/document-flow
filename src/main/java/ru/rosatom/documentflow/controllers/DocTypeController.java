@@ -1,5 +1,6 @@
 package ru.rosatom.documentflow.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.Optional;
@@ -22,12 +23,13 @@ import ru.rosatom.documentflow.services.DocTypeService;
 @RequiredArgsConstructor
 @RequestMapping(path = "/v1/doctypes")
 @PreAuthorize("hasAuthority('ADMIN')")
-@Tag(name = "Тип документа", description = "Управляет типами документа")
+@Tag(name = "Тип документа")
 public class DocTypeController {
 
   private final DocTypeService docTypeService;
   private final ModelMapper modelMapper;
 
+  @Operation(summary = "Получить все типы", description = "Все типы с пагинацией и сортировкой")
   @GetMapping
   List<DocTypeDto> getAllDocTypes(
       @RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy) {
@@ -36,6 +38,7 @@ public class DocTypeController {
         .collect(Collectors.toList());
   }
 
+  @Operation(summary = "Получить тип по ID")
   @GetMapping("/{docTypeId}")
   public DocTypeDto getDocType(@PathVariable Long docTypeId) {
     DocType docType = docTypeService.getDocTypeById(docTypeId);
@@ -43,6 +46,7 @@ public class DocTypeController {
     return convertToDto(docType);
   }
 
+  @Operation(summary = "Добавить тип")
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public DocTypeDto createDocType(@Valid @RequestBody DocTypeCreateDto docTypeCreateDto) {
@@ -54,6 +58,7 @@ public class DocTypeController {
     return convertToDto(docType);
   }
 
+  @Operation(summary = "Изменить тип")
   @RequestMapping(value = "/{docTypeId}", method = RequestMethod.PATCH)
   public DocTypeDto updateDocType(
       @PathVariable Long docTypeId,
@@ -67,6 +72,7 @@ public class DocTypeController {
     return convertToDto(docType);
   }
 
+  @Operation(summary = "Поиск типа по подстроке в имени")
   @GetMapping("/name/{name}")
   public List<DocTypeDto> getDocTypesByNameLike(@PathVariable String name) {
     List<DocType> docTypes = docTypeService.getDocTypesByName(name);
@@ -75,13 +81,7 @@ public class DocTypeController {
         .collect(Collectors.toList());
   }
 
-  @DeleteMapping("/{docTypeId}")
-  @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deleteDocType(@PathVariable Long docTypeId) {
-    log.info("Получен запрос на удаление DocType с ID: {}", docTypeId);
-    docTypeService.deleteDocType(docTypeId);
-  }
-
+  @Operation(summary = "Добавить атрибут к типу")
   @RequestMapping(value = "/{docTypeId}/attributes/{docAttributeId}", method = RequestMethod.PUT)
   public DocTypeDto addAttributeToType(
       @PathVariable Long docTypeId, @PathVariable Long docAttributeId) {
@@ -89,6 +89,15 @@ public class DocTypeController {
 
     return convertToDto(docTypeService.attributeToType(docTypeId, docAttributeId));
   }
+
+  @Operation(summary = "Удалить тип")
+  @DeleteMapping("/{docTypeId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void deleteDocType(@PathVariable Long docTypeId) {
+    log.info("Получен запрос на удаление DocType с ID: {}", docTypeId);
+    docTypeService.deleteDocType(docTypeId);
+  }
+
   private DocTypeDto convertToDto(DocType docType) {
     return modelMapper.map(docType, DocTypeDto.class);
   }

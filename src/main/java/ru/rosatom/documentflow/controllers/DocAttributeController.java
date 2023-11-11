@@ -1,5 +1,6 @@
 package ru.rosatom.documentflow.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.Optional;
@@ -26,12 +27,15 @@ import ru.rosatom.documentflow.services.DocAttributeService;
 @RequiredArgsConstructor
 @RequestMapping(path = "/v1/docattributes")
 @PreAuthorize("hasAuthority('ADMIN')")
-@Tag(name = "Атрибуты документа", description = "Управляет атрибутами документа")
+@Tag(name = "Атрибуты документа")
 public class DocAttributeController {
 
   private final DocAttributeService docAttributeService;
   private final ModelMapper modelMapper;
 
+  @Operation(
+      summary = "Получить все атрибуты",
+      description = "Все атрибуты с пагинацией и сортировкой")
   @GetMapping
   List<DocAttributeDto> getAllDocTypes(
       @RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy) {
@@ -40,6 +44,7 @@ public class DocAttributeController {
         .collect(Collectors.toList());
   }
 
+  @Operation(summary = "Получить атрибут по ID")
   @GetMapping("/{docAttributeId}")
   public DocAttributeDto getAttribute(@PathVariable Long docAttributeId) {
     DocAttribute docAttribute = docAttributeService.getDocAttributeById(docAttributeId);
@@ -47,6 +52,7 @@ public class DocAttributeController {
     return convertToDto(docAttribute);
   }
 
+  @Operation(summary = "Добавить атрибут")
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public DocAttributeDto createAttribute(
@@ -58,6 +64,7 @@ public class DocAttributeController {
     return convertToDto(docAttribute);
   }
 
+  @Operation(summary = "Изменить атрибут")
   @RequestMapping(value = "/{docAttributeId}", method = RequestMethod.PATCH)
   public DocAttributeDto updateAttribute(
       @PathVariable Long docAttributeId,
@@ -74,6 +81,7 @@ public class DocAttributeController {
     return convertToDto(docAttribute);
   }
 
+  @Operation(summary = "Поиск атрибута по подстроке в имени")
   @GetMapping("/name/{name}")
   public List<DocAttributeDto> getDocAttributesByNameLike(@PathVariable String name) {
     List<DocAttribute> docAttributes = docAttributeService.getDocAttributesByName(name);
@@ -82,6 +90,7 @@ public class DocAttributeController {
         .collect(Collectors.toList());
   }
 
+  @Operation(summary = "Удалить атрибут")
   @DeleteMapping("/{docAttributeId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteAttribute(@PathVariable Long docAttributeId) {
