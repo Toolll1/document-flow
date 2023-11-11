@@ -44,7 +44,10 @@ public class DocTypeServiceImpl implements DocTypeService {
 
   @Override
   public DocType createDocType(DocTypeCreationRequest docTypeCreationRequest) {
-    DocType docType = DocType.builder().name(docTypeCreationRequest.getName()).build();
+    DocType docType = DocType.builder()
+            .name(docTypeCreationRequest.getName())
+            .agreementType(docTypeCreationRequest.getAgreementType())
+            .build();
     return docTypeRepository.save(docType);
   }
 
