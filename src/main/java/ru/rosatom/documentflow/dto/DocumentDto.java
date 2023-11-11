@@ -22,7 +22,7 @@ public class DocumentDto {
     Long id;
     @NotNull
     @NotEmpty
-    String title;
+    String name;
     @NotNull
     @NotEmpty
     String documentPath;
