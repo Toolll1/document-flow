@@ -10,7 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
-import ru.rosatom.documentflow.models.DocAttribute;
+import ru.rosatom.documentflow.models.AgreementType;
 import ru.rosatom.documentflow.models.DocType;
 import ru.rosatom.documentflow.models.DocTypeCreationRequest;
 import ru.rosatom.documentflow.models.DocTypeUpdateRequest;
@@ -61,14 +61,14 @@ public class DocTypeServiceImpl implements DocTypeService {
     }
   }
 
-  @Override
-  public void deleteDocType(Long id) {
-    if (docTypeRepository.existsById(id)) {
-      docTypeRepository.deleteById(id);
-    } else {
-      throw new ObjectNotFoundException("Тип документа с ID " + id + " не найден.");
+    @Override
+    public DocType createDocType(DocTypeCreationRequest docTypeCreationRequest) {
+        DocType docType = DocType.builder()
+                .name(docTypeCreationRequest.getName())
+                .agreementType(AgreementType.EVERYONE)
+                .build();
+        return docTypeRepository.save(docType);
     }
-  }
 
   @Override
   public List<DocType> getDocTypesByName(String name) {

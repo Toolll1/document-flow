@@ -22,6 +22,8 @@ public class DocAttribute {
   @Column(name = "name", nullable = false, length = 320)
   private String name;
 
+    @Column(name = "type", nullable = false, length = 500)
+    private String type;
   @Column(name = "type", nullable = false, length = 16)
   private String type;
 
