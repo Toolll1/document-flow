@@ -1,6 +1,7 @@
 package ru.rosatom.documentflow.dto;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import org.springframework.lang.Nullable;
@@ -10,10 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DocumentUpdateDto {
     @Nullable
-    String title;
+    String name;
     @Nullable
     String documentPath;
     @Nullable
