@@ -21,8 +21,8 @@ public class Document {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "document_id")
     final Long id;
-    @Column(name = "title", nullable = false, length = 256)
-    String title;
+    @Column(name = "name", nullable = false, length = 256)
+    String name;
     @Column(name = "document_path", nullable = false, length = 1000)
     String documentPath;
     @Column(name = "created_at")

@@ -18,12 +18,12 @@ VALUES
     ('Name attribute 6', 'type attribute 6');
 INSERT INTO DOCUMENT_TYPES (NAME)
 VALUES
-    ('DOCUMENT_TYPES 1'),
-    ('DOCUMENT_TYPES 2'),
-    ('DOCUMENT_TYPES 3'),
-    ('DOCUMENT_TYPES 4'),
-    ('DOCUMENT_TYPES 5');
-INSERT INTO documents (title, document_path, created_at, organization_id, owner_id, type_id)
+    ('Накладная'),
+    ('Счёт-фактура'),
+    ('Опись имущества'),
+    ('Письмо'),
+    ('Донос');
+INSERT INTO documents (name, document_path, created_at, organization_id, owner_id, type_id)
 VALUES
     ('Test Document 1', '/path/to/document1', NOW(), 1, 1, 1),
     ('Test Document 2', '/path/to/document2', NOW(), 2, 2, 2);
