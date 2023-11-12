@@ -1,6 +1,7 @@
 package ru.rosatom.documentflow.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -40,7 +41,8 @@ public class DocAttributeController {
   @GetMapping
   @SecurityRequirement(name = "JWT")
   List<DocAttributeDto> getAllDocTypes(
-      @RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy) {
+      @RequestParam @Parameter(description = "Номер страницы") Optional<Integer> page,
+      @RequestParam @Parameter(description = "Сортировка") Optional<String> sortBy) {
     return docAttributeService.getAllDocAttributes(page, sortBy).stream()
         .map(this::convertToDto)
         .collect(Collectors.toList());
@@ -49,7 +51,8 @@ public class DocAttributeController {
   @Operation(summary = "Получить атрибут по ID")
   @GetMapping("/{docAttributeId}")
   @SecurityRequirement(name = "JWT")
-  public DocAttributeDto getAttribute(@PathVariable Long docAttributeId) {
+  public DocAttributeDto getAttribute(
+      @PathVariable @Parameter(description = "ID атрибута") Long docAttributeId) {
     DocAttribute docAttribute = docAttributeService.getDocAttributeById(docAttributeId);
     log.info("Получен запрос на получение DocAttribute с ID: {}", docAttributeId);
     return convertToDto(docAttribute);
@@ -72,7 +75,7 @@ public class DocAttributeController {
   @RequestMapping(value = "/{docAttributeId}", method = RequestMethod.PATCH)
   @SecurityRequirement(name = "JWT")
   public DocAttributeDto updateAttribute(
-      @PathVariable Long docAttributeId,
+      @PathVariable @Parameter(description = "ID атрибута") Long docAttributeId,
       @Valid @RequestBody DocAttributeUpdateRequestDto docAttributeUpdateRequestDto) {
     DocAttributeUpdateRequest docAttributeUpdateRequest =
         modelMapper.map(docAttributeUpdateRequestDto, DocAttributeUpdateRequest.class);
@@ -89,7 +92,8 @@ public class DocAttributeController {
   @Operation(summary = "Поиск атрибута по подстроке в имени")
   @GetMapping("/name/{name}")
   @SecurityRequirement(name = "JWT")
-  public List<DocAttributeDto> getDocAttributesByNameLike(@PathVariable String name) {
+  public List<DocAttributeDto> getDocAttributesByNameLike(
+      @PathVariable @Parameter(description = "Подстрока имени") String name) {
     List<DocAttribute> docAttributes = docAttributeService.getDocAttributesByName(name);
     return docAttributes.stream()
         .map(o -> modelMapper.map(o, DocAttributeDto.class))
@@ -100,7 +104,8 @@ public class DocAttributeController {
   @DeleteMapping("/{docAttributeId}")
   @SecurityRequirement(name = "JWT")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deleteAttribute(@PathVariable Long docAttributeId) {
+  public void deleteAttribute(
+      @PathVariable @Parameter(description = "ID атрибута") Long docAttributeId) {
     log.info("Получен запрос на удаление DocAttribute с ID: {}", docAttributeId);
     docAttributeService.deleteDocAttribute(docAttributeId);
   }

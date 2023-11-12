@@ -1,6 +1,7 @@
 package ru.rosatom.documentflow.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
@@ -58,7 +59,7 @@ public class DocumentController {
   @GetMapping("/{documentId}")
   @SecurityRequirement(name = "JWT")
   public DocumentDto getDocumentById(
-      @PathVariable Long documentId, @AuthenticationPrincipal User user) {
+          @PathVariable @Parameter(description = "ID документа") Long documentId, @AuthenticationPrincipal User user) {
     log.trace("Запрос информации о документе {} от пользователя {}", documentId, user.getId());
     return dm.documentToDto(documentService.findDocumentById(documentId));
   }
@@ -68,17 +69,17 @@ public class DocumentController {
   @GetMapping
   @SecurityRequirement(name = "JWT")
   public List<DocumentDto> findDocuments(
-      @RequestParam(required = false) String text,
+      @RequestParam(required = false) @Parameter(description = "Имя документа") String text,
       @RequestParam(required = false) @DateTimeFormat(pattern = DATE_TIME_PATTERN)
-          LocalDateTime rangeStart,
+      @Parameter(description = "Начало интервала") LocalDateTime rangeStart,
       @RequestParam(required = false) @DateTimeFormat(pattern = DATE_TIME_PATTERN)
-          LocalDateTime rangeEnd,
-      @RequestParam(required = false) Long creatorId,
-      @RequestParam(defaultValue = PAGINATION_DEFAULT_FROM) @PositiveOrZero Integer from,
-      @RequestParam(defaultValue = PAGINATION_DEFAULT_SIZE) @Positive Integer size,
-      @RequestParam(required = false) Long typeId,
-      @RequestParam(required = false) Long attributeId,
-      @RequestParam(required = false) String attributeValue,
+      @Parameter(description = "Конец интервала")LocalDateTime rangeEnd,
+      @RequestParam(required = false) @Parameter(description = "ID создателя документа")Long creatorId,
+      @RequestParam(defaultValue = PAGINATION_DEFAULT_FROM) @PositiveOrZero @Parameter(description = "Номер страницы")Integer from,
+      @RequestParam(defaultValue = PAGINATION_DEFAULT_SIZE) @Positive @Parameter(description = "Количество элементов на странице")Integer size,
+      @RequestParam(required = false) @Parameter(description = "ID типа документа")Long typeId,
+      @RequestParam(required = false) @Parameter(description = "ID атрибута документа")Long attributeId,
+      @RequestParam(required = false) @Parameter(description = "Значение атрибута")String attributeValue,
       @AuthenticationPrincipal User user) {
     log.trace("Запрос информации о документах своей организации от пользователя {}", user.getId());
     return documentService
@@ -97,7 +98,7 @@ public class DocumentController {
   @GetMapping("/{documentId}/changes")
   @SecurityRequirement(name = "JWT")
   public List<DocumentChangesDto> findDocChangesByDocumentId(
-      @PathVariable Long documentId, @AuthenticationPrincipal User user) {
+      @PathVariable @Parameter(description = "ID документа") Long documentId, @AuthenticationPrincipal User user) {
     log.trace(
         "Запрос информации о истории изменений документа {} от пользователя {}",
         documentId,
@@ -114,7 +115,7 @@ public class DocumentController {
   @PatchMapping("/{documentId}")
   @SecurityRequirement(name = "JWT")
   public DocumentDto updateDocument(
-      @PathVariable Long documentId,
+      @PathVariable @Parameter(description = "ID документа") Long documentId,
       @RequestBody @Valid DocumentUpdateDto documentUpdateDto,
       @AuthenticationPrincipal User user) {
     log.trace("Обновление информации о событии {} пользователем {}", documentId, user.getId());
@@ -128,7 +129,7 @@ public class DocumentController {
       "@documentProcessSecurityService.isCanManageProcess(#documentId,#user.id) && hasAuthority('USER')")
   @DeleteMapping("/{documentId}")
   @SecurityRequirement(name = "JWT")
-  public void deleteDocument(@PathVariable Long documentId, @AuthenticationPrincipal User user) {
+  public void deleteDocument(@PathVariable @Parameter(description = "ID документа") Long documentId, @AuthenticationPrincipal User user) {
     log.trace("Удаление документа {} пользователем {}", documentId, user.getId());
     documentService.deleteDocumentById(documentId, user.getId());
   }
@@ -138,7 +139,7 @@ public class DocumentController {
   @GetMapping("/changesById/{documentChangesId}")
   @SecurityRequirement(name = "JWT")
   public DocumentChangesDto findDocChangesById(
-      @PathVariable Long documentChangesId, @AuthenticationPrincipal User user) {
+      @PathVariable @Parameter(description = "ID изменения документа")Long documentChangesId, @AuthenticationPrincipal User user) {
     log.trace(
         "Запрос информации о изменений {} от пользователя {}", documentChangesId, user.getId());
     return cm.changesToDto(documentService.findDocChangesById(documentChangesId, user.getId()));
@@ -149,7 +150,8 @@ public class DocumentController {
   @GetMapping("/changesByCreator/{creatorId}")
   @SecurityRequirement(name = "JWT")
   public List<DocumentChangesDto> findDocChangesByUserId(
-      @PathVariable Long creatorId, @AuthenticationPrincipal User user) {
+      @PathVariable @Parameter(description = "ID создателя документа") Long creatorId,
+      @AuthenticationPrincipal User user) {
     log.trace(
         "Запрос информации о документах измененных пользователем {} от пользователя {}",
         creatorId,

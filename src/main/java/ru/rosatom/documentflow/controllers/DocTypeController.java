@@ -1,6 +1,7 @@
 package ru.rosatom.documentflow.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -34,7 +35,8 @@ public class DocTypeController {
   @GetMapping
   @SecurityRequirement(name = "JWT")
   List<DocTypeDto> getAllDocTypes(
-      @RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy) {
+      @RequestParam @Parameter(description = "Номер страницы") Optional<Integer> page,
+      @RequestParam @Parameter(description = "Сортировка") Optional<String> sortBy) {
     return docTypeService.getAllDocTypes(page, sortBy).stream()
         .map(this::convertToDto)
         .collect(Collectors.toList());
@@ -43,7 +45,7 @@ public class DocTypeController {
   @Operation(summary = "Получить тип по ID")
   @GetMapping("/{docTypeId}")
   @SecurityRequirement(name = "JWT")
-  public DocTypeDto getDocType(@PathVariable Long docTypeId) {
+  public DocTypeDto getDocType(@PathVariable @Parameter(description = "ID типа") Long docTypeId) {
     DocType docType = docTypeService.getDocTypeById(docTypeId);
     log.info("Получен запрос на получение DocType с ID: {}", docTypeId);
     return convertToDto(docType);
@@ -66,7 +68,7 @@ public class DocTypeController {
   @RequestMapping(value = "/{docTypeId}", method = RequestMethod.PATCH)
   @SecurityRequirement(name = "JWT")
   public DocTypeDto updateDocType(
-      @PathVariable Long docTypeId,
+      @PathVariable @Parameter(description = "ID типа") Long docTypeId,
       @Valid @RequestBody DocTypeUpdateRequestDto docTypeUpdateRequestDto) {
     DocTypeUpdateRequest docTypeUpdateRequest =
         modelMapper.map(docTypeUpdateRequestDto, DocTypeUpdateRequest.class);
@@ -80,7 +82,8 @@ public class DocTypeController {
   @Operation(summary = "Поиск типа по подстроке в имени")
   @GetMapping("/name/{name}")
   @SecurityRequirement(name = "JWT")
-  public List<DocTypeDto> getDocTypesByNameLike(@PathVariable String name) {
+  public List<DocTypeDto> getDocTypesByNameLike(
+      @PathVariable @Parameter(description = "Подстрока имени") String name) {
     List<DocType> docTypes = docTypeService.getDocTypesByName(name);
     return docTypes.stream()
         .map(o -> modelMapper.map(o, DocTypeDto.class))
@@ -91,7 +94,8 @@ public class DocTypeController {
   @RequestMapping(value = "/{docTypeId}/attributes/{docAttributeId}", method = RequestMethod.PUT)
   @SecurityRequirement(name = "JWT")
   public DocTypeDto addAttributeToType(
-      @PathVariable Long docTypeId, @PathVariable Long docAttributeId) {
+      @PathVariable @Parameter(description = "ID типа") Long docTypeId,
+      @PathVariable @Parameter(description = "ID атрибута") Long docAttributeId) {
     log.info("Добавлен атрибут с ID: {} к документу с ID: {}", docAttributeId, docTypeId);
 
     return convertToDto(docTypeService.attributeToType(docTypeId, docAttributeId));
@@ -101,7 +105,7 @@ public class DocTypeController {
   @DeleteMapping("/{docTypeId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @SecurityRequirement(name = "JWT")
-  public void deleteDocType(@PathVariable Long docTypeId) {
+  public void deleteDocType(@PathVariable @Parameter(description = "ID типа") Long docTypeId) {
     log.info("Получен запрос на удаление DocType с ID: {}", docTypeId);
     docTypeService.deleteDocType(docTypeId);
   }

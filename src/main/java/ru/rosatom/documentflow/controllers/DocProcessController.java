@@ -1,6 +1,7 @@
 package ru.rosatom.documentflow.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -31,7 +32,8 @@ public class DocProcessController {
       "@documentProcessSecurityService.isCanManageProcess(#documentId, authentication.principal.id) && hasAuthority('USER')")
   @SecurityRequirement(name = "JWT")
   public DocProcessDto createNewProcess(
-      @PathVariable Long documentId, @PathVariable Long recipientId) {
+      @PathVariable @Parameter(description = "ID документа") Long documentId,
+      @PathVariable @Parameter(description = "ID получателя") Long recipientId) {
     return modelMapper.map(
         documentProcessService.createNewProcess(documentId, recipientId), DocProcessDto.class);
   }
@@ -41,7 +43,8 @@ public class DocProcessController {
   @PreAuthorize(
       "@documentProcessSecurityService.isHasAccess(#documentId, authentication.principal.id) && hasAuthority('USER')")
   @SecurityRequirement(name = "JWT")
-  public Collection<DocProcessDto> findProcessByDocumentId(@PathVariable Long documentId) {
+  public Collection<DocProcessDto> findProcessByDocumentId(
+      @PathVariable @Parameter(description = "ID документа") Long documentId) {
     return documentProcessService.findProcessesByDocumentId(documentId).stream()
         .map(docProcess -> modelMapper.map(docProcess, DocProcessDto.class))
         .collect(Collectors.toList());
@@ -52,7 +55,8 @@ public class DocProcessController {
   @PreAuthorize(
       "@documentProcessSecurityService.isHasAccess(#processId, authentication.principal.id)")
   @SecurityRequirement(name = "JWT")
-  public DocProcessDto findProcessById(@PathVariable Long processId) {
+  public DocProcessDto findProcessById(
+      @PathVariable @Parameter(description = "ID процесса") Long processId) {
     return modelMapper.map(documentProcessService.findProcessById(processId), DocProcessDto.class);
   }
 
@@ -63,7 +67,7 @@ public class DocProcessController {
           + "&& !@documentProcessSecurityService.isProcessDone(#processId) && hasAuthority('USER')")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @SecurityRequirement(name = "JWT")
-  public void deleteProcess(@PathVariable Long processId) {
+  public void deleteProcess(@PathVariable @Parameter(description = "ID процесса") Long processId) {
     documentProcessService.deleteProcess(processId);
   }
 

@@ -1,6 +1,7 @@
 package ru.rosatom.documentflow.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,8 @@ public class StatisticsController {
   @Operation(summary = "Получить кол-во документов со статусом")
   @GetMapping("/documents/getCountByStatus/{status}")
   @SecurityRequirement(name = "JWT")
-  public DocStatisticDTO getCountByStatus(@PathVariable String stringStatus) {
+  public DocStatisticDTO getCountByStatus(
+      @PathVariable @Parameter(description = "Наименование статуса") String stringStatus) {
     return statisticsService.getCountByStatus(stringStatus);
   }
 
@@ -46,10 +48,11 @@ public class StatisticsController {
     return statisticsService.statisticsUserAndOrganization();
   }
 
-  @Operation(summary = "Получить рейтинг активных пользователей")
+  @Operation(summary = "Получить рейтинг активных пользователей по организации")
   @GetMapping("/userRating/{orgId}")
   @SecurityRequirement(name = "JWT")
-  public List<UserRatingDto> getRating(@PathVariable Long orgId) {
+  public List<UserRatingDto> getRating(
+      @PathVariable @Parameter(description = "ID организации") Long orgId) {
     return statisticsService.getRatingAllUsersByOrgId(orgId);
   }
 

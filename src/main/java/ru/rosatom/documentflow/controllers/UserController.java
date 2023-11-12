@@ -1,6 +1,7 @@
 package ru.rosatom.documentflow.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -60,7 +61,9 @@ public class UserController {
   @Operation(summary = "Изменить пользователя")
   @PatchMapping("/{userId}")
   @SecurityRequirement(name = "JWT")
-  public UserReplyDto updateUser(@Valid @RequestBody UserUpdateDto dto, @PathVariable Long userId) {
+  public UserReplyDto updateUser(
+      @Valid @RequestBody UserUpdateDto dto,
+      @PathVariable @Parameter(description = "ID пользователя") Long userId) {
 
     log.info("Received a request to update a user {}. userId = {}", dto, userId);
 
@@ -72,9 +75,12 @@ public class UserController {
   @PatchMapping("/password/{userId}")
   @SecurityRequirement(name = "JWT")
   public ResponseEntity<?> setUserPassword(
-      @Valid @Size(min = 8, message = "password is too short") @RequestParam(value = "password")
+      @Valid
+          @Size(min = 8, message = "password is too short")
+          @RequestParam(value = "password")
+          @Parameter(description = "Пароль пользователя")
           String password,
-      @PathVariable Long userId,
+      @PathVariable @Parameter(description = "ID пользователя") Long userId,
       @AuthenticationPrincipal User user) {
     log.info("Received a request to set password to user with userId = {}", userId);
     if (userService.setPasswordToUser(password, userId)) {
@@ -88,7 +94,9 @@ public class UserController {
   @PreAuthorize("(#userId==#user.id && hasAuthority('USER')) || hasAuthority('ADMIN')")
   @GetMapping("/{userId}")
   @SecurityRequirement(name = "JWT")
-  public UserReplyDto getUser(@PathVariable Long userId, @AuthenticationPrincipal User user) {
+  public UserReplyDto getUser(
+      @PathVariable @Parameter(description = "ID пользователя") Long userId,
+      @AuthenticationPrincipal User user) {
 
     log.info("A request was received to search for a user with an id {}", userId);
 
@@ -112,10 +120,16 @@ public class UserController {
   @SecurityRequirement(name = "JWT")
   public List<UserReplyDto> getUsers(
       @RequestParam(required = false) List<Long> ids,
-      @RequestParam(value = "sort", defaultValue = "")
+      @RequestParam(value = "sort", defaultValue = "") @Parameter(description = "Сортировка")
           String sort, // например, сортировка по id или по фамилии (ID, LAST_NAME)
-      @RequestParam(value = "from", defaultValue = "0") @Min(0) Integer from,
-      @RequestParam(value = "size", defaultValue = "10") @Min(1) Integer size) {
+      @RequestParam(value = "from", defaultValue = "0")
+          @Min(0)
+          @Parameter(description = "Номер страницы")
+          Integer from,
+      @RequestParam(value = "size", defaultValue = "10")
+          @Min(1)
+          @Parameter(description = "Количество элементов на странице")
+          Integer size) {
 
     log.info(
         "Received a request to search for all users for params: ids {}, sort {}, from {}, size {}",
@@ -132,7 +146,8 @@ public class UserController {
   @Operation(summary = "Получить пользователя по номеру телефона")
   @GetMapping("/phone/{phone}")
   @SecurityRequirement(name = "JWT")
-  public UserReplyDto getUserByPhone(@PathVariable String phone) {
+  public UserReplyDto getUserByPhone(
+      @PathVariable @Parameter(description = "Телефон пользователя") String phone) {
 
     log.info("Received a request to search user for telephone {}", phone);
 
@@ -142,7 +157,8 @@ public class UserController {
   @Operation(summary = "Получить пользователя по eMail")
   @GetMapping("/email/{email}")
   @SecurityRequirement(name = "JWT")
-  public UserReplyDto getUserByEmail(@PathVariable String email) {
+  public UserReplyDto getUserByEmail(
+      @PathVariable @Parameter(description = "eMail пользователя") String email) {
 
     log.info("Received a request to search user for email {}", email);
 
@@ -152,7 +168,8 @@ public class UserController {
   @Operation(summary = "Получить пользователя по паспорту")
   @GetMapping("/passport/{passport}")
   @SecurityRequirement(name = "JWT")
-  public UserReplyDto getUserByPassport(@PathVariable String passport) {
+  public UserReplyDto getUserByPassport(
+      @PathVariable @Parameter(description = "Паспорт пользователя") String passport) {
 
     log.info("Received a request to search user for passport {}", passport);
 
@@ -163,7 +180,7 @@ public class UserController {
   @DeleteMapping("/{userId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @SecurityRequirement(name = "JWT")
-  public void deleteUser(@PathVariable Long userId) {
+  public void deleteUser(@PathVariable @Parameter(description = "ID пользователя") Long userId) {
 
     log.info("Received a request to delete a user with an id " + userId);
 

@@ -1,6 +1,7 @@
 package ru.rosatom.documentflow.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -54,7 +55,7 @@ public class OrgController {
   @Operation(summary = "Получить организацию по Id")
   @GetMapping("/{orgId}")
   @SecurityRequirement(name = "JWT")
-  public OrgDto getOrg(@PathVariable Long orgId) {
+  public OrgDto getOrg(@PathVariable @Parameter(description = "ID организации") Long orgId) {
     UserOrganization organization = userOrganizationService.getOrganization(orgId);
     return modelMapper.map(organization, OrgDto.class);
   }
@@ -62,7 +63,8 @@ public class OrgController {
   @Operation(summary = "Поиск организации по подстроке в имени")
   @GetMapping("/name/{name}")
   @SecurityRequirement(name = "JWT")
-  public List<OrgDto> getOrgsByNameLike(@PathVariable String name) {
+  public List<OrgDto> getOrgsByNameLike(
+      @PathVariable @Parameter(description = "Подстрока в имени") String name) {
     List<UserOrganization> organizations = userOrganizationService.getOrganizationsByNameLike(name);
     return organizations.stream()
         .map(o -> modelMapper.map(o, OrgDto.class))
@@ -73,7 +75,8 @@ public class OrgController {
   @RequestMapping(value = "/{orgId}", method = RequestMethod.PATCH)
   @SecurityRequirement(name = "JWT")
   public OrgDto updateOrg(
-      @PathVariable Long orgId, @Valid @RequestBody OrgUpdateRequestDto orgUpdateRequestDto) {
+      @PathVariable @Parameter(description = "ID организации") Long orgId,
+      @Valid @RequestBody OrgUpdateRequestDto orgUpdateRequestDto) {
     OrgUpdateRequest orgUpdateRequest =
         modelMapper.map(orgUpdateRequestDto, OrgUpdateRequest.class);
     UserOrganization organization =
@@ -84,7 +87,7 @@ public class OrgController {
   @Operation(summary = "Удалить организацию")
   @DeleteMapping("/{orgId}")
   @SecurityRequirement(name = "JWT")
-  public OrgDto deleteOrg(@PathVariable Long orgId) {
+  public OrgDto deleteOrg(@PathVariable @Parameter(description = "ID организации") Long orgId) {
     UserOrganization organization = userOrganizationService.deleteOrganization(orgId);
     return modelMapper.map(organization, OrgDto.class);
   }
