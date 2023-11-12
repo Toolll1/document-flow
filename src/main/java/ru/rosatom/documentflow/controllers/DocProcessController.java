@@ -1,6 +1,7 @@
 package ru.rosatom.documentflow.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -28,6 +29,7 @@ public class DocProcessController {
   @PostMapping("/{documentId}/recipient/{recipientId}/new-process")
   @PreAuthorize(
       "@documentProcessSecurityService.isCanManageProcess(#documentId, authentication.principal.id) && hasAuthority('USER')")
+  @SecurityRequirement(name = "JWT")
   public DocProcessDto createNewProcess(
       @PathVariable Long documentId, @PathVariable Long recipientId) {
     return modelMapper.map(
@@ -38,6 +40,7 @@ public class DocProcessController {
   @GetMapping("{documentId}/processes")
   @PreAuthorize(
       "@documentProcessSecurityService.isHasAccess(#documentId, authentication.principal.id) && hasAuthority('USER')")
+  @SecurityRequirement(name = "JWT")
   public Collection<DocProcessDto> findProcessByDocumentId(@PathVariable Long documentId) {
     return documentProcessService.findProcessesByDocumentId(documentId).stream()
         .map(docProcess -> modelMapper.map(docProcess, DocProcessDto.class))
@@ -48,6 +51,7 @@ public class DocProcessController {
   @GetMapping("/processes/{processId}")
   @PreAuthorize(
       "@documentProcessSecurityService.isHasAccess(#processId, authentication.principal.id)")
+  @SecurityRequirement(name = "JWT")
   public DocProcessDto findProcessById(@PathVariable Long processId) {
     return modelMapper.map(documentProcessService.findProcessById(processId), DocProcessDto.class);
   }
@@ -58,6 +62,7 @@ public class DocProcessController {
       "@documentProcessSecurityService.isCanManageProcess(#processId, authentication.principal.id) "
           + "&& !@documentProcessSecurityService.isProcessDone(#processId) && hasAuthority('USER')")
   @ResponseStatus(HttpStatus.NO_CONTENT)
+  @SecurityRequirement(name = "JWT")
   public void deleteProcess(@PathVariable Long processId) {
     documentProcessService.deleteProcess(processId);
   }
@@ -66,6 +71,7 @@ public class DocProcessController {
   @PatchMapping("/processes/{processId}/send-to-approve")
   @PreAuthorize(
       "@documentProcessSecurityService.isHasAccess(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('USER')")
+  @SecurityRequirement(name = "JWT")
   public void sendToApprove(ProcessUpdateRequestDto processUpdateRequestDto) {
     ProcessUpdateRequest processUpdateRequest =
         modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
@@ -76,6 +82,7 @@ public class DocProcessController {
   @PatchMapping("/processes/{processId}/approve")
   @PreAuthorize(
       "@documentProcessSecurityService.isRecipient(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('USER')")
+  @SecurityRequirement(name = "JWT")
   public void approve(ProcessUpdateRequestDto processUpdateRequestDto) {
     ProcessUpdateRequest processUpdateRequest =
         modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
@@ -86,6 +93,7 @@ public class DocProcessController {
   @PatchMapping("/processes/{processId}/reject")
   @PreAuthorize(
       "@documentProcessSecurityService.isRecipient(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('USER')")
+  @SecurityRequirement(name = "JWT")
   public void reject(ProcessUpdateRequestDto processUpdateRequestDto) {
     ProcessUpdateRequest processUpdateRequest =
         modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
@@ -96,6 +104,7 @@ public class DocProcessController {
   @PatchMapping("/processes/{processId}/send-to-correction")
   @PreAuthorize(
       "@documentProcessSecurityService.isRecipient(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('USER')")
+  @SecurityRequirement(name = "JWT")
   public void sendToCorrection(ProcessUpdateRequestDto processUpdateRequestDto) {
     ProcessUpdateRequest processUpdateRequest =
         modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);

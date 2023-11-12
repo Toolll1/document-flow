@@ -1,6 +1,7 @@
 package ru.rosatom.documentflow.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +32,7 @@ public class DocTypeController {
 
   @Operation(summary = "Получить все типы", description = "Все типы с пагинацией и сортировкой")
   @GetMapping
+  @SecurityRequirement(name = "JWT")
   List<DocTypeDto> getAllDocTypes(
       @RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy) {
     return docTypeService.getAllDocTypes(page, sortBy).stream()
@@ -40,15 +42,17 @@ public class DocTypeController {
 
   @Operation(summary = "Получить тип по ID")
   @GetMapping("/{docTypeId}")
+  @SecurityRequirement(name = "JWT")
   public DocTypeDto getDocType(@PathVariable Long docTypeId) {
     DocType docType = docTypeService.getDocTypeById(docTypeId);
     log.info("Получен запрос на получение DocType с ID: {}", docTypeId);
     return convertToDto(docType);
   }
 
-  @Operation(summary = "Добавить тип")
+  @Operation(summary = "Создать тип")
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
+  @SecurityRequirement(name = "JWT")
   public DocTypeDto createDocType(@Valid @RequestBody DocTypeCreateDto docTypeCreateDto) {
     DocTypeCreationRequest docTypeCreationRequest =
         modelMapper.map(docTypeCreateDto, DocTypeCreationRequest.class);
@@ -60,6 +64,7 @@ public class DocTypeController {
 
   @Operation(summary = "Изменить тип")
   @RequestMapping(value = "/{docTypeId}", method = RequestMethod.PATCH)
+  @SecurityRequirement(name = "JWT")
   public DocTypeDto updateDocType(
       @PathVariable Long docTypeId,
       @Valid @RequestBody DocTypeUpdateRequestDto docTypeUpdateRequestDto) {
@@ -74,6 +79,7 @@ public class DocTypeController {
 
   @Operation(summary = "Поиск типа по подстроке в имени")
   @GetMapping("/name/{name}")
+  @SecurityRequirement(name = "JWT")
   public List<DocTypeDto> getDocTypesByNameLike(@PathVariable String name) {
     List<DocType> docTypes = docTypeService.getDocTypesByName(name);
     return docTypes.stream()
@@ -83,6 +89,7 @@ public class DocTypeController {
 
   @Operation(summary = "Добавить атрибут к типу")
   @RequestMapping(value = "/{docTypeId}/attributes/{docAttributeId}", method = RequestMethod.PUT)
+  @SecurityRequirement(name = "JWT")
   public DocTypeDto addAttributeToType(
       @PathVariable Long docTypeId, @PathVariable Long docAttributeId) {
     log.info("Добавлен атрибут с ID: {} к документу с ID: {}", docAttributeId, docTypeId);
@@ -93,6 +100,7 @@ public class DocTypeController {
   @Operation(summary = "Удалить тип")
   @DeleteMapping("/{docTypeId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
+  @SecurityRequirement(name = "JWT")
   public void deleteDocType(@PathVariable Long docTypeId) {
     log.info("Получен запрос на удаление DocType с ID: {}", docTypeId);
     docTypeService.deleteDocType(docTypeId);

@@ -1,6 +1,7 @@
 package ru.rosatom.documentflow.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +45,7 @@ public class DocumentController {
   @Operation(summary = "Добавить новый документ")
   @PreAuthorize("hasAuthority('USER')")
   @PostMapping
+  @SecurityRequirement(name = "JWT")
   public DocumentDto createDocument(
       @RequestBody @Valid DocumentCreateDto documentDto, @AuthenticationPrincipal User user) {
     log.trace("Создание документа пользователем {} : {}", user.getId(), documentDto);
@@ -54,6 +56,7 @@ public class DocumentController {
   // поиск документа по id
   @Operation(summary = "Получить документ по ID")
   @GetMapping("/{documentId}")
+  @SecurityRequirement(name = "JWT")
   public DocumentDto getDocumentById(
       @PathVariable Long documentId, @AuthenticationPrincipal User user) {
     log.trace("Запрос информации о документе {} от пользователя {}", documentId, user.getId());
@@ -63,6 +66,7 @@ public class DocumentController {
   // поиск документов по своей организации
   @Operation(summary = "Получить документы по своей организации")
   @GetMapping
+  @SecurityRequirement(name = "JWT")
   public List<DocumentDto> findDocuments(
       @RequestParam(required = false) String text,
       @RequestParam(required = false) @DateTimeFormat(pattern = DATE_TIME_PATTERN)
@@ -91,6 +95,7 @@ public class DocumentController {
   // поиск истории изменений по id документа
   @Operation(summary = "Получить историю изменений по ID")
   @GetMapping("/{documentId}/changes")
+  @SecurityRequirement(name = "JWT")
   public List<DocumentChangesDto> findDocChangesByDocumentId(
       @PathVariable Long documentId, @AuthenticationPrincipal User user) {
     log.trace(
@@ -107,6 +112,7 @@ public class DocumentController {
   @PreAuthorize(
       "@documentProcessSecurityService.isCanManageProcess(#documentId,#user.id) && hasAuthority('USER')")
   @PatchMapping("/{documentId}")
+  @SecurityRequirement(name = "JWT")
   public DocumentDto updateDocument(
       @PathVariable Long documentId,
       @RequestBody @Valid DocumentUpdateDto documentUpdateDto,
@@ -121,6 +127,7 @@ public class DocumentController {
   @PreAuthorize(
       "@documentProcessSecurityService.isCanManageProcess(#documentId,#user.id) && hasAuthority('USER')")
   @DeleteMapping("/{documentId}")
+  @SecurityRequirement(name = "JWT")
   public void deleteDocument(@PathVariable Long documentId, @AuthenticationPrincipal User user) {
     log.trace("Удаление документа {} пользователем {}", documentId, user.getId());
     documentService.deleteDocumentById(documentId, user.getId());
@@ -129,6 +136,7 @@ public class DocumentController {
   // поиск изменения по id
   @Operation(summary = "Получить изменения документа по ID")
   @GetMapping("/changesById/{documentChangesId}")
+  @SecurityRequirement(name = "JWT")
   public DocumentChangesDto findDocChangesById(
       @PathVariable Long documentChangesId, @AuthenticationPrincipal User user) {
     log.trace(
@@ -139,6 +147,7 @@ public class DocumentController {
   // поиск документов измененных пользователем
   @Operation(summary = "Получить документы измененные пользователем")
   @GetMapping("/changesByCreator/{creatorId}")
+  @SecurityRequirement(name = "JWT")
   public List<DocumentChangesDto> findDocChangesByUserId(
       @PathVariable Long creatorId, @AuthenticationPrincipal User user) {
     log.trace(
