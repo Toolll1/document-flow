@@ -42,12 +42,18 @@ public class DocProcessController {
     }
 
     @GetMapping("{documentId}/processes")
-    @PreAuthorize("@documentProcessSecurityService.isHasAccess(#documentId, authentication.principal.id) && hasAuthority('USER')")
+    @PreAuthorize("@documentProcessSecurityService.isHasAccessToProcess(#documentId, authentication.principal.id) && hasAuthority('USER')")
     public Collection<DocProcessDto> findProcessByDocumentId(@PathVariable Long documentId) {
         return documentProcessService.findProcessesByDocumentId(documentId)
                 .stream()
                 .map(docProcess -> modelMapper.map(docProcess, DocProcessDto.class))
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/processes/{processId}")
+    @PreAuthorize("@documentProcessSecurityService.isHasAccessToProcess(#processId, authentication.principal.id)")
+    public DocProcessDto findProcessById(@PathVariable Long processId) {
+        return modelMapper.map(documentProcessService.findProcessById(processId), DocProcessDto.class);
     }
 
     @GetMapping("/processes/incoming")
@@ -73,7 +79,7 @@ public class DocProcessController {
     }
 
     @PatchMapping("/processes/{processId}/send-to-approve")
-    @PreAuthorize("@documentProcessSecurityService.isHasAccess(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('USER')")
+    @PreAuthorize("@documentProcessSecurityService.isHasAccessToProcess(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('USER')")
     public DocProcessDto sendToApprove(ProcessUpdateRequestDto processUpdateRequestDto) {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
         documentProcessService.sendToApprove(processUpdateRequest);
