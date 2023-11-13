@@ -20,40 +20,39 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Schema(name = "Документ")
 public class DocumentDto {
+  @Schema(name = "ID документа")
+  Long id;
 
-    @Schema(name = "ID документа")
-    Long id;
+  @Schema(name = "Название")
+  @NotNull
+  @NotEmpty
+  String title;
 
-    @Schema(name = "Название")
-    @NotNull
-    @NotEmpty
-    String title;
+  @Schema(name = "Путь документа")
+  @NotNull
+  @NotEmpty
+  String documentPath;
 
-    @Schema(name = "Путь документа")
-    @NotNull
-    @NotEmpty
-    String documentPath;
+  @Schema(name = "Дата последнего обновления")
+  @NotNull
+  @JsonFormat(pattern = CommonUtils.DATE_TIME_PATTERN)
+  LocalDateTime date;
 
-    @Schema(name = "Дата последнего обновления")
-    @NotNull
-    @JsonFormat(pattern = CommonUtils.DATE_TIME_PATTERN)
-    LocalDateTime date;
+  @Schema(name = "ID организации")
+  @NotNull
+  Long idOrganization;
 
-    @Schema(name = "ID организации")
-    @NotNull
-    Long idOrganization;
+  @Schema(name = "ID создателя")
+  Long ownerId;
 
-    @Schema(name = "ID создателя")
-    Long ownerId;
+  @Schema(name = "Тип документа")
+  @NotNull
+  DocTypeDto docTypeDto;
 
-    @Schema(name = "Тип документа")
-    @NotNull
-    DocTypeDto docTypeDto;
+  @Schema(name = "Список атрибутов")
+  @NotNull
+  List<DocAttributeValues> attributeValues;
 
-    @Schema(name = "Список атрибутов")
-    @NotNull
-    List<DocAttributeValues> attributeValues;
-
-    @Schema(name = "Статус")
-    DocProcessStatus finalDocStatus;
+  @Schema(name = "Статус")
+  DocProcessStatus finalDocStatus;
 }
