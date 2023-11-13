@@ -1,16 +1,25 @@
 package ru.rosatom.documentflow.dto;
 
-import lombok.Data;
-import ru.rosatom.documentflow.models.AgreementType;
-import ru.rosatom.documentflow.models.DocAttribute;
-
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Data;
+import ru.rosatom.documentflow.models.AgreementType;
 
 @Data
+@Schema(description = "Тип документа")
 public class DocTypeDto {
+  @Schema(description = "ID типа документа")
   private long id;
+
+  @Schema(description = "Наименование типа")
   private String name;
-  private List<DocAttribute> attributes = new ArrayList<>();
+
+  @Schema(description = "Аттрибуты привязанные к типу")
+  private List<DocAttributeDto> attributes = new ArrayList<>();
+
+  @Schema(
+      description =
+          "Для согласования документа требуется: EVERYONE - все получатели, ANYONE - хотя бы один, QUORUM - не менее 50% получателей.")
   private AgreementType agreementType;
 }
