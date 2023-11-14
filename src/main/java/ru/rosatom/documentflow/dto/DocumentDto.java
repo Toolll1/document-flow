@@ -55,4 +55,5 @@ public class DocumentDto {
 
   @Schema(name = "Статус")
   DocProcessStatus finalDocStatus;
+
 }

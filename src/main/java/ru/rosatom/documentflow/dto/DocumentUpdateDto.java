@@ -2,6 +2,7 @@ package ru.rosatom.documentflow.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import org.springframework.lang.Nullable;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Schema(name = "Обновление документа")
 public class DocumentUpdateDto {
