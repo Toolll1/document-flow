@@ -1,5 +1,6 @@
 package ru.rosatom.documentflow.services.impl;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -23,19 +24,21 @@ class DocTypeServiceImplTest {
     private DocTypeRepository docTypeRepository;
     @Autowired
     private DocAttributeRepository docAttributeRepository;
-
     private DocTypeServiceImpl impl;
+
+    @BeforeEach
+    void initImpl() {
+        impl = new DocTypeServiceImpl(docTypeRepository, docAttributeRepository);
+    }
 
     @Test
     void getAllDocTypesThenGreaterThan0() {
-        impl = new DocTypeServiceImpl(docTypeRepository, docAttributeRepository);
         Page<DocType> page = impl.getAllDocTypes(Optional.of(0), Optional.of("id"));
-        assertThat(page.getTotalElements()).isGreaterThan(0).isEqualTo(5);
+        assertThat(page.getTotalElements()).isEqualTo(5);
     }
 
     @Test
     void getAllDocTypesThenIllegalArgumentException() {
-        impl = new DocTypeServiceImpl(docTypeRepository, docAttributeRepository);
         assertThatThrownBy(() -> impl.getAllDocTypes(Optional.of(-1), Optional.of("id")))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("less than zero");
@@ -43,7 +46,6 @@ class DocTypeServiceImplTest {
 
     @Test
     void getAllDocTypesThenPropertyReferenceException() {
-        impl = new DocTypeServiceImpl(docTypeRepository, docAttributeRepository);
         assertThatThrownBy(() -> impl.getAllDocTypes(Optional.of(0), Optional.of("type")))
                 .isInstanceOf(org.springframework.data.mapping.PropertyReferenceException.class)
                 .hasMessageContaining("No property");
@@ -51,14 +53,12 @@ class DocTypeServiceImplTest {
 
     @Test
     void getDocTypeByIdThenFoundOne() {
-        impl = new DocTypeServiceImpl(docTypeRepository, docAttributeRepository);
         String name = "накладная";
         assertThat(impl.getDocTypeById(1L).getName()).isNotNull().containsIgnoringCase(name);
     }
 
     @Test
     void getDocTypeByIdThenObjectNotFoundException() {
-        impl = new DocTypeServiceImpl(docTypeRepository, docAttributeRepository);
         assertThatThrownBy(() -> impl.getDocTypeById(-1L))
                 .isInstanceOf(ObjectNotFoundException.class)
                 .hasMessageContaining("не найден");
@@ -66,14 +66,12 @@ class DocTypeServiceImplTest {
 
     @Test
     void createDocTypeThenNotNull() {
-        impl = new DocTypeServiceImpl(docTypeRepository, docAttributeRepository);
         DocTypeCreationRequest creationRequest = new DocTypeCreationRequest("договор", AgreementType.ANYONE);
         assertNotNull(impl.createDocType(creationRequest));
     }
 
     @Test
     void updateDocTypeThenNotNull() {
-        impl = new DocTypeServiceImpl(docTypeRepository, docAttributeRepository);
         DocTypeUpdateRequest updateRequest = new DocTypeUpdateRequest("договор");
         assertThat(impl.updateDocType(1L, updateRequest).getName())
                 .isNotNull()
@@ -82,7 +80,6 @@ class DocTypeServiceImplTest {
 
     @Test
     void updateDocTypeThenObjectNotFoundException() {
-        impl = new DocTypeServiceImpl(docTypeRepository, docAttributeRepository);
         DocTypeUpdateRequest updateRequest = new DocTypeUpdateRequest("договор");
         assertThatThrownBy(() -> impl.updateDocType(-1L, updateRequest))
                 .isInstanceOf(ObjectNotFoundException.class)
@@ -91,7 +88,6 @@ class DocTypeServiceImplTest {
 
     @Test
     void deleteDocTypeThenNotNull() {
-        impl = new DocTypeServiceImpl(docTypeRepository, docAttributeRepository);
         boolean isExistBeforeDelete = docTypeRepository.findById(1L).isPresent();
         impl.deleteDocType(1L);
         boolean isExistAfterDelete = docTypeRepository.findById(1L).isPresent();
@@ -100,7 +96,6 @@ class DocTypeServiceImplTest {
 
     @Test
     void deleteDocTypeThenObjectNotFoundException() {
-        impl = new DocTypeServiceImpl(docTypeRepository, docAttributeRepository);
         assertThatThrownBy(() -> impl.deleteDocType(-1L))
                 .isInstanceOf(ObjectNotFoundException.class)
                 .hasMessageContaining("не найден");
@@ -108,7 +103,6 @@ class DocTypeServiceImplTest {
 
     @Test
     void getDocTypesByNameThenNotEmpty() {
-        impl = new DocTypeServiceImpl(docTypeRepository, docAttributeRepository);
         assertThat(impl.getDocTypesByName("Накладная"))
                 .isNotEmpty()
                 .hasSize(1);
@@ -116,14 +110,12 @@ class DocTypeServiceImplTest {
 
     @Test
     void getDocTypesByNameThenEmpty() {
-        impl = new DocTypeServiceImpl(docTypeRepository, docAttributeRepository);
         assertThat(impl.getDocTypesByName("договор"))
                 .isEmpty();
     }
 
     @Test
     void attributeToTypeThenHasSizeOne() {
-        impl = new DocTypeServiceImpl(docTypeRepository, docAttributeRepository);
         DocAttribute docAttribute = docAttributeRepository.findById(1L).get();
         assertThat(impl.attributeToType(1L, 1L).getAttributes())
                 .hasSize(1)
@@ -132,7 +124,6 @@ class DocTypeServiceImplTest {
 
     @Test
     void attributeToTypeThenNoSuchElementExceptionForDocType() {
-        impl = new DocTypeServiceImpl(docTypeRepository, docAttributeRepository);
         assertThatThrownBy(() -> impl.attributeToType(-1L, 1L))
                 .isInstanceOf(NoSuchElementException.class)
                 .hasMessageContaining("No value present");
@@ -140,7 +131,6 @@ class DocTypeServiceImplTest {
 
     @Test
     void attributeToTypeThenNoSuchElementExceptionForDocAttribute() {
-        impl = new DocTypeServiceImpl(docTypeRepository, docAttributeRepository);
         assertThatThrownBy(() -> impl.attributeToType(1L, -1L))
                 .isInstanceOf(NoSuchElementException.class)
                 .hasMessageContaining("No value present");
