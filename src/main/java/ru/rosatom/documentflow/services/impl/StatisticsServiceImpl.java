@@ -7,6 +7,7 @@ import ru.rosatom.documentflow.dto.StatisticUsersAndOrg;
 import ru.rosatom.documentflow.dto.UserRatingDto;
 import ru.rosatom.documentflow.models.DocProcessStatus;
 import ru.rosatom.documentflow.repositories.UserRepository;
+import ru.rosatom.documentflow.models.UserOrganization;
 import ru.rosatom.documentflow.services.DocumentService;
 import ru.rosatom.documentflow.services.StatisticsService;
 import ru.rosatom.documentflow.services.UserOrganizationService;
@@ -50,5 +51,10 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Override
     public List<UserRatingDto> getRatingAllUsersByOrgId(Long orgId) {
         return userRepository.findRatingForAllUsersByOrganizationId(orgId);
+    }
+
+    @Override
+    public List<UserOrganization> getAllActiveOrganization() {
+        return userOrganizationService.getAllActiveOrganization();
     }
 }

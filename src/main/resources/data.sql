@@ -7,7 +7,9 @@ values ('Admin','Admin','Admin','2002-09-26 00:00:00.000000','admin@mail.ru','89
        ('User 1','test','test','2002-09-26 00:00:00.000000','user1@mail.ru','89853661412',
         '$2a$10$zXJXdvir4P4ZYQEsIF4mSOzVLG2fAzdFBTnZreyLb6zly3L9CHTOS','none','USER',1,1),
        ('User 2','test','test','2002-09-26 00:00:00.000000','user2@mail.ru','89853661413',
-        '$2a$10$zXJXdvir4P4ZYQEsIF4mSOzVLG2fAzdFBTnZreyLb6zly3L9CHTOS','none','USER',1,1);
+        '$2a$10$zXJXdvir4P4ZYQEsIF4mSOzVLG2fAzdFBTnZreyLb6zly3L9CHTOS','none','USER',1,1),
+       ('User 3','test','test','2002-09-26 00:00:00.000000','user3@mail.ru','89853661414',
+        '$2a$10$zXJXdvir4P4ZYQEsIF4mSOzVLG2fAzdFBTnZreyLb6zly3L9CHTOS','none','USER',1,2);
 INSERT INTO ATTRIBUTES (NAME, TYPE)
 VALUES
     ('Name attribute 1', 'type attribute 1'),
@@ -18,15 +20,16 @@ VALUES
     ('Name attribute 6', 'type attribute 6');
 INSERT INTO DOCUMENT_TYPES (NAME)
 VALUES
-    ('DOCUMENT_TYPES 1'),
-    ('DOCUMENT_TYPES 2'),
-    ('DOCUMENT_TYPES 3'),
-    ('DOCUMENT_TYPES 4'),
-    ('DOCUMENT_TYPES 5');
-INSERT INTO documents (title, document_path, created_at, organization_id, owner_id, type_id)
+    ('Накладная'),
+    ('Счёт-фактура'),
+    ('Опись имущества'),
+    ('Письмо'),
+    ('Донос');
+INSERT INTO documents (name, document_path, created_at, organization_id, owner_id, type_id)
 VALUES
     ('Test Document 1', '/path/to/document1', NOW(), 1, 1, 1),
-    ('Test Document 2', '/path/to/document2', NOW(), 2, 2, 2);
+    ('Test Document 2', '/path/to/document2', NOW(), 2, 2, 2),
+    ('Test Document 3', '/path/to/document3', NOW(), 2, 4, 2);
 INSERT INTO document_process (document_id, sender_id, recipient_id, status, comment)
 VALUES
     (1, 1, 2, 'NEW', 'Test Comment 1'),

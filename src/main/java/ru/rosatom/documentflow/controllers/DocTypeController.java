@@ -23,8 +23,8 @@ import ru.rosatom.documentflow.services.DocTypeService;
 @PreAuthorize("hasAuthority('ADMIN')")
 public class DocTypeController {
 
-  private final DocTypeService docTypeService;
-  private final ModelMapper modelMapper;
+    private final DocTypeService docTypeService;
+    private final ModelMapper modelMapper;
 
   @GetMapping
   List<DocTypeDto> getAllDocTypes(
@@ -41,13 +41,14 @@ public class DocTypeController {
     return convertToDto(docType);
   }
 
-  @PostMapping
-  @ResponseStatus(HttpStatus.CREATED)
-  public DocTypeDto createDocType(@Valid @RequestBody DocTypeCreateDto docTypeCreateDto) {
-    DocTypeCreationRequest docTypeCreationRequest =
-        modelMapper.map(docTypeCreateDto, DocTypeCreationRequest.class);
-    DocType docType = docTypeService.createDocType(docTypeCreationRequest);
-    log.info("Получен запрос на создание DocType: {}", docTypeCreateDto);
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public DocTypeDto createDocType(@Valid @RequestBody DocTypeCreateDto docTypeCreateDto) {
+
+        DocTypeCreationRequest docTypeCreationRequest =
+                modelMapper.map(docTypeCreateDto, DocTypeCreationRequest.class);
+        DocType docType = docTypeService.createDocType(docTypeCreationRequest);
+        log.info("Получен запрос на создание DocType: {}", docTypeCreateDto);
 
     return convertToDto(docType);
   }

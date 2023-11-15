@@ -99,7 +99,12 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
      */
     @Override
     public List<UserOrganization> getOrganizationsByNameLike(String name) {
-        return repository.findByNameContains(name);
+        return repository.findByNameContainsIgnoreCase(name);
+    }
+
+    @Override
+    public List<UserOrganization> getAllActiveOrganization() {
+        return repository.findActiveOrganization();
     }
 
 
