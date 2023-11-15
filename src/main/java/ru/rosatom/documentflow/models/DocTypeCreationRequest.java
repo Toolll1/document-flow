@@ -7,4 +7,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class DocTypeCreationRequest {
     private String name;
+    private AgreementType agreementType;
 }

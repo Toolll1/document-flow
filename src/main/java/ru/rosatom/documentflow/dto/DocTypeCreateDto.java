@@ -10,4 +10,5 @@ import javax.validation.constraints.Size;
 public class DocTypeCreateDto {
     @Size(min = 1, max = 255)
     private String name;
+    private String agreementType;
 }

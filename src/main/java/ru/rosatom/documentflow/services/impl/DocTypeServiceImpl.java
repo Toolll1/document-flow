@@ -1,8 +1,5 @@
 package ru.rosatom.documentflow.services.impl;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +15,10 @@ import ru.rosatom.documentflow.repositories.DocAttributeRepository;
 import ru.rosatom.documentflow.repositories.DocTypeRepository;
 import ru.rosatom.documentflow.services.DocTypeService;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -29,7 +30,7 @@ public class DocTypeServiceImpl implements DocTypeService {
   @Override
   public Page<DocType> getAllDocTypes(Optional<Integer> page, Optional<String> sortBy) {
     return docTypeRepository.findAll(
-        PageRequest.of(page.orElse(0), 20, Sort.Direction.ASC, sortBy.orElse("id")));
+            PageRequest.of(page.orElse(0), 20, Sort.Direction.ASC, sortBy.orElse("id")));
   }
 
   @Override
@@ -43,7 +44,10 @@ public class DocTypeServiceImpl implements DocTypeService {
 
   @Override
   public DocType createDocType(DocTypeCreationRequest docTypeCreationRequest) {
-    DocType docType = DocType.builder().name(docTypeCreationRequest.getName()).build();
+    DocType docType = DocType.builder()
+            .name(docTypeCreationRequest.getName())
+            .agreementType(docTypeCreationRequest.getAgreementType())
+            .build();
     return docTypeRepository.save(docType);
   }
 
@@ -53,7 +57,7 @@ public class DocTypeServiceImpl implements DocTypeService {
     if (docTypeRepository.existsById(docTypeId)) {
       DocType docType = getDocTypeById(docTypeId);
       docType.setName(
-          Objects.requireNonNullElse(docTypeUpdateRequest.getName(), docType.getName()));
+              Objects.requireNonNullElse(docTypeUpdateRequest.getName(), docType.getName()));
 
       return docTypeRepository.save(docType);
     } else {

@@ -25,7 +25,7 @@ public class StatisticsController {
     }
 
     @GetMapping("/documents/getCountByStatus/{status}")
-    public DocStatisticDTO getCountByStatus(@PathVariable String stringStatus) {
+    public DocStatisticDTO getCountByStatus(@PathVariable(name = "status") String stringStatus) {
         return statisticsService.getCountByStatus(stringStatus);
     }
 
