@@ -5,4 +5,5 @@ import lombok.Data;
 @Data
 public class DocTypeCreationRequest {
     private String name;
+    private AgreementType agreementType;
 }

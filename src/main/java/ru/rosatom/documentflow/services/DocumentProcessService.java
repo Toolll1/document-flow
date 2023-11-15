@@ -4,6 +4,7 @@ import ru.rosatom.documentflow.models.DocProcess;
 import ru.rosatom.documentflow.models.ProcessUpdateRequest;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface DocumentProcessService {
 
@@ -14,6 +15,9 @@ public interface DocumentProcessService {
     DocProcess findProcessById(Long processId);
 
     Collection<DocProcess> findProcessesByDocumentId(Long documentId);
+    List<DocProcess> getIncomingProcessesByUserId(Long userId);
+
+    List<DocProcess> getOutgoingProcessesByUserId(Long userId);
 
     void approve(ProcessUpdateRequest processUpdateRequest);
 

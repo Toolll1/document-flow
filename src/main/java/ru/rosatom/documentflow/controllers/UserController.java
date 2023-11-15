@@ -98,7 +98,7 @@ public class UserController {
 
         log.info("Received a request to search for all users for params: ids {}, sort {}, from {}, size {}", ids, sort, from, size);
 
-        return userService.getUsers(ids, sort.toUpperCase(), from, size).stream()
+        return userService.getUsers(ids, sort, from, size).stream()
                 .map(userMapper::objectToReplyDto)
                 .collect(Collectors.toList());
     }

@@ -4,11 +4,20 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.rosatom.documentflow.exceptions.IllegalProcessStatusException;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
-import ru.rosatom.documentflow.models.*;
+import ru.rosatom.documentflow.models.AgreementType;
+import ru.rosatom.documentflow.models.DocProcess;
+import ru.rosatom.documentflow.models.DocProcessStatus;
+import ru.rosatom.documentflow.models.Document;
+import ru.rosatom.documentflow.models.ProcessUpdateRequest;
+import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
 import ru.rosatom.documentflow.services.DocumentProcessService;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static ru.rosatom.documentflow.models.DocProcessStatus.*;
@@ -63,6 +72,24 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         throwIfStatusNotCorrect(docProcess, DocProcessStatus.WAITING_FOR_APPROVE);
         docProcess.setStatus(DocProcessStatus.WAITING_FOR_APPROVE);
         docProcessRepository.save(docProcess);
+    }
+
+    /**
+     * Получить список процессов по id получателя
+     * @param userId - id получателя
+     * @return Список процессов
+     */
+    public List<DocProcess> getIncomingProcessesByUserId(Long userId){
+        return docProcessRepository.findAllByRecipientId(userId);
+    }
+
+    /**
+     * Получить список процессов по id отправителя
+     * @param userId - id отправителя
+     * @return Список процессов
+     */
+    public List<DocProcess> getOutgoingProcessesByUserId(Long userId){
+        return docProcessRepository.findAllBySenderId(userId);
     }
 
     private void throwIfStatusNotCorrect(DocProcess docProcess, DocProcessStatus attemptStatus) {
