@@ -6,10 +6,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
-import ru.rosatom.documentflow.models.DocAttribute;
-import ru.rosatom.documentflow.models.DocType;
-import ru.rosatom.documentflow.models.DocTypeCreationRequest;
-import ru.rosatom.documentflow.models.DocTypeUpdateRequest;
+import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocAttributeRepository;
 import ru.rosatom.documentflow.repositories.DocTypeRepository;
 
@@ -17,6 +14,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -69,8 +67,8 @@ class DocTypeServiceImplTest {
     @Test
     void createDocTypeThenNotNull() {
         impl = new DocTypeServiceImpl(docTypeRepository, docAttributeRepository);
-        DocTypeCreationRequest creationRequest = new DocTypeCreationRequest("договор");
-        assertThat(impl.createDocType(creationRequest)).isNotNull();
+        DocTypeCreationRequest creationRequest = new DocTypeCreationRequest("договор", AgreementType.ANYONE);
+        assertNotNull(impl.createDocType(creationRequest));
     }
 
     @Test
