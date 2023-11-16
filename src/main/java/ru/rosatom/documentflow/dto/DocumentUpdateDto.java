@@ -1,5 +1,6 @@
 package ru.rosatom.documentflow.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
@@ -13,17 +14,29 @@ import java.util.List;
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Schema(name = "Обновление документа")
 public class DocumentUpdateDto {
-    @Nullable
-    String name;
-    @Nullable
-    String documentPath;
-    @Nullable
-    LocalDateTime date;
-    @Nullable
-    Long docTypeId;
-    @Nullable
-    String previousVersion;
-    @Nullable
-    List<DocAttributeValueCreateDto> attributeValues = new ArrayList<>();
+  @Schema(name = "Название")
+  @Nullable
+  String name;
+
+  @Schema(name = "Путь документа")
+  @Nullable
+  String documentPath;
+
+  @Schema(name = "Дата обновления")
+  @Nullable
+  LocalDateTime date;
+
+  @Schema(name = "ID типа")
+  @Nullable
+  Long docTypeId;
+
+  @Schema(name = "Предыдущая версия")
+  @Nullable
+  String previousVersion;
+
+  @Schema(name = "Список атрибутов")
+  @Nullable
+  List<DocAttributeValueCreateDto> attributeValues = new ArrayList<>();
 }
