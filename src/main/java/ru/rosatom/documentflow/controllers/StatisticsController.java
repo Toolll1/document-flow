@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import ru.rosatom.documentflow.models.UserOrganization;
 import ru.rosatom.documentflow.services.StatisticsService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,12 +27,13 @@ import java.util.List;
 @Tag(name = "Статистика")
 public class StatisticsController {
   private final StatisticsService statisticsService;
+  private final ModelMapper modelMapper;
 
   @Operation(summary = "Получить общее кол-во документов")
   @GetMapping("/documents/getCount")
   @SecurityRequirement(name = "JWT")
   public DocStatisticDTO getCount() {
-    return statisticsService.getCount();
+    return modelMapper.map(statisticsService.getCount(), DocStatisticDTO.class);
   }
 
   @Operation(summary = "Получить кол-во документов со статусом")
@@ -38,14 +41,14 @@ public class StatisticsController {
   @SecurityRequirement(name = "JWT")
   public DocStatisticDTO getCountByStatus(
       @PathVariable @Parameter(description = "Наименование статуса") String stringStatus) {
-    return statisticsService.getCountByStatus(stringStatus);
+    return modelMapper.map(statisticsService.getCountByStatus(stringStatus), DocStatisticDTO.class);
   }
 
   @Operation(summary = "Получить кол-во пользователей и организаций")
   @GetMapping("/userAndOrganisation")
   @SecurityRequirement(name = "JWT")
   public StatisticUsersAndOrg statisticsUserAndOrganization() {
-    return statisticsService.statisticsUserAndOrganization();
+    return modelMapper.map(statisticsService.statisticsUserAndOrganization(), StatisticUsersAndOrg.class);
   }
 
   @Operation(summary = "Получить рейтинг активных пользователей по организации")
@@ -53,13 +56,17 @@ public class StatisticsController {
   @SecurityRequirement(name = "JWT")
   public List<UserRatingDto> getRating(
       @PathVariable @Parameter(description = "ID организации") Long orgId) {
-    return statisticsService.getRatingAllUsersByOrgId(orgId);
+    return statisticsService.getRatingAllUsersByOrgId(orgId).stream()
+            .map(o -> modelMapper.map(o, UserRatingDto.class))
+            .collect(Collectors.toList());
   }
 
   @Operation(summary = "Получить список самых активных организаций")
   @GetMapping("/getActiveOrganization")
   @SecurityRequirement(name = "JWT")
   public List<UserOrganization> getActiveOrganization() {
-    return statisticsService.getAllActiveOrganization();
+    return statisticsService.getAllActiveOrganization().stream()
+            .map(o -> modelMapper.map(o, UserOrganization.class))
+            .collect(Collectors.toList());
   }
 }
