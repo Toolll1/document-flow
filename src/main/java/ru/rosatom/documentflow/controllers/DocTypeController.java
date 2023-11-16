@@ -28,8 +28,8 @@ import ru.rosatom.documentflow.services.DocTypeService;
 @Tag(name = "Тип документа")
 public class DocTypeController {
 
-  private final DocTypeService docTypeService;
-  private final ModelMapper modelMapper;
+    private final DocTypeService docTypeService;
+    private final ModelMapper modelMapper;
 
   @Operation(summary = "Получить все типы", description = "Все типы с пагинацией и сортировкой")
   @GetMapping

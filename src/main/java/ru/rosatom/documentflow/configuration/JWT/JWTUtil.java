@@ -21,6 +21,7 @@ public class JWTUtil {
     @Value("${jwt.expires_in}")
     private int expiresIn;
 
+
     private Claims getAllClaimsFromToken(String token) {
         Claims claims;
         try {

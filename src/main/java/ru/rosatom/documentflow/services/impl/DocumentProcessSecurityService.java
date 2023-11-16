@@ -17,7 +17,7 @@ public class DocumentProcessSecurityService {
         return documentService.findDocumentById(documentId).getOwnerId().equals(userId);
     }
 
-    public boolean isHasAccess(Long processId, Long userId) {
+    public boolean isHasAccessToProcess(Long processId, Long userId) {
         DocProcess docProcess = documentProcessService.findProcessById(processId);
         return docProcess.getSender().getId().equals(userId) || docProcess.getRecipient().getId().equals(userId);
     }

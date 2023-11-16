@@ -26,7 +26,7 @@ public class DocumentDto {
   @Schema(name = "Название")
   @NotNull
   @NotEmpty
-  String title;
+  String name;
 
   @Schema(name = "Путь документа")
   @NotNull
@@ -56,3 +56,4 @@ public class DocumentDto {
   @Schema(name = "Статус")
   DocProcessStatus finalDocStatus;
 }
+

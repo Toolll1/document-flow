@@ -1,10 +1,14 @@
 package ru.rosatom.documentflow.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.*;
-import lombok.*;
 
 @Data
 @AllArgsConstructor
@@ -22,8 +26,9 @@ public class DocAttribute {
   @Column(name = "name", nullable = false, length = 320)
   private String name;
 
-  @Column(name = "type", nullable = false, length = 16)
-  private String type;
+    @Column(name = "type", nullable = false, length = 500)
+    private String type;
+
 
   @JsonIgnore
   @ManyToMany(mappedBy = "attributes")

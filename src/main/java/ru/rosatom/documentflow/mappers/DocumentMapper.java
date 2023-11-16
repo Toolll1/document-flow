@@ -36,10 +36,6 @@ public class DocumentMapper {
             attributeValues.add(values);
         }
         return Document.builder()
-                .id(dto.getId())
-                .title(dto.getTitle())
-                .documentPath(dto.getDocumentPath())
-                .date(dto.getDate())
                 .idOrganization(dto.getIdOrganization())
                 .docType(docTypeService.getDocTypeById(dto.getDocTypId()))
                 .attributeValues(attributeValues)
@@ -49,7 +45,7 @@ public class DocumentMapper {
     public DocumentDto documentToDto(Document document) {
         return DocumentDto.builder()
                 .id(document.getId())
-                .title(document.getTitle())
+                .name(document.getName())
                 .documentPath(document.getDocumentPath())
                 .date(document.getDate())
                 .idOrganization(document.getIdOrganization())

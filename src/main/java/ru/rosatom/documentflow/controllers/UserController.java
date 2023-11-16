@@ -138,10 +138,10 @@ public class UserController {
         from,
         size);
 
-    return userService.getUsers(ids, sort.toUpperCase(), from, size).stream()
-        .map(userMapper::objectToReplyDto)
-        .collect(Collectors.toList());
-  }
+        return userService.getUsers(ids, sort, from, size).stream()
+                .map(userMapper::objectToReplyDto)
+                .collect(Collectors.toList());
+    }
 
   @Operation(summary = "Получить пользователя по номеру телефона")
   @GetMapping("/phone/{phone}")
