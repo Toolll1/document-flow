@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.rosatom.documentflow.dto.DocStatisticDTO;
+import ru.rosatom.documentflow.dto.ReasonChangesInDocumentDto;
 import ru.rosatom.documentflow.dto.StatisticUsersAndOrg;
 import ru.rosatom.documentflow.services.StatisticsService;
 
@@ -13,7 +14,8 @@ import ru.rosatom.documentflow.services.StatisticsService;
 @RequiredArgsConstructor
 @RequestMapping("/statistic")
 public class StatisticsController {
-    private StatisticsService statisticsService;
+
+    private final StatisticsService statisticsService;
 
     @GetMapping("/documents/getCount")
     public DocStatisticDTO getCount() {
@@ -28,5 +30,10 @@ public class StatisticsController {
     @GetMapping("/userAndOrganisation")
     public StatisticUsersAndOrg statisticsUserAndOrganization(){
         return statisticsService.statisticsUserAndOrganization();
+    }
+
+    @GetMapping("/reasonsChanges/{id}")
+    public ReasonChangesInDocumentDto reasonChangesInDocument(@PathVariable String id) {
+        return statisticsService.reasonChanges(Long.parseLong(id));
     }
 }
