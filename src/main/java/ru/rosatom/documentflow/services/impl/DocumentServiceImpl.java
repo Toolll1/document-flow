@@ -86,7 +86,7 @@ public class DocumentServiceImpl implements DocumentService {
 
         User user = userService.getUser(document.getOwnerId());
         String name = TranslitText.transliterate(user.getLastName()).replaceAll(" ", "").toLowerCase() + document.getId() + ".docx";
-        String path = new File("src\\main\\java\\ru\\rosatom\\documentflow\\files\\" + name).getAbsolutePath();
+        String path = new File("files/"+System.currentTimeMillis()+name).getAbsolutePath();
         File file = new File(path);
 
         if (file.exists()) {
