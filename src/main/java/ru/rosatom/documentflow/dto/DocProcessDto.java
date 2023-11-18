@@ -6,24 +6,24 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@Schema(name = "Процесс изменения документа")
+@Schema(description = "Процесс изменения документа")
 public class DocProcessDto {
 
-    @Schema(name = "ID процесса")
-    private Long id;
+  @Schema(description = "ID процесса")
+  private Long id;
 
-    @Schema(name = "Документ")
-    private Long document;
+  @Schema(description = "Документ")
+  private Long document;
 
-    @Schema(name = "Отправитель")
-    private Long sender;
+  @Schema(description = "Отправитель")
+  private Long sender;
 
-    @Schema(name = "Получатель")
-    private Long recipient;
+  @Schema(description = "Получатель")
+  private Long recipient;
 
-    @Schema(name = "Статус")
-    private String status;
+  @Schema(description = "Статус")
+  private String status;
 
-    @Schema(name = "Комментарий")
-    private String comment;
+  @Schema(description = "Комментарий")
+  private String comment;
 }

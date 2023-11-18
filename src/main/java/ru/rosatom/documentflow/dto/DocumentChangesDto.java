@@ -11,24 +11,24 @@ import java.time.LocalDate;
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Schema(name = "Изменения в документе")
+@Schema(description = "Изменения в документе")
 public class DocumentChangesDto {
 
-    @Schema(name = "ID изменения")
+    @Schema(description = "ID изменения")
     Long id;
 
-    @Schema(name = "ID документа")
+    @Schema(description = "ID документа")
     Long documentId;
 
-    @Schema(name = "Дата изменения")
+    @Schema(description = "Дата изменения")
     LocalDate dateChange;
 
-    @Schema(name = "Изменения")
+    @Schema(description = "Изменения")
     String changes;
 
-    @Schema(name = "Предыдущая версия")
+    @Schema(description = "Предыдущая версия")
     String previousVersion;
 
-    @Schema(name = "ID автора изменения")
+    @Schema(description = "ID автора изменения")
     Long userChangerId;
 }

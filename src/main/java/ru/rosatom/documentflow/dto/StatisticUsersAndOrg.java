@@ -6,12 +6,12 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@Schema(name = "Статистика пользователя и организации")
+@Schema(description = "Статистика пользователя и организации")
 public class StatisticUsersAndOrg {
-    @Schema(name = "Количество пользователей")
+    @Schema(description = "Количество пользователей")
     int countUser;
 
-    @Schema(name = "Количество организаций")
+    @Schema(description = "Количество организаций")
     int countOrganization;
 
     public StatisticUsersAndOrg(int countUser, int countOrganization) {

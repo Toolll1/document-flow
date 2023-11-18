@@ -8,21 +8,21 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 @Builder
-@Schema(name = "Рейтинг пользователя")
+@Schema(description = "Рейтинг пользователя")
 public class UserRatingDto {
 
-    @Schema(name = "ID пользователя")
+    @Schema(description = "ID пользователя")
     private long id;
 
-    @Schema(name = "Фамилия")
+    @Schema(description = "Фамилия")
     private final String lastName;
 
-    @Schema(name = "Имя")
+    @Schema(description = "Имя")
     private final String firstName;
 
-    @Schema(name = "Email")
+    @Schema(description = "Email")
     private final String email;
 
-    @Schema(name = "Количество созданных документов")
+    @Schema(description = "Количество созданных документов")
     private final long createdDocuments;
 }

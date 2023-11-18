@@ -13,33 +13,33 @@ import ru.rosatom.documentflow.models.UserRole;
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
 @Builder
-@Schema(name = "Ответ на получение пользователя")
+@Schema(description = "Ответ на получение пользователя")
 public class UserReplyDto {
 
-    @Schema(name = "ID пользователя")
+    @Schema(description = "ID пользователя")
     private final Long id;
 
-    @Schema(name = "ФИО")
+    @Schema(description = "ФИО")
     private final String fullName;
 
-    @Schema(name = "Дата рождения")
+    @Schema(description = "Дата рождения")
     private final String dateOfBirth;
 
-    @Schema(name = "Email")
+    @Schema(description = "Email")
     private final String email;
 
-    @Schema(name = "Телефон")
+    @Schema(description = "Телефон")
     private final String phone;
 
-    @Schema(name = "Описание")
+    @Schema(description = "Описание")
     private final String post;
 
-    @Schema(name = "Роль")
+    @Schema(description = "Роль")
     private final UserRole role;
 
-    @Schema(name = "Паспорт")
+    @Schema(description = "Паспорт")
     private final UserPassport passport;
 
-    @Schema(name = "Организация")
+    @Schema(description = "Организация")
     private final UserOrganization organization;
 }
