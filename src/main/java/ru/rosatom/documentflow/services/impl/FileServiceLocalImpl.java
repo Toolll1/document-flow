@@ -10,6 +10,7 @@ import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.wml.Jc;
 import org.docx4j.wml.JcEnumeration;
 import org.docx4j.wml.PPr;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import ru.rosatom.documentflow.adapters.TranslitText;
 import ru.rosatom.documentflow.dto.UserReplyDto;
@@ -27,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
+@ConditionalOnProperty(prefix = "service", name = "file", havingValue = "local")
 public class FileServiceLocalImpl implements FileService {
 
     private final UserService userService;

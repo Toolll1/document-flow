@@ -31,11 +31,10 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
-@ConditionalOnProperty(
-        value = "project.mq.enabled",
-        matchIfMissing = false)
+
 @Service
 @RequiredArgsConstructor
+@ConditionalOnProperty(prefix = "service", name = "file", havingValue = "minio")
 public class FileServiceMinioImpl implements FileService {
 
     private final MinioClient minioClient = MinioClient.builder()

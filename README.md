@@ -3,7 +3,7 @@ ER-диаграмма:
 ![This is an image](https://i.postimg.cc/vBLDgNG7/ER.png)
 
 Для изменения конфигурации на сохранение файла в minio необходимо изменить 
-значение константы project.mq.enabled в application.properties на true
+значение константы service.file в application.properties на minio
 
 ## Запуск через Docker
 
