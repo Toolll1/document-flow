@@ -152,8 +152,9 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         return docProcessRepository.findAllByDocumentId(documentId);
     }
 
-    private void finalStatusUpdate (Long documentId) {
-        List<DocProcessStatus> processes = findProcessesByDocumentId(documentId)
+    private void finalStatusUpdate(Long documentId) {
+        Collection<DocProcess> docProcess = findProcessesByDocumentId(documentId);
+        List<DocProcessStatus> processes = docProcess
                 .stream()
                 .map(DocProcess::getStatus)
                 .collect(Collectors.toList());
@@ -165,16 +166,16 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         switch (agreementType) {
             case EVERYONE:
                 if (processes.contains(REJECTED)) {
-                    documentService.updateFinalStatus(document, REJECTED);
+                    documentService.updateFinalStatus(document, REJECTED, null);
                 } else {
-                    documentService.updateFinalStatus(document, APPROVED);
+                    documentService.updateFinalStatus(document, APPROVED, docProcess);
                 }
                 break;
             case ANYONE:
                 if (processes.contains(APPROVED)) {
-                    documentService.updateFinalStatus(document, APPROVED);
+                    documentService.updateFinalStatus(document, APPROVED, docProcess);
                 } else {
-                    documentService.updateFinalStatus(document, REJECTED);
+                    documentService.updateFinalStatus(document, REJECTED, null);
                 }
                 break;
             case QUORUM:
@@ -198,7 +199,12 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
                     }
                 }
                 if (maxVotes != secondVotes) {
-                    documentService.updateFinalStatus(document, finalStatus);
+
+                    if (finalStatus.equals(APPROVED)) {
+                        documentService.updateFinalStatus(document, finalStatus, docProcess);
+                    } else {
+                        documentService.updateFinalStatus(document, finalStatus, null);
+                    }
                 }
         }
     }
