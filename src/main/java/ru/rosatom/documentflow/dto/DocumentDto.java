@@ -2,7 +2,11 @@ package ru.rosatom.documentflow.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import ru.rosatom.documentflow.adapters.CommonUtils;
 import ru.rosatom.documentflow.models.DocAttributeValues;
@@ -15,44 +19,44 @@ import java.util.List;
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Schema(name = "Документ")
+@Schema(description = "Документ")
 @NoArgsConstructor
 @AllArgsConstructor
 public class DocumentDto {
   @Schema(name = "ID документа")
   Long id;
 
-  @Schema(name = "Название")
+  @Schema(description = "Название")
   @NotNull
   @NotEmpty
   String name;
 
-  @Schema(name = "Путь документа")
+  @Schema(description = "Путь документа")
   @NotNull
   @NotEmpty
   String documentPath;
 
-  @Schema(name = "Дата последнего обновления")
+  @Schema(description = "Дата последнего обновления")
   @NotNull
   @JsonFormat(pattern = CommonUtils.DATE_TIME_PATTERN)
   LocalDateTime date;
 
-  @Schema(name = "ID организации")
+  @Schema(description = "ID организации")
   @NotNull
   Long idOrganization;
 
-  @Schema(name = "ID создателя")
+  @Schema(description = "ID создателя")
   Long ownerId;
 
-  @Schema(name = "Тип документа")
+  @Schema(description = "Тип документа")
   @NotNull
   String docTypeName;
 
-  @Schema(name = "Список атрибутов")
+  @Schema(description = "Список атрибутов")
   @NotNull
   List<DocAttributeValues> attributeValues;
 
-  @Schema(name = "Статус")
+  @Schema(description = "Статус")
   String finalDocStatus;
 }
 

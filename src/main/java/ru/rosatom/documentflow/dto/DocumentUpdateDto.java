@@ -14,29 +14,29 @@ import java.util.List;
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Schema(name = "Обновление документа")
+@Schema(description = "Обновление документа")
 public class DocumentUpdateDto {
-  @Schema(name = "Название")
+  @Schema(description = "Название")
   @Nullable
-  String name;
+  String name ;
 
-  @Schema(name = "Путь документа")
+  @Schema(description = "Путь документа")
   @Nullable
   String documentPath;
 
-  @Schema(name = "Дата обновления")
+  @Schema(description = "Дата обновления")
   @Nullable
   LocalDateTime date;
 
-  @Schema(name = "ID типа")
+  @Schema(description = "ID типа")
   @Nullable
   Long docTypeId;
 
-  @Schema(name = "Предыдущая версия")
+  @Schema(description = "Предыдущая версия")
   @Nullable
   String previousVersion;
 
-  @Schema(name = "Список атрибутов")
+  @Schema(description = "Список атрибутов")
   @Nullable
   List<DocAttributeValueCreateDto> attributeValues = new ArrayList<>();
 }

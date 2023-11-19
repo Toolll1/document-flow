@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
 @Builder
-@Schema(name = "Данные пользователя для авторизации")
+@Schema(description = "Данные пользователя для авторизации")
 public class UserCredentialsDto {
-    @Schema(name = "Email")
+    @Schema(description = "Email")
     private final String email;
-    @Schema(name = "Пароль")
+    @Schema(description = "Пароль")
     private final String password;
 }

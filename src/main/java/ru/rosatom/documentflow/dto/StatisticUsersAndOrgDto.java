@@ -6,12 +6,12 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-@Schema(name = "Статистика пользователя и организации")
+@Schema(description = "Статистика пользователя и организации")
 public class StatisticUsersAndOrgDto {
-    @Schema(name = "Количество пользователей")
+    @Schema(description = "Количество пользователей")
     private final int countUser;
 
-    @Schema(name = "Количество организаций")
+    @Schema(description = "Количество организаций")
     private final int countOrganization;
 
 }
