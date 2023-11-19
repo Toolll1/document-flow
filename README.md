@@ -1,8 +1,9 @@
 # document-flow
 ER-диаграмма:
-![This is an image](https://i.postimg.cc/qMTRjYNK/ER.png)
+![This is an image](https://i.postimg.cc/vBLDgNG7/ER.png)
 
-
+Для изменения конфигурации на сохранение файла в minio необходимо изменить 
+значение константы project.mq.enabled в application.properties на true
 
 ## Запуск через Docker
 

@@ -10,7 +10,6 @@ import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.wml.Jc;
 import org.docx4j.wml.JcEnumeration;
 import org.docx4j.wml.PPr;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import ru.rosatom.documentflow.adapters.TranslitText;
 import ru.rosatom.documentflow.dto.UserReplyDto;
@@ -26,7 +25,6 @@ import java.nio.file.FileSystems;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
-@Primary
 @Service
 @RequiredArgsConstructor
 public class FileServiceLocalImpl implements FileService {
@@ -115,7 +113,7 @@ public class FileServiceLocalImpl implements FileService {
 
         converter.convert(fileDocx).as(DocumentType.MS_WORD)
                 .to(filePdf).as(DocumentType.PDF)
-                .prioritizeWith(1000) // optional
+                .prioritizeWith(1000)
                 .schedule();
     }
 
