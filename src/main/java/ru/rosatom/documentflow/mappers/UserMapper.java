@@ -21,9 +21,15 @@ public class UserMapper {
                 .phone(user.getPhone())
                 .email(user.getEmail())
                 .post(user.getPost())
-                .role(user.getRole())
-                .passport(user.getPassport())
-                .organization(user.getOrganization())
+                .role(user.getRole().toString())
+                .passportDate(String.valueOf(user.getPassport().getDate()))
+                .passportIssued(user.getPassport().getIssued())
+                .passportKp(user.getPassport().getKp())
+                .passportNumber(user.getPassport().getNumber())
+                .passportSeries(user.getPassport().getSeries())
+                .organizationId(user.getOrganization().getId())
+                .innOrganization(user.getOrganization().getInn())
+                .nameOrganization(user.getOrganization().getName())
                 .build();
     }
 

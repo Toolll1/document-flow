@@ -5,9 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.rosatom.documentflow.models.UserOrganization;
-import ru.rosatom.documentflow.models.UserPassport;
-import ru.rosatom.documentflow.models.UserRole;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Data
 @AllArgsConstructor
@@ -35,11 +36,41 @@ public class UserReplyDto {
     private final String post;
 
     @Schema(name = "Роль")
-    private final UserRole role;
+    private final String role;
 
-    @Schema(name = "Паспорт")
-    private final UserPassport passport;
+    @Schema(name = "Серия паспорта", minLength = 4, maxLength = 4)
+    @NotBlank
+    @Size(min = 4, max = 4)
+    private final String passportSeries;
 
-    @Schema(name = "Организация")
-    private final UserOrganization organization;
+    @Schema(name = "Номер паспорта", minLength = 6, maxLength = 6)
+    @NotBlank
+    @Size(min = 6, max = 6)
+    private final String passportNumber;
+
+    @Schema(name = "Кем выдан паспорт", minLength = 2, maxLength = 1000)
+    @NotBlank
+    @Size(min = 2, max = 1000)
+    private final String passportIssued; // кем выдан
+
+    @Schema(name = "Дата выдачи паспорта", minLength = 10, maxLength = 10)
+    @NotBlank
+    @Size(min = 10, max = 10)
+    private final String passportDate;
+
+    @Schema(name = "Код подразделения", minLength = 6, maxLength = 6)
+    @NotBlank
+    @Size(min = 6, max = 6)
+    private final String passportKp; // код подразделения
+
+    @Schema(name = "ID организации")
+    @NotNull
+    private final Long organizationId;
+
+    @Schema(name = "Название организации")
+    private String nameOrganization;
+
+    @Schema(name = "ИНН организации")
+    private String innOrganization;
+
 }

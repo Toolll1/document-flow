@@ -15,10 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.rosatom.documentflow.adapters.TranslitText;
-import ru.rosatom.documentflow.dto.DocAttributeValueCreateDto;
-import ru.rosatom.documentflow.dto.DocParams;
-import ru.rosatom.documentflow.dto.DocumentUpdateDto;
-import ru.rosatom.documentflow.dto.UserReplyDto;
+import ru.rosatom.documentflow.dto.*;
 import ru.rosatom.documentflow.exceptions.BadRequestException;
 import ru.rosatom.documentflow.exceptions.ConflictException;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
@@ -105,8 +102,8 @@ public class DocumentServiceImpl implements DocumentService {
             mainDocumentPart.addStyledParagraphOfText("Title", document.getDocType().getName());
             mainDocumentPart.addParagraphOfText("ФИО: " + userReplyDto.getFullName()).setPPr(paragraphProperties);
             mainDocumentPart.addParagraphOfText("Дата рождения: " + userReplyDto.getDateOfBirth()).setPPr(paragraphProperties);
-            mainDocumentPart.addParagraphOfText("Организация: " + userReplyDto.getOrganization().getName()).setPPr(paragraphProperties);
-            mainDocumentPart.addParagraphOfText("ИНН: " + userReplyDto.getOrganization().getInn()).setPPr(paragraphProperties);
+            mainDocumentPart.addParagraphOfText("Организация: " +userReplyDto.getNameOrganization()).setPPr(paragraphProperties);
+            mainDocumentPart.addParagraphOfText("ИНН: " + userReplyDto.getInnOrganization()).setPPr(paragraphProperties);
             mainDocumentPart.addParagraphOfText("\n\n");
             mainDocumentPart.addParagraphOfText("Значения атрибутов:");
 

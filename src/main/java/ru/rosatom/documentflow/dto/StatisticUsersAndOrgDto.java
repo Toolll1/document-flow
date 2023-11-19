@@ -1,21 +1,17 @@
 package ru.rosatom.documentflow.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
+@AllArgsConstructor
 @Schema(name = "Статистика пользователя и организации")
-public class StatisticUsersAndOrg {
+public class StatisticUsersAndOrgDto {
     @Schema(name = "Количество пользователей")
-    int countUser;
+    private final int countUser;
 
     @Schema(name = "Количество организаций")
-    int countOrganization;
+    private final int countOrganization;
 
-    public StatisticUsersAndOrg(int countUser, int countOrganization) {
-        this.countUser = countUser;
-        this.countOrganization = countOrganization;
-    }
 }

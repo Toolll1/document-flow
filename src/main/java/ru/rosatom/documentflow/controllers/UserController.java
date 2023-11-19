@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -43,7 +42,6 @@ public class UserController {
   private final UserOrganizationService organizationService;
   private final UserPassportMapper passportMapper;
   private final UserMapper userMapper;
-  private final ModelMapper modelMapper;
 
   @Operation(summary = "Добавить пользователя")
   @PostMapping
@@ -57,7 +55,7 @@ public class UserController {
     UserPassport passport = passportMapper.dtoToObject(dto);
     User user = userMapper.dtoToObject(dto, organization, passport);
 
-    return modelMapper.map(userMapper.objectToReplyDto(userService.createUser(organization, passport, user)), UserReplyDto.class);
+    return userMapper.objectToReplyDto(userService.createUser(organization, passport, user));
   }
 
   @Operation(summary = "Изменить пользователя")
@@ -69,7 +67,7 @@ public class UserController {
 
     log.info("Received a request to update a user {}. userId = {}", dto, userId);
 
-    return modelMapper.map(userMapper.objectToReplyDto(userService.updateUser(dto, userId)), UserReplyDto.class);
+    return userMapper.objectToReplyDto(userService.updateUser(dto, userId));
   }
 
   @Operation(summary = "Установить пароль для пользователя")
@@ -102,7 +100,7 @@ public class UserController {
 
     log.info("A request was received to search for a user with an id {}", userId);
 
-    return modelMapper.map(userMapper.objectToReplyDto(userService.getUser(userId)), UserReplyDto.class);
+    return userMapper.objectToReplyDto(userService.getUser(userId));
   }
 
   @Operation(summary = "Получить всех пользователей")
@@ -114,7 +112,6 @@ public class UserController {
 
     return userService.getAllUsers().stream()
             .map(userMapper::objectToReplyDto)
-            .map(o -> modelMapper.map(o, UserReplyDto.class))
             .collect(Collectors.toList());
   }
 
@@ -143,7 +140,6 @@ public class UserController {
 
         return userService.getUsers(ids, sort, from, size).stream()
                 .map(userMapper::objectToReplyDto)
-                .map(o -> modelMapper.map(o, UserReplyDto.class))
                 .collect(Collectors.toList());
     }
 
@@ -155,7 +151,7 @@ public class UserController {
 
     log.info("Received a request to search user for telephone {}", phone);
 
-    return  modelMapper.map(userMapper.objectToReplyDto(userService.getUserByPhone(phone)), UserReplyDto.class);
+    return userMapper.objectToReplyDto(userService.getUserByPhone(phone));
   }
 
   @Operation(summary = "Получить пользователя по eMail")
@@ -166,7 +162,7 @@ public class UserController {
 
     log.info("Received a request to search user for email {}", email);
 
-    return modelMapper.map(userMapper.objectToReplyDto(userService.getUserByEmail(email)), UserReplyDto.class);
+    return userMapper.objectToReplyDto(userService.getUserByEmail(email));
   }
 
   @Operation(summary = "Получить пользователя по паспорту")
@@ -177,7 +173,7 @@ public class UserController {
 
     log.info("Received a request to search user for passport {}", passport);
 
-    return modelMapper.map(userMapper.objectToReplyDto(userService.getUserByPassport(passport)), UserReplyDto.class);
+    return userMapper.objectToReplyDto(userService.getUserByPassport(passport));
   }
 
   @Operation(summary = "Удалить пользователя")

@@ -44,7 +44,6 @@ public class DocAttributeController {
       @RequestParam @Parameter(description = "Номер страницы") Optional<Integer> page,
       @RequestParam @Parameter(description = "Сортировка") Optional<String> sortBy) {
     return docAttributeService.getAllDocAttributes(page, sortBy).stream()
-            .map(this::convertToDto)
             .map(o -> modelMapper.map(o, DocAttributeDto.class))
             .collect(Collectors.toList());
   }
