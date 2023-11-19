@@ -13,16 +13,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.rosatom.documentflow.adapters.TranslitText;
 import ru.rosatom.documentflow.dto.DocumentUpdateDto;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
-import ru.rosatom.documentflow.mappers.DocumentMapper;
 import ru.rosatom.documentflow.mappers.UserMapper;
 import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.*;
+import ru.rosatom.documentflow.services.DocAttributeService;
 import ru.rosatom.documentflow.services.UserOrganizationService;
 import ru.rosatom.documentflow.services.UserService;
 
 import java.io.File;
-import java.lang.reflect.Field;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -45,19 +43,10 @@ public class DocumentServiceImplTest {
     private DocChangesRepository docChangesRepository;
 
     @Mock
-    private UserRepository userRepository;
-
-    @Mock
     private UserService userService;
 
     @Mock
-    private UserOrganizationRepository userOrganizationRepository;
-
-    @Mock
     private UserOrganizationService userOrganizationService;
-
-    @Mock
-    private DocTypeRepository docTypeRepository;
 
     @Mock
     private DocTypeServiceImpl docTypeService;
@@ -65,39 +54,27 @@ public class DocumentServiceImplTest {
     @Mock
     private DocAttributeValuesRepository docAttributeValuesRepository;
 
-    @InjectMocks
-    private DocAttributeServiceImpl docAttributeService;
-
-    @InjectMocks
     private DocumentServiceImpl documentService;
 
     @InjectMocks
     private UserMapper userMapper;
 
     @InjectMocks
-    private DocumentMapper documentMapper;
-
-    @InjectMocks
     private DocumentUpdateDto documentUpdateDto;
+
+    @Mock
+    private DocAttributeService docAttributesService;
 
 
     private Document document;
-    private UserOrganization userOrganization;
     private User user;
-    private DocType docType;
 
-    @SneakyThrows
-    private void setField(Object obj, String fieldName, Object fieldValue) {
-        Field field = obj.getClass().getDeclaredField(fieldName);
-        field.setAccessible(true);
-        field.set(obj, fieldValue);
-    }
 
     @BeforeEach
     public void setup(){
         //documentRepository = Mockito.mock(DocumentRepository.class);
         //documentService = new DocumentServiceImpl(documentRepository);
-        userOrganization = UserOrganization.builder()
+        UserOrganization userOrganization = UserOrganization.builder()
                 .id(1L)
                 .inn("1234567")
                 .name("ООО Зеленоглазое такси")
@@ -113,7 +90,7 @@ public class DocumentServiceImplTest {
                 .build();
 
         java.time.LocalDateTime time = LocalDateTime.now();
-        docType = new DocType();
+        DocType docType = new DocType();
         document = Document.builder()
                 .id(1L)
                 .name("documentOne")
@@ -125,7 +102,17 @@ public class DocumentServiceImplTest {
                 .attributeValues(new ArrayList<>())
                 .build();
 
-        setField(documentService, "userMapper", userMapper);
+
+        documentService = new DocumentServiceImpl(
+                documentRepository,
+                docChangesRepository,
+                userService,
+                userOrganizationService,
+                docTypeService,
+                docAttributeValuesRepository,
+                docAttributesService,
+                userMapper
+        );
 
     }
 
@@ -146,24 +133,20 @@ public class DocumentServiceImplTest {
         assertThat(documentList.size()).isEqualTo(2);
     }
 
-    @SneakyThrows
-    @Test
-    public void createDocumentTest(){
-        List<String> pathParts = List.of("src", "main", "java", "ru", "rosatom", "documentflow", "files");
-        Path path = Path.of("");
-        for (String pathPart : pathParts) {
-            path = Paths.get(path.toString(), pathPart);
-            if (!Files.exists(path)) {
-                Files.createDirectory(path);
-            }
-        }
-
-        String fileName = TranslitText.transliterate(user.getLastName()).replaceAll(" ", "").toLowerCase() + document.getId() + ".docx";
-        path = Paths.get(path.toString(), fileName).toAbsolutePath();
+    void deleteFileIfExist(Path path){
         File file = new File(path.toUri());
         if (file.exists()){
             file.delete();
         }
+    }
+
+    @SneakyThrows
+    @Test
+    public void createDocumentTest(){
+
+        String fileName = TranslitText.transliterate(user.getLastName()).replaceAll(" ", "").toLowerCase() + document.getId() + ".docx";
+        Path path = Paths.get(DocumentServiceImpl.pathToFiles, fileName).toAbsolutePath();
+        deleteFileIfExist(path);
 
         Mockito.when(userService.getUser(user.getId())).thenReturn(user);
         Mockito.when(documentRepository.findById(document.getId())).thenReturn(Optional.ofNullable(document));

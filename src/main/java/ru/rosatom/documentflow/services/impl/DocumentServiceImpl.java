@@ -56,7 +56,8 @@ public class DocumentServiceImpl implements DocumentService {
     final DocTypeService docTypeService;
     final DocAttributeValuesRepository docAttributeValuesRepository;
     final DocAttributeService docAttributeService;
-    private final UserMapper userMapper;
+    final UserMapper userMapper;
+    static final String pathToFiles = "src\\main\\java\\ru\\rosatom\\documentflow\\files\\";
     private final MinioClient minioClient = MinioClient.builder()
             .endpoint("http://minio:9000")
             //.endpoint("http://localhost:9000") // для запуска нашего сервиса локально
@@ -73,7 +74,7 @@ public class DocumentServiceImpl implements DocumentService {
         document.setDate(LocalDateTime.now());
         docAttributeValuesRepository.saveAll(document.getAttributeValues());
         document.setName(name); // удалить при включении минио
-        document.setDocumentPath(new File("src\\main\\java\\ru\\rosatom\\documentflow\\files\\" + name).getAbsolutePath()); // удалить при включении минио
+        document.setDocumentPath(new File(pathToFiles + name).getAbsolutePath()); // удалить при включении минио
 
         Document newDocument = documentRepository.save(document);
 
@@ -86,7 +87,7 @@ public class DocumentServiceImpl implements DocumentService {
 
         User user = userService.getUser(document.getOwnerId());
         String name = TranslitText.transliterate(user.getLastName()).replaceAll(" ", "").toLowerCase() + document.getId() + ".docx";
-        String path = new File("src\\main\\java\\ru\\rosatom\\documentflow\\files\\" + name).getAbsolutePath();
+        String path = new File(pathToFiles + name).getAbsolutePath();
         File file = new File(path);
 
         if (file.exists()) {
