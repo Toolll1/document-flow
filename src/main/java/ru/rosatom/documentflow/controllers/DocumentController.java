@@ -48,7 +48,8 @@ public class DocumentController {
   @PostMapping
   @SecurityRequirement(name = "JWT")
   public DocumentDto createDocument(
-      @RequestBody @Valid DocumentCreateDto documentDto, @AuthenticationPrincipal User user) {
+      @RequestBody @Valid @Parameter(description = "DTO создания объекта") DocumentCreateDto documentDto,
+      @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
     log.trace("Создание документа пользователем {} : {}", user.getId(), documentDto);
     return dm.documentToDto(
         documentService.createDocument(dm.documentFromCreateDto(documentDto), user.getId()));
@@ -60,7 +61,7 @@ public class DocumentController {
   @SecurityRequirement(name = "JWT")
   public DocumentDto getDocumentById(
       @PathVariable @Parameter(description = "ID документа") Long documentId,
-      @AuthenticationPrincipal User user) {
+      @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
     log.trace("Запрос информации о документе {} от пользователя {}", documentId, user.getId());
     return dm.documentToDto(documentService.findDocumentById(documentId));
   }
@@ -113,7 +114,7 @@ public class DocumentController {
   @SecurityRequirement(name = "JWT")
   public List<DocumentChangesDto> findDocChangesByDocumentId(
       @PathVariable @Parameter(description = "ID документа") Long documentId,
-      @AuthenticationPrincipal User user) {
+      @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
     log.trace(
         "Запрос информации о истории изменений документа {} от пользователя {}",
         documentId,
@@ -131,8 +132,8 @@ public class DocumentController {
   @SecurityRequirement(name = "JWT")
   public DocumentDto updateDocument(
       @PathVariable @Parameter(description = "ID документа") Long documentId,
-      @RequestBody @Valid DocumentUpdateDto documentUpdateDto,
-      @AuthenticationPrincipal User user) {
+      @RequestBody @Valid @Parameter(description = "DTO изменения документа") DocumentUpdateDto documentUpdateDto,
+      @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
     log.trace("Обновление информации о событии {} пользователем {}", documentId, user.getId());
     return dm.documentToDto(
         documentService.updateDocument(documentUpdateDto, documentId, user.getId()));
@@ -146,7 +147,7 @@ public class DocumentController {
   @SecurityRequirement(name = "JWT")
   public void deleteDocument(
       @PathVariable @Parameter(description = "ID документа") Long documentId,
-      @AuthenticationPrincipal User user) {
+      @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
     log.trace("Удаление документа {} пользователем {}", documentId, user.getId());
     documentService.deleteDocumentById(documentId, user.getId());
   }
@@ -157,7 +158,7 @@ public class DocumentController {
   @SecurityRequirement(name = "JWT")
   public DocumentChangesDto findDocChangesById(
       @PathVariable @Parameter(description = "ID изменения документа") Long documentChangesId,
-      @AuthenticationPrincipal User user) {
+      @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
     log.trace(
         "Запрос информации о изменений {} от пользователя {}", documentChangesId, user.getId());
     return cm.changesToDto(documentService.findDocChangesById(documentChangesId, user.getId()));
@@ -169,7 +170,7 @@ public class DocumentController {
   @SecurityRequirement(name = "JWT")
   public List<DocumentChangesDto> findDocChangesByUserId(
       @PathVariable @Parameter(description = "ID создателя документа") Long creatorId,
-      @AuthenticationPrincipal User user) {
+      @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
     log.trace(
         "Запрос информации о документах измененных пользователем {} от пользователя {}",
         creatorId,

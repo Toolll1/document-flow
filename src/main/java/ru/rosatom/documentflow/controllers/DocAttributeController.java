@@ -58,12 +58,12 @@ public class DocAttributeController {
     return convertToDto(docAttribute);
   }
 
-  @Operation(summary = "Добавить атрибут")
+  @Operation(summary = "Создать атрибут")
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   @SecurityRequirement(name = "JWT")
   public DocAttributeDto createAttribute(
-      @Valid @RequestBody DocAttributeCreateDto docAttributeCreateDto) {
+      @Valid @RequestBody @Parameter(description = "DTO создания атрибута") DocAttributeCreateDto docAttributeCreateDto) {
     DocAttributeCreationRequest docAttributeCreationRequest =
         modelMapper.map(docAttributeCreateDto, DocAttributeCreationRequest.class);
     DocAttribute docAttribute = docAttributeService.createDocAttribute(docAttributeCreationRequest);
@@ -76,7 +76,7 @@ public class DocAttributeController {
   @SecurityRequirement(name = "JWT")
   public DocAttributeDto updateAttribute(
       @PathVariable @Parameter(description = "ID атрибута") Long docAttributeId,
-      @Valid @RequestBody DocAttributeUpdateRequestDto docAttributeUpdateRequestDto) {
+      @Valid @RequestBody @Parameter(description = "DTO изменения типа") DocAttributeUpdateRequestDto docAttributeUpdateRequestDto) {
     DocAttributeUpdateRequest docAttributeUpdateRequest =
         modelMapper.map(docAttributeUpdateRequestDto, DocAttributeUpdateRequest.class);
     DocAttribute docAttribute =

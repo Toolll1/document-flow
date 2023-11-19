@@ -55,7 +55,7 @@ public class DocTypeController {
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   @SecurityRequirement(name = "JWT")
-  public DocTypeDto createDocType(@Valid @RequestBody DocTypeCreateDto docTypeCreateDto) {
+  public DocTypeDto createDocType(@Valid @RequestBody @Parameter(description = "DTO создания типа") DocTypeCreateDto docTypeCreateDto) {
     DocTypeCreationRequest docTypeCreationRequest =
         modelMapper.map(docTypeCreateDto, DocTypeCreationRequest.class);
     DocType docType = docTypeService.createDocType(docTypeCreationRequest);
@@ -69,7 +69,7 @@ public class DocTypeController {
   @SecurityRequirement(name = "JWT")
   public DocTypeDto updateDocType(
       @PathVariable @Parameter(description = "ID типа") Long docTypeId,
-      @Valid @RequestBody DocTypeUpdateRequestDto docTypeUpdateRequestDto) {
+      @Valid @RequestBody @Parameter(description = "DTO изменения типа") DocTypeUpdateRequestDto docTypeUpdateRequestDto) {
     DocTypeUpdateRequest docTypeUpdateRequest =
         modelMapper.map(docTypeUpdateRequestDto, DocTypeUpdateRequest.class);
     DocType docType = docTypeService.updateDocType(docTypeId, docTypeUpdateRequest);

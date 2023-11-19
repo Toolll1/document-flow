@@ -45,7 +45,8 @@ public class OrgController {
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   @SecurityRequirement(name = "JWT")
-  public OrgDto createOrg(@Valid @RequestBody OrgCreateRequestDto orgCreateRequestDto) {
+  public OrgDto createOrg(
+      @Valid @RequestBody @Parameter(description = "DTO создания организации") OrgCreateRequestDto orgCreateRequestDto) {
     OrgCreationRequest orgCreationRequest =
         modelMapper.map(orgCreateRequestDto, OrgCreationRequest.class);
     UserOrganization organization = userOrganizationService.createOrganization(orgCreationRequest);
