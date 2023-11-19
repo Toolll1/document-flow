@@ -111,8 +111,8 @@ public class UserController {
     log.info("A search request was received for all users");
 
     return userService.getAllUsers().stream()
-        .map(userMapper::objectToReplyDto)
-        .collect(Collectors.toList());
+            .map(userMapper::objectToReplyDto)
+            .collect(Collectors.toList());
   }
 
   @Operation(summary = "Получить всех пользователей с сортировкой и пагинацией")

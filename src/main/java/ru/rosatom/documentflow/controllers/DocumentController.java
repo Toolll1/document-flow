@@ -8,6 +8,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,9 +18,10 @@ import ru.rosatom.documentflow.adapters.CustomPageRequest;
 import ru.rosatom.documentflow.dto.*;
 import ru.rosatom.documentflow.mappers.DocumentChangesMapper;
 import ru.rosatom.documentflow.mappers.DocumentMapper;
+import ru.rosatom.documentflow.models.DocChanges;
+import ru.rosatom.documentflow.models.Document;
 import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.services.DocumentService;
-
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
@@ -41,6 +43,8 @@ public class DocumentController {
   final DocumentService documentService;
   final DocumentMapper dm;
   final DocumentChangesMapper cm;
+  private final ModelMapper modelMapper;
+
 
   // создание нового документа
   @Operation(summary = "Добавить новый документ")
@@ -50,8 +54,9 @@ public class DocumentController {
   public DocumentDto createDocument(
       @RequestBody @Valid DocumentCreateDto documentDto, @AuthenticationPrincipal User user) {
     log.trace("Создание документа пользователем {} : {}", user.getId(), documentDto);
-    return dm.documentToDto(
-        documentService.createDocument(dm.documentFromCreateDto(documentDto), user.getId()));
+    Document documentFromDto = dm.documentFromCreateDto(documentDto);
+    Document docCreate =  documentService.createDocument(documentFromDto, user.getId());
+    return modelMapper.map(docCreate, DocumentDto.class) ;
   }
 
   // поиск документа по id
@@ -61,7 +66,8 @@ public class DocumentController {
   public DocumentDto getDocumentById(
           @PathVariable @Parameter(description = "ID документа") Long documentId, @AuthenticationPrincipal User user) {
     log.trace("Запрос информации о документе {} от пользователя {}", documentId, user.getId());
-    return dm.documentToDto(documentService.findDocumentById(documentId));
+    Document document = documentService.findDocumentById(documentId);
+    return modelMapper.map(document, DocumentDto.class);
   }
 
   // поиск документов по своей организации
@@ -89,7 +95,7 @@ public class DocumentController {
                 text, rangeStart, rangeEnd, creatorId, typeId, attributeId, attributeValue),
             new CustomPageRequest(from, size))
         .stream()
-        .map(dm::documentToDto)
+        .map(o -> modelMapper.map(o, DocumentDto.class ))
         .collect(Collectors.toList());
   }
 
@@ -104,7 +110,7 @@ public class DocumentController {
         documentId,
         user.getId());
     return documentService.findDocChangesByDocumentId(documentId, user.getId()).stream()
-        .map(cm::changesToDto)
+        .map(o->modelMapper.map(o, DocumentChangesDto.class))
         .collect(Collectors.toList());
   }
 
@@ -119,8 +125,8 @@ public class DocumentController {
       @RequestBody @Valid DocumentUpdateDto documentUpdateDto,
       @AuthenticationPrincipal User user) {
     log.trace("Обновление информации о событии {} пользователем {}", documentId, user.getId());
-    return dm.documentToDto(
-        documentService.updateDocument(documentUpdateDto, documentId, user.getId()));
+    Document updateDocument = documentService.updateDocument(documentUpdateDto, documentId, user.getId());
+    return modelMapper.map(updateDocument, DocumentDto.class);
   }
 
   // удаление документа
@@ -142,7 +148,8 @@ public class DocumentController {
       @PathVariable @Parameter(description = "ID изменения документа")Long documentChangesId, @AuthenticationPrincipal User user) {
     log.trace(
         "Запрос информации о изменений {} от пользователя {}", documentChangesId, user.getId());
-    return cm.changesToDto(documentService.findDocChangesById(documentChangesId, user.getId()));
+    DocChanges document = documentService.findDocChangesById(documentChangesId, user.getId());
+    return modelMapper.map(document, DocumentChangesDto.class);
   }
 
   // поиск документов измененных пользователем
@@ -157,7 +164,7 @@ public class DocumentController {
         creatorId,
         user.getId());
     return documentService.findDocChangesByUserId(creatorId).stream()
-        .map(cm::changesToDto)
+        .map(o-> modelMapper.map(o, DocumentChangesDto.class))
         .collect(Collectors.toList());
   }
 }

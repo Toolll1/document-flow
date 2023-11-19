@@ -1,9 +1,7 @@
 package ru.rosatom.documentflow.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
@@ -12,6 +10,8 @@ import java.time.LocalDate;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Schema(name = "Изменения в документе")
+@AllArgsConstructor
+@NoArgsConstructor
 public class DocumentChangesDto {
 
     @Schema(name = "ID изменения")

@@ -2,13 +2,10 @@ package ru.rosatom.documentflow.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.rosatom.documentflow.adapters.CommonUtils;
 import ru.rosatom.documentflow.models.DocAttributeValues;
-import ru.rosatom.documentflow.models.DocProcessStatus;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -19,6 +16,8 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Schema(name = "Документ")
+@NoArgsConstructor
+@AllArgsConstructor
 public class DocumentDto {
   @Schema(name = "ID документа")
   Long id;
@@ -47,13 +46,13 @@ public class DocumentDto {
 
   @Schema(name = "Тип документа")
   @NotNull
-  DocTypeDto docTypeDto;
+  String docTypeName;
 
   @Schema(name = "Список атрибутов")
   @NotNull
   List<DocAttributeValues> attributeValues;
 
   @Schema(name = "Статус")
-  DocProcessStatus finalDocStatus;
+  String finalDocStatus;
 }
 

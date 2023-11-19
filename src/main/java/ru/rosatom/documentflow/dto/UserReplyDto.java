@@ -5,41 +5,40 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.rosatom.documentflow.models.UserOrganization;
-import ru.rosatom.documentflow.models.UserPassport;
-import ru.rosatom.documentflow.models.UserRole;
+
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
 @Builder
-@Schema(name = "Ответ на получение пользователя")
+@Schema(description = "Ответ на получение пользователя")
 public class UserReplyDto {
 
-    @Schema(name = "ID пользователя")
+    @Schema(description = "ID пользователя")
     private final Long id;
 
-    @Schema(name = "ФИО")
+    @Schema(description = "ФИО")
     private final String fullName;
 
-    @Schema(name = "Дата рождения")
+    @Schema(description = "Дата рождения")
     private final String dateOfBirth;
 
-    @Schema(name = "Email")
+    @Schema(description = "Email")
     private final String email;
 
-    @Schema(name = "Телефон")
+    @Schema(description = "Телефон")
     private final String phone;
 
-    @Schema(name = "Описание")
+    @Schema(description = "Описание")
     private final String post;
 
-    @Schema(name = "Роль")
-    private final UserRole role;
+    @Schema(description = "Роль")
+    private final String role;
 
-    @Schema(name = "Паспорт")
-    private final UserPassport passport;
+    @Schema(description = "Паспорт")
+    private final UserPassportDto userPassportDto;
 
-    @Schema(name = "Организация")
-    private final UserOrganization organization;
+    @Schema(description = "Организация")
+    private final OrgDto orgDto;
+
 }
