@@ -12,6 +12,8 @@ import java.time.LocalDate;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Schema(description = "Изменения в документе")
+@AllArgsConstructor
+@NoArgsConstructor
 public class DocumentChangesDto {
 
     @Schema(description = "ID изменения")

@@ -44,8 +44,8 @@ public class DocAttributeController {
       @RequestParam @Parameter(description = "Номер страницы") Optional<Integer> page,
       @RequestParam @Parameter(description = "Сортировка") Optional<String> sortBy) {
     return docAttributeService.getAllDocAttributes(page, sortBy).stream()
-        .map(this::convertToDto)
-        .collect(Collectors.toList());
+            .map(o -> modelMapper.map(o, DocAttributeDto.class))
+            .collect(Collectors.toList());
   }
 
   @Operation(summary = "Получить атрибут по ID")
@@ -55,7 +55,7 @@ public class DocAttributeController {
       @PathVariable @Parameter(description = "ID атрибута") Long docAttributeId) {
     DocAttribute docAttribute = docAttributeService.getDocAttributeById(docAttributeId);
     log.info("Получен запрос на получение DocAttribute с ID: {}", docAttributeId);
-    return convertToDto(docAttribute);
+    return modelMapper.map(docAttribute, DocAttributeDto.class);
   }
 
   @Operation(summary = "Создать атрибут")
@@ -68,7 +68,7 @@ public class DocAttributeController {
         modelMapper.map(docAttributeCreateDto, DocAttributeCreationRequest.class);
     DocAttribute docAttribute = docAttributeService.createDocAttribute(docAttributeCreationRequest);
     log.info("Получен запрос на создание DocAttribute: {}", docAttributeCreateDto);
-    return convertToDto(docAttribute);
+    return modelMapper.map(docAttribute, DocAttributeDto.class);
   }
 
   @Operation(summary = "Изменить атрибут")
@@ -86,7 +86,7 @@ public class DocAttributeController {
         "Получен запрос на обновление DocAttribute с ID: {}. Обновлённый DocAttribute: {}",
         docAttributeId,
         docAttribute);
-    return convertToDto(docAttribute);
+    return modelMapper.map(docAttribute, DocAttributeDto.class);
   }
 
   @Operation(summary = "Поиск атрибута по подстроке в имени")

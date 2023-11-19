@@ -5,9 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.rosatom.documentflow.models.UserOrganization;
-import ru.rosatom.documentflow.models.UserPassport;
-import ru.rosatom.documentflow.models.UserRole;
 
 @Data
 @AllArgsConstructor
@@ -35,11 +32,12 @@ public class UserReplyDto {
     private final String post;
 
     @Schema(description = "Роль")
-    private final UserRole role;
+    private final String role;
 
     @Schema(description = "Паспорт")
-    private final UserPassport passport;
+    private final UserPassportDto userPassportDto;
 
     @Schema(description = "Организация")
-    private final UserOrganization organization;
+    private final OrgDto orgDto;
+
 }
