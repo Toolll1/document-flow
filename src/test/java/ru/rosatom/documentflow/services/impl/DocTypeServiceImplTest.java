@@ -32,7 +32,7 @@ class DocTypeServiceImplTest {
     }
 
     @Test
-    void getAllDocTypesThenGreaterThan0() {
+    void getAllDocTypesThenFoundFive() {
         Page<DocType> page = impl.getAllDocTypes(Optional.of(0), Optional.of("id"));
         assertThat(page.getTotalElements()).isEqualTo(5);
     }
@@ -87,7 +87,7 @@ class DocTypeServiceImplTest {
     }
 
     @Test
-    void deleteDocTypeThenNotNull() {
+    void deleteDocType() {
         boolean isExistBeforeDelete = docTypeRepository.findById(1L).isPresent();
         impl.deleteDocType(1L);
         boolean isExistAfterDelete = docTypeRepository.findById(1L).isPresent();

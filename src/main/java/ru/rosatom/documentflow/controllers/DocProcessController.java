@@ -24,7 +24,6 @@ import ru.rosatom.documentflow.models.ProcessUpdateRequest;
 import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.services.DocumentProcessService;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,7 +51,9 @@ public class DocProcessController {
     @GetMapping("{documentId}/processes")
     @PreAuthorize("@documentProcessSecurityService.isHasAccessToProcess(#documentId, authentication.principal.id) && hasAuthority('USER')")
     @SecurityRequirement(name = "JWT")
-    public Collection<DocProcessDto> findProcessByDocumentId(@PathVariable @Parameter(description = "ID документа") Long documentId) {
+
+
+    public List<DocProcessDto> findProcessByDocumentId(@PathVariable @Parameter(description = "ID документа") Long documentId) {
         return documentProcessService.findProcessesByDocumentId(documentId)
                 .stream()
                 .map(docProcess -> modelMapper.map(docProcess, DocProcessDto.class))
