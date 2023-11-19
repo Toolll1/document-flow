@@ -37,8 +37,8 @@ public class StatisticsController {
   @GetMapping("/documents/getCountByStatus/{status}")
   @SecurityRequirement(name = "JWT")
   public DocStatisticDTO getCountByStatus(
-      @PathVariable @Parameter(description = "Наименование статуса") String stringStatus) {
-    return statisticsService.getCountByStatus(stringStatus);
+      @PathVariable @Parameter(description = "Наименование статуса") String status) {
+    return statisticsService.getCountByStatus(status);
   }
 
   @Operation(summary = "Получить кол-во пользователей и организаций")

@@ -2,6 +2,7 @@ package ru.rosatom.documentflow.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -97,18 +98,25 @@ public class DocProcessController {
     @PatchMapping("/processes/{processId}/send-to-approve")
     @PreAuthorize("@documentProcessSecurityService.isHasAccessToProcess(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('USER')")
     @SecurityRequirement(name = "JWT")
-    public DocProcessDto sendToApprove(@Parameter(description = "DTO изменения процесса") ProcessUpdateRequestDto processUpdateRequestDto) {
+    @Parameter(name="processUpdateRequestDto", hidden = true)
+    @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
+    @Parameter(name = "comment", description = "Комментарий")
+    public DocProcessDto sendToApprove(ProcessUpdateRequestDto processUpdateRequestDto) {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
         documentProcessService.sendToApprove(processUpdateRequest);
         return modelMapper.map(documentProcessService.findProcessById(processUpdateRequest.getProcessId()),
                 DocProcessDto.class);
     }
 
+
     @Operation(summary = "Согласовать документ")
     @PatchMapping("/processes/{processId}/approve")
     @PreAuthorize("@documentProcessSecurityService.isRecipient(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('USER')")
     @SecurityRequirement(name = "JWT")
-    public DocProcessDto approve(@Parameter(description = "DTO изменения процесса") ProcessUpdateRequestDto processUpdateRequestDto) {
+    @Parameter(name="processUpdateRequestDto", hidden = true)
+    @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
+    @Parameter(name = "comment", description = "Комментарий")
+    public DocProcessDto approve( ProcessUpdateRequestDto processUpdateRequestDto) {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
         documentProcessService.approve(processUpdateRequest);
         return modelMapper.map(documentProcessService.findProcessById(processUpdateRequest.getProcessId()),
@@ -119,7 +127,10 @@ public class DocProcessController {
     @PatchMapping("/processes/{processId}/reject")
     @PreAuthorize("@documentProcessSecurityService.isRecipient(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('USER')")
     @SecurityRequirement(name = "JWT")
-    public DocProcessDto reject(@Parameter(description = "DTO изменения процесса")ProcessUpdateRequestDto processUpdateRequestDto) {
+    @Parameter(name="processUpdateRequestDto", hidden = true)
+    @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
+    @Parameter(name = "comment", description = "Комментарий")
+    public DocProcessDto reject(ProcessUpdateRequestDto processUpdateRequestDto) {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
         documentProcessService.reject(processUpdateRequest);
         return modelMapper.map(documentProcessService.findProcessById(processUpdateRequest.getProcessId()),
@@ -130,7 +141,10 @@ public class DocProcessController {
     @PatchMapping("/processes/{processId}/send-to-correction")
     @PreAuthorize("@documentProcessSecurityService.isRecipient(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('USER')")
     @SecurityRequirement(name = "JWT")
-    public DocProcessDto sendToCorrection(@Parameter(description = "DTO изменения процесса") ProcessUpdateRequestDto processUpdateRequestDto) {
+    @Parameter(name="processUpdateRequestDto", hidden = true)
+    @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
+    @Parameter(name = "comment", description = "Комментарий")
+    public DocProcessDto sendToCorrection( ProcessUpdateRequestDto processUpdateRequestDto) {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
         documentProcessService.sendToCorrection(processUpdateRequest);
         return modelMapper.map(documentProcessService.findProcessById(processUpdateRequest.getProcessId()),
