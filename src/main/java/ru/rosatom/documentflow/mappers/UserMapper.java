@@ -1,8 +1,12 @@
 package ru.rosatom.documentflow.mappers;
 
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 import ru.rosatom.documentflow.adapters.DateTimeAdapter;
+import ru.rosatom.documentflow.dto.OrgDto;
 import ru.rosatom.documentflow.dto.UserCreateDto;
+import ru.rosatom.documentflow.dto.UserPassportDto;
 import ru.rosatom.documentflow.dto.UserReplyDto;
 import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.models.UserOrganization;
@@ -10,7 +14,10 @@ import ru.rosatom.documentflow.models.UserPassport;
 import ru.rosatom.documentflow.models.UserRole;
 
 @Component
+@RequiredArgsConstructor
 public class UserMapper {
+
+    private final ModelMapper modelMapper;
 
     public UserReplyDto objectToReplyDto(User user) {
 
@@ -22,14 +29,8 @@ public class UserMapper {
                 .email(user.getEmail())
                 .post(user.getPost())
                 .role(user.getRole().toString())
-                .passportDate(String.valueOf(user.getPassport().getDate()))
-                .passportIssued(user.getPassport().getIssued())
-                .passportKp(user.getPassport().getKp())
-                .passportNumber(user.getPassport().getNumber())
-                .passportSeries(user.getPassport().getSeries())
-                .organizationId(user.getOrganization().getId())
-                .innOrganization(user.getOrganization().getInn())
-                .nameOrganization(user.getOrganization().getName())
+                .userPassportDto(modelMapper.map(user.getPassport(), UserPassportDto.class))
+                .orgDto(modelMapper.map(user.getOrganization(), OrgDto.class))
                 .build();
     }
 

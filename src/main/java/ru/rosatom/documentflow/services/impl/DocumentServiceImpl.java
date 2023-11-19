@@ -102,8 +102,8 @@ public class DocumentServiceImpl implements DocumentService {
             mainDocumentPart.addStyledParagraphOfText("Title", document.getDocType().getName());
             mainDocumentPart.addParagraphOfText("ФИО: " + userReplyDto.getFullName()).setPPr(paragraphProperties);
             mainDocumentPart.addParagraphOfText("Дата рождения: " + userReplyDto.getDateOfBirth()).setPPr(paragraphProperties);
-            mainDocumentPart.addParagraphOfText("Организация: " +userReplyDto.getNameOrganization()).setPPr(paragraphProperties);
-            mainDocumentPart.addParagraphOfText("ИНН: " + userReplyDto.getInnOrganization()).setPPr(paragraphProperties);
+            mainDocumentPart.addParagraphOfText("Организация: " +userReplyDto.getOrgDto().getName()).setPPr(paragraphProperties);
+            mainDocumentPart.addParagraphOfText("ИНН: " + userReplyDto.getOrgDto().getInn()).setPPr(paragraphProperties);
             mainDocumentPart.addParagraphOfText("\n\n");
             mainDocumentPart.addParagraphOfText("Значения атрибутов:");
 
