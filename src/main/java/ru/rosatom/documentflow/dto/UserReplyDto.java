@@ -14,63 +14,63 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
 @Builder
-@Schema(name = "Ответ на получение пользователя")
+@Schema(description = "Ответ на получение пользователя")
 public class UserReplyDto {
 
-    @Schema(name = "ID пользователя")
+    @Schema(description = "ID пользователя")
     private final Long id;
 
-    @Schema(name = "ФИО")
+    @Schema(description = "ФИО")
     private final String fullName;
 
-    @Schema(name = "Дата рождения")
+    @Schema(description = "Дата рождения")
     private final String dateOfBirth;
 
-    @Schema(name = "Email")
+    @Schema(description = "Email")
     private final String email;
 
-    @Schema(name = "Телефон")
+    @Schema(description = "Телефон")
     private final String phone;
 
-    @Schema(name = "Описание")
+    @Schema(description = "Описание")
     private final String post;
 
-    @Schema(name = "Роль")
+    @Schema(description = "Роль")
     private final String role;
 
-    @Schema(name = "Серия паспорта", minLength = 4, maxLength = 4)
+    @Schema(description = "Серия паспорта", minLength = 4, maxLength = 4)
     @NotBlank
     @Size(min = 4, max = 4)
     private final String passportSeries;
 
-    @Schema(name = "Номер паспорта", minLength = 6, maxLength = 6)
+    @Schema(description = "Номер паспорта", minLength = 6, maxLength = 6)
     @NotBlank
     @Size(min = 6, max = 6)
     private final String passportNumber;
 
-    @Schema(name = "Кем выдан паспорт", minLength = 2, maxLength = 1000)
+    @Schema(description = "Кем выдан паспорт", minLength = 2, maxLength = 1000)
     @NotBlank
     @Size(min = 2, max = 1000)
     private final String passportIssued; // кем выдан
 
-    @Schema(name = "Дата выдачи паспорта", minLength = 10, maxLength = 10)
+    @Schema(description = "Дата выдачи паспорта", minLength = 10, maxLength = 10)
     @NotBlank
     @Size(min = 10, max = 10)
     private final String passportDate;
 
-    @Schema(name = "Код подразделения", minLength = 6, maxLength = 6)
+    @Schema(description = "Код подразделения", minLength = 6, maxLength = 6)
     @NotBlank
     @Size(min = 6, max = 6)
     private final String passportKp; // код подразделения
 
-    @Schema(name = "ID организации")
+    @Schema(description = "ID организации")
     @NotNull
     private final Long organizationId;
 
-    @Schema(name = "Название организации")
+    @Schema(description = "Название организации")
     private String nameOrganization;
 
-    @Schema(name = "ИНН организации")
+    @Schema(description = "ИНН организации")
     private String innOrganization;
 
 }

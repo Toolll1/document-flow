@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
-@Schema(name = "Кол-во организаций")
+@Schema(description  = "Кол-во организаций")
 public class CountOrgDto {
 
-    @Schema(name = "Количество организаций")
+    @Schema(description  = "Количество организаций")
     private final int countOrganization;
 }
