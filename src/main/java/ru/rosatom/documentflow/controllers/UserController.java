@@ -47,7 +47,7 @@ public class UserController {
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   @SecurityRequirement(name = "JWT")
-  public UserReplyDto createUser(@Valid @RequestBody UserCreateDto dto) {
+  public UserReplyDto createUser(@Valid @RequestBody @Parameter(description = "DTO создания пользователя") UserCreateDto dto) {
 
     log.info("Received a request to create a user " + dto);
 
@@ -62,7 +62,7 @@ public class UserController {
   @PatchMapping("/{userId}")
   @SecurityRequirement(name = "JWT")
   public UserReplyDto updateUser(
-      @Valid @RequestBody UserUpdateDto dto,
+      @Valid @RequestBody @Parameter(description = "DTO изменения пользователя") UserUpdateDto dto,
       @PathVariable @Parameter(description = "ID пользователя") Long userId) {
 
     log.info("Received a request to update a user {}. userId = {}", dto, userId);
@@ -81,7 +81,7 @@ public class UserController {
           @Parameter(description = "Пароль пользователя")
           String password,
       @PathVariable @Parameter(description = "ID пользователя") Long userId,
-      @AuthenticationPrincipal User user) {
+      @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true)User user) {
     log.info("Received a request to set password to user with userId = {}", userId);
     if (userService.setPasswordToUser(password, userId)) {
       return new ResponseEntity<>(HttpStatus.OK);
@@ -96,7 +96,7 @@ public class UserController {
   @SecurityRequirement(name = "JWT")
   public UserReplyDto getUser(
       @PathVariable @Parameter(description = "ID пользователя") Long userId,
-      @AuthenticationPrincipal User user) {
+      @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
 
     log.info("A request was received to search for a user with an id {}", userId);
 
@@ -111,8 +111,8 @@ public class UserController {
     log.info("A search request was received for all users");
 
     return userService.getAllUsers().stream()
-        .map(userMapper::objectToReplyDto)
-        .collect(Collectors.toList());
+            .map(userMapper::objectToReplyDto)
+            .collect(Collectors.toList());
   }
 
   @Operation(summary = "Получить всех пользователей с сортировкой и пагинацией")

@@ -4,15 +4,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@Schema(name = "Данные об организации")
+@Schema(description = "Данные об организации")
 public class OrgDto {
 
-    @Schema(name = "ID организации")
+    @Schema(description = "ID организации")
     private long id;
 
-    @Schema(name = "Название")
+    @Schema(description = "Название")
     private String name;
 
-    @Schema(name = "ИНН")
+    @Schema(description = "ИНН")
     private String inn;
 }

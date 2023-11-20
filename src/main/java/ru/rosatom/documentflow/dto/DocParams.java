@@ -11,19 +11,19 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(force = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-@Schema(name = "Параметры документа")
+@Schema(description = "Параметры документа")
 public class DocParams {
 
-    @Schema(name = "Текст")
+    @Schema(description = "Текст")
     String text;
     LocalDateTime rangeStart;
     LocalDateTime rangeEnd;
-    @Schema(name = "ID оздателя")
+    @Schema(description = "ID оздателя")
     Long creatorId;
-    @Schema(name = "ID типа")
+    @Schema(description = "ID типа")
     Long typeId;
-    @Schema(name = "ID атрибута")
+    @Schema(description = "ID атрибута")
     Long attributeId;
-    @Schema(name = "Значение атрибута")
+    @Schema(description = "Значение атрибута")
     String attributeValue;
 }

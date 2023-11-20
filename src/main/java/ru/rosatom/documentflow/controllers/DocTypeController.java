@@ -38,8 +38,8 @@ public class DocTypeController {
       @RequestParam @Parameter(description = "Номер страницы") Optional<Integer> page,
       @RequestParam @Parameter(description = "Сортировка") Optional<String> sortBy) {
     return docTypeService.getAllDocTypes(page, sortBy).stream()
-        .map(this::convertToDto)
-        .collect(Collectors.toList());
+            .map(o -> modelMapper.map(o, DocTypeDto.class))
+            .collect(Collectors.toList());
   }
 
   @Operation(summary = "Получить тип по ID")
@@ -48,20 +48,20 @@ public class DocTypeController {
   public DocTypeDto getDocType(@PathVariable @Parameter(description = "ID типа") Long docTypeId) {
     DocType docType = docTypeService.getDocTypeById(docTypeId);
     log.info("Получен запрос на получение DocType с ID: {}", docTypeId);
-    return convertToDto(docType);
+    return modelMapper.map(docType, DocTypeDto.class);
   }
 
   @Operation(summary = "Создать тип")
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   @SecurityRequirement(name = "JWT")
-  public DocTypeDto createDocType(@Valid @RequestBody DocTypeCreateDto docTypeCreateDto) {
+  public DocTypeDto createDocType(@Valid @RequestBody @Parameter(description = "DTO создания типа") DocTypeCreateDto docTypeCreateDto) {
     DocTypeCreationRequest docTypeCreationRequest =
         modelMapper.map(docTypeCreateDto, DocTypeCreationRequest.class);
     DocType docType = docTypeService.createDocType(docTypeCreationRequest);
     log.info("Получен запрос на создание DocType: {}", docTypeCreateDto);
 
-    return convertToDto(docType);
+    return modelMapper.map(docType, DocTypeDto.class);
   }
 
   @Operation(summary = "Изменить тип")
@@ -69,14 +69,14 @@ public class DocTypeController {
   @SecurityRequirement(name = "JWT")
   public DocTypeDto updateDocType(
       @PathVariable @Parameter(description = "ID типа") Long docTypeId,
-      @Valid @RequestBody DocTypeUpdateRequestDto docTypeUpdateRequestDto) {
+      @Valid @RequestBody @Parameter(description = "DTO изменения типа") DocTypeUpdateRequestDto docTypeUpdateRequestDto) {
     DocTypeUpdateRequest docTypeUpdateRequest =
         modelMapper.map(docTypeUpdateRequestDto, DocTypeUpdateRequest.class);
     DocType docType = docTypeService.updateDocType(docTypeId, docTypeUpdateRequest);
 
     log.info(
         "Получен запрос на обновление DocType с ID: {}. Обновлен DocType: {}", docTypeId, docType);
-    return convertToDto(docType);
+    return modelMapper.map(docType, DocTypeDto.class);
   }
 
   @Operation(summary = "Поиск типа по подстроке в имени")
@@ -98,7 +98,7 @@ public class DocTypeController {
       @PathVariable @Parameter(description = "ID атрибута") Long docAttributeId) {
     log.info("Добавлен атрибут с ID: {} к документу с ID: {}", docAttributeId, docTypeId);
 
-    return convertToDto(docTypeService.attributeToType(docTypeId, docAttributeId));
+    return modelMapper.map(docTypeService.attributeToType(docTypeId, docAttributeId), DocTypeDto.class);
   }
 
   @Operation(summary = "Удалить тип")

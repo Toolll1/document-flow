@@ -6,9 +6,9 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-@Schema(name = "Статистика по документам")
+@Schema(description = "Статистика по документам")
 public class DocStatisticDTO {
 
-    @Schema(name = "Количество")
-    private long count;
+  @Schema(description = "Количество")
+  private long count;
 }
