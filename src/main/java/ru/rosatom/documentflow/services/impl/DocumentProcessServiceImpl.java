@@ -198,7 +198,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     }
 
     private void finalStatusUpdate(Long documentId) {
-        Collection<DocProcess> docProcess = findProcessesByDocumentId(documentId);
+        List<DocProcess> docProcess = findProcessesByDocumentId(documentId);
         List<DocProcessStatus> processes = docProcess
                 .stream()
                 .map(DocProcess::getStatus)

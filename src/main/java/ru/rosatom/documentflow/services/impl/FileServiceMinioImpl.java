@@ -68,8 +68,8 @@ public class FileServiceMinioImpl implements FileService {
             paragraphProperties.setJc(justification);
             mainDocumentPart.addStyledParagraphOfText("Title", document.getDocType().getName());
             mainDocumentPart.addParagraphOfText("ФИО: " + userReplyDto.getFullName()).setPPr(paragraphProperties);
-            mainDocumentPart.addParagraphOfText("Организация: " + userReplyDto.getOrganization().getName()).setPPr(paragraphProperties);
-            mainDocumentPart.addParagraphOfText("ИНН: " + userReplyDto.getOrganization().getInn()).setPPr(paragraphProperties);
+            mainDocumentPart.addParagraphOfText("Организация: " + userReplyDto.getOrgDto().getName()).setPPr(paragraphProperties);
+            mainDocumentPart.addParagraphOfText("ИНН: " + userReplyDto.getOrgDto().getInn()).setPPr(paragraphProperties);
             mainDocumentPart.addParagraphOfText("\n\n");
             mainDocumentPart.addParagraphOfText("Значения атрибутов:");
 
@@ -85,8 +85,8 @@ public class FileServiceMinioImpl implements FileService {
                     if (process.getStatus().equals(DocProcessStatus.APPROVED)) {
                         UserReplyDto recipientReplyDto = userMapper.objectToReplyDto(process.getRecipient());
                         mainDocumentPart.addParagraphOfText("ФИО: " + recipientReplyDto.getFullName());
-                        mainDocumentPart.addParagraphOfText("Организация: " + recipientReplyDto.getOrganization().getName());
-                        mainDocumentPart.addParagraphOfText("ИНН: " + recipientReplyDto.getOrganization().getInn());
+                        mainDocumentPart.addParagraphOfText("Организация: " + recipientReplyDto.getOrgDto().getName());
+                        mainDocumentPart.addParagraphOfText("ИНН: " + recipientReplyDto.getOrgDto().getInn());
                         mainDocumentPart.addParagraphOfText("Подпись:");
                         mainDocumentPart.addParagraphOfText("\n\n");
                     }
