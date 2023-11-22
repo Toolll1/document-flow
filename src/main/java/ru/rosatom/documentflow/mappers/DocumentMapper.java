@@ -6,7 +6,6 @@ import lombok.experimental.FieldDefaults;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 import ru.rosatom.documentflow.dto.DocAttributeValueCreateDto;
-import ru.rosatom.documentflow.dto.DocTypeDto;
 import ru.rosatom.documentflow.dto.DocumentCreateDto;
 import ru.rosatom.documentflow.dto.DocumentDto;
 import ru.rosatom.documentflow.models.DocAttributeValues;
@@ -50,9 +49,9 @@ public class DocumentMapper {
                 .date(document.getDate())
                 .idOrganization(document.getIdOrganization())
                 .ownerId(document.getOwnerId())
-                .docTypeDto(modelMapper.map(document.getDocType(), DocTypeDto.class))
+                .docTypeName((document.getDocType()).getName())
                 .attributeValues(document.getAttributeValues())
-                .finalDocStatus(document.getFinalDocStatus())
+                .finalDocStatus(String.valueOf(document.getFinalDocStatus()))
                 .build();
     }
 }
