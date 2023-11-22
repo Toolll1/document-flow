@@ -15,10 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.rosatom.documentflow.adapters.TranslitText;
-import ru.rosatom.documentflow.dto.DocAttributeValueCreateDto;
-import ru.rosatom.documentflow.dto.DocParams;
-import ru.rosatom.documentflow.dto.DocumentUpdateDto;
-import ru.rosatom.documentflow.dto.UserReplyDto;
+import ru.rosatom.documentflow.dto.*;
 import ru.rosatom.documentflow.exceptions.BadRequestException;
 import ru.rosatom.documentflow.exceptions.ConflictException;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
@@ -56,7 +53,8 @@ public class DocumentServiceImpl implements DocumentService {
     final DocTypeService docTypeService;
     final DocAttributeValuesRepository docAttributeValuesRepository;
     final DocAttributeService docAttributeService;
-    private final UserMapper userMapper;
+    final UserMapper userMapper;
+    static final String pathToFiles = "src\\main\\java\\ru\\rosatom\\documentflow\\files\\";
     private final MinioClient minioClient = MinioClient.builder()
             .endpoint("http://minio:9000")
             //.endpoint("http://localhost:9000") // для запуска нашего сервиса локально
@@ -73,7 +71,7 @@ public class DocumentServiceImpl implements DocumentService {
         document.setDate(LocalDateTime.now());
         docAttributeValuesRepository.saveAll(document.getAttributeValues());
         document.setName(name); // удалить при включении минио
-        document.setDocumentPath(new File("src\\main\\java\\ru\\rosatom\\documentflow\\files\\" + name).getAbsolutePath()); // удалить при включении минио
+        document.setDocumentPath(new File(pathToFiles + name).getAbsolutePath()); // удалить при включении минио
 
         Document newDocument = documentRepository.save(document);
 
@@ -86,7 +84,7 @@ public class DocumentServiceImpl implements DocumentService {
 
         User user = userService.getUser(document.getOwnerId());
         String name = TranslitText.transliterate(user.getLastName()).replaceAll(" ", "").toLowerCase() + document.getId() + ".docx";
-        String path = new File("src\\main\\java\\ru\\rosatom\\documentflow\\files\\" + name).getAbsolutePath();
+        String path = new File(pathToFiles + name).getAbsolutePath();
         File file = new File(path);
 
         if (file.exists()) {
@@ -105,8 +103,8 @@ public class DocumentServiceImpl implements DocumentService {
             mainDocumentPart.addStyledParagraphOfText("Title", document.getDocType().getName());
             mainDocumentPart.addParagraphOfText("ФИО: " + userReplyDto.getFullName()).setPPr(paragraphProperties);
             mainDocumentPart.addParagraphOfText("Дата рождения: " + userReplyDto.getDateOfBirth()).setPPr(paragraphProperties);
-            mainDocumentPart.addParagraphOfText("Организация: " + userReplyDto.getOrganization().getName()).setPPr(paragraphProperties);
-            mainDocumentPart.addParagraphOfText("ИНН: " + userReplyDto.getOrganization().getInn()).setPPr(paragraphProperties);
+            mainDocumentPart.addParagraphOfText("Организация: " +userReplyDto.getOrgDto().getName()).setPPr(paragraphProperties);
+            mainDocumentPart.addParagraphOfText("ИНН: " + userReplyDto.getOrgDto().getInn()).setPPr(paragraphProperties);
             mainDocumentPart.addParagraphOfText("\n\n");
             mainDocumentPart.addParagraphOfText("Значения атрибутов:");
 
