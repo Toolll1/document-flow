@@ -87,7 +87,7 @@ public class FileServiceLocalImpl implements FileService {
                 File filePdf = new File(pathPdf);
 
                 wordPackage.save(fileDocx);
-                convertToPdf(fileDocx, filePdf);
+               // convertToPdf(fileDocx, filePdf);
                 deleteFile(Document.builder().documentPath(pathDocx).build());
                 document.setName(namePdf);
                 document.setDocumentPath(pathPdf);
