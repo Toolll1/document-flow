@@ -11,7 +11,7 @@ import java.util.List;
 
 @Data
 @Builder
-@Schema(name = "Создание документа")
+@Schema(description = "Создание документа")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DocumentCreateDto {
 
@@ -26,4 +26,5 @@ public class DocumentCreateDto {
     @Schema(name = "Список атрибутов")
     @NotNull
     List<DocAttributeValueCreateDto> docAttributeValueCreateDtos;
+
 }

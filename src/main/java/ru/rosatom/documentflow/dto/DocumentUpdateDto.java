@@ -14,8 +14,9 @@ import java.util.List;
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Schema(name = "Обновление документа")
+@Schema(description = "Обновление документа")
 public class DocumentUpdateDto {
+
     @Schema(name = "Название")
     @Nullable
     String name;

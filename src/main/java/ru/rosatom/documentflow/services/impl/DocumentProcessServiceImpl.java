@@ -7,8 +7,11 @@ import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
 import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
 import ru.rosatom.documentflow.services.DocumentProcessService;
+import ru.rosatom.documentflow.services.DocumentService;
+import ru.rosatom.documentflow.services.UserService;
 
 import java.util.*;
+
 import java.util.stream.Collectors;
 
 import static ru.rosatom.documentflow.models.DocProcessStatus.*;
@@ -25,8 +28,8 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
             DocProcessStatus.APPROVED, List.of(),
             DocProcessStatus.REJECTED, List.of()
     );
-    private final DocumentServiceImpl documentService;
-    private final UserServiceImpl userService;
+    private final DocumentService documentService;
+    private final UserService userService;
     private final DocProcessRepository docProcessRepository;
 
 
@@ -71,8 +74,12 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
      * @param userId - id получателя
      * @return Список процессов
      */
-    public List<DocProcess> getIncomingProcessesByUserId(Long userId) {
-        return docProcessRepository.findAllByRecipientId(userId);
+
+    public List<DocProcess> getIncomingProcessesByUserId(Long userId){
+        return docProcessRepository.findAllByRecipientId(userId)
+                .stream()
+                .filter(docProcess -> !docProcess.getStatus().equals(NEW))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -108,7 +115,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     /**
      * Отклонить документ. Статус процесса - REJECTED
      *
-     * @param processUpdateRequest
+     * @param processUpdateRequest - запрос на обновление процесса
      */
     @Override
     public void reject(ProcessUpdateRequest processUpdateRequest) {
@@ -122,20 +129,34 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     /**
      * Отправить на доработку. Статус процесса - CORRECTING
      *
-     * @param processUpdateRequest
+     * @param processUpdateRequest - запрос на обновление процесса
      */
     @Override
     public void sendToCorrection(ProcessUpdateRequest processUpdateRequest) {
         DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
         throwIfStatusNotCorrect(docProcess, DocProcessStatus.CORRECTING);
-        docProcess.setStatus(DocProcessStatus.CORRECTING);
+        setStatusForAllProcessesExceptByDocument(docProcess.getDocument(), CORRECTING, List.of(CORRECTING, NEW));
         docProcessRepository.save(docProcess);
+    }
+
+    /**
+     * Установить статус для всех процессов по документу кроме процессов со статусами из списка exceptStatuses
+     * @param document - документ для которого нужно установить статус
+     * @param newStatus - новый статус
+     * @param exceptStatuses - список статусов, которые нужно исключить
+     */
+    public void setStatusForAllProcessesExceptByDocument(Document document, DocProcessStatus newStatus, List<DocProcessStatus> exceptStatuses){
+        List<DocProcess> processes = docProcessRepository.findAllByDocumentId(document.getId());
+        processes.stream()
+                .filter(process -> !exceptStatuses.contains(process.getStatus()))
+                .forEach(process -> process.setStatus(newStatus));
+        docProcessRepository.saveAll(processes);
     }
 
     /**
      * Удалить запрос на согласование. Запрос может быть удален только если он не согласован или не отклонен
      *
-     * @param processId
+     * @param processId - id процесса
      */
     @Override
     public void deleteProcess(Long processId) {
@@ -152,7 +173,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     /**
      * Найти процесс согласования по id
      *
-     * @param processId
+     * @param processId - id процесса
      * @return DocProcess - процесс согласования
      */
     @Override
@@ -164,11 +185,11 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     /**
      * Найти все процессы согласования по id документа
      *
-     * @param documentId
+     * @param documentId - id процесса
      * @return Collection<DocProcess> - коллекция процессов согласования
      */
     @Override
-    public Collection<DocProcess> findProcessesByDocumentId(Long documentId) {
+    public List<DocProcess> findProcessesByDocumentId(Long documentId) {
         return docProcessRepository.findAllByDocumentId(documentId);
     }
 

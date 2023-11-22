@@ -9,14 +9,14 @@ import javax.validation.constraints.Size;
 
 @Data
 @NoArgsConstructor
-@Schema(name = "Запрос на создание организации")
+@Schema(description = "Запрос на создание организации")
 public class OrgCreateRequestDto {
 
-    @Schema(name = "Название", minLength = 1, maxLength = 255)
+    @Schema(description = "Название", minLength = 1, maxLength = 255)
     @Size(min = 1, max = 255)
     private String name;
 
-    @Schema(name = "ИНН")
+    @Schema(description = "ИНН")
     @Pattern(regexp = "\\d{10}")
     private String inn;
 

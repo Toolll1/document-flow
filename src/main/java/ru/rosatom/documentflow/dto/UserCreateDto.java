@@ -13,8 +13,9 @@ import javax.validation.constraints.Size;
 @Data
 @AllArgsConstructor
 @Builder
-@Schema(name = "Данные для создания пользователя")
+@Schema(description = "Данные для создания пользователя")
 public class UserCreateDto {
+
     @Schema(name = "ID пользователя")
     private final Long id;
 

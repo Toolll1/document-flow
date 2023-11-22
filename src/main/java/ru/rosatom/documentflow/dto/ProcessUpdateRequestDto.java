@@ -6,10 +6,10 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@Schema(name = "Запрос на обновление документа")
+@Schema(description = "Запрос на обновление документа")
 public class ProcessUpdateRequestDto {
-    @Schema(name = "ID процесса")
+    @Schema(description = "ID процесса")
     private Long processId;
-    @Schema(name = "Комментарий")
+    @Schema(description = "Комментарий")
     private String comment;
 }

@@ -52,6 +52,7 @@ public class OrgController {
         return modelMapper.map(organization, OrgDto.class);
     }
 
+
     @Operation(summary = "Получить организацию по Id")
     @GetMapping("/{orgId}")
     @SecurityRequirement(name = "JWT")
