@@ -18,20 +18,20 @@ import ru.rosatom.documentflow.services.AuthService;
 @Tag(name = "Авторизация")
 public class AuthController {
 
-  private final AuthService authService;
+    private final AuthService authService;
 
-  @Operation(summary = "Авторизация")
-  @PostMapping("/login")
-  @ResponseStatus(HttpStatus.ACCEPTED)
-  public ResponseEntity<?> login(@RequestBody UserCredentialsDto userCredentialsDto) {
-    log.info("Received a request to login user with email = {}", userCredentialsDto.getEmail());
-    return authService.loginUser(userCredentialsDto.getEmail(), userCredentialsDto.getPassword());
-  }
+    @Operation(summary = "Авторизация")
+    @PostMapping("/login")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public ResponseEntity<?> login(@RequestBody UserCredentialsDto userCredentialsDto) {
+        log.info("Received a request to login user with email = {}", userCredentialsDto.getEmail());
+        return authService.loginUser(userCredentialsDto.getEmail(), userCredentialsDto.getPassword());
+    }
 
-  @Operation(summary = "Получить информацию о пользователе по токену авторизации")
-  @GetMapping("/info")
-  public ResponseEntity<?> getUserInfo(Authentication authentication) {
-    log.info("Received a request to get info about user with email = {}", authentication.getName());
-    return authService.userInfo(authentication);
-  }
+    @Operation(summary = "Получить информацию о пользователе по токену авторизации")
+    @GetMapping("/info")
+    public ResponseEntity<?> getUserInfo(Authentication authentication) {
+        log.info("Received a request to get info about user with email = {}", authentication.getName());
+        return authService.userInfo(authentication);
+    }
 }

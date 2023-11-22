@@ -9,14 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.rosatom.documentflow.dto.DocProcessDto;
 import ru.rosatom.documentflow.dto.ProcessUpdateRequestDto;
 import ru.rosatom.documentflow.models.ProcessUpdateRequest;
@@ -33,20 +26,21 @@ import java.util.stream.Collectors;
 @Tag(name = "Бизнес процесс")
 public class DocProcessController {
 
-  private final DocumentProcessService documentProcessService;
-  private final ModelMapper modelMapper;
+    private final DocumentProcessService documentProcessService;
+    private final ModelMapper modelMapper;
 
-  @Operation(summary = "Создать запрос на согласование")
-  @PostMapping("/{documentId}/recipient/{recipientId}/new-process")
-  @PreAuthorize(
-      "@documentProcessSecurityService.isCanManageProcess(#documentId, authentication.principal.id) && hasAuthority('USER')")
-  @SecurityRequirement(name = "JWT")
-  public DocProcessDto createNewProcess(
-      @PathVariable @Parameter(description = "ID документа") Long documentId,
-      @PathVariable @Parameter(description = "ID получателя") Long recipientId) {
-    return modelMapper.map(
-        documentProcessService.createNewProcess(documentId, recipientId), DocProcessDto.class);
-  }
+    @Operation(summary = "Создать запрос на согласование")
+    @PostMapping("/{documentId}/recipient/{recipientId}/new-process")
+    @PreAuthorize(
+            "@documentProcessSecurityService.isCanManageProcess(#documentId, authentication.principal.id) && hasAuthority('USER')")
+    @SecurityRequirement(name = "JWT")
+    public DocProcessDto createNewProcess(
+            @PathVariable @Parameter(description = "ID документа") Long documentId,
+            @PathVariable @Parameter(description = "ID получателя") Long recipientId) {
+        return modelMapper.map(
+                documentProcessService.createNewProcess(documentId, recipientId), DocProcessDto.class);
+    }
+
     @Operation(summary = "Посмотреть все процессы по документу")
     @GetMapping("{documentId}/processes")
     @PreAuthorize("@documentProcessSecurityService.isHasAccessToProcess(#documentId, authentication.principal.id) && hasAuthority('USER')")
@@ -83,6 +77,7 @@ public class DocProcessController {
                 .map(docProcess -> modelMapper.map(docProcess, DocProcessDto.class))
                 .collect(Collectors.toList());
     }
+
     @Operation(summary = "Удалить процесс")
     @DeleteMapping("/processes/{processId}")
     @PreAuthorize("@documentProcessSecurityService.isCanManageProcess(#processId, authentication.principal.id) " +

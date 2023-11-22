@@ -1,0 +1,57 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="v1.2_create_table_users" author="nikita_glushko">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+            <sqlCheck expectedResult="document-flow">SELECT current_database()</sqlCheck>
+            <not>
+                <tableExists tableName="users"/>
+            </not>
+        </preConditions>
+        <createTable tableName="users">
+            <column name="user_id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="last_name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="patronymic" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_of_birth" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="varchar(320)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="phone" type="varchar(11)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="user_password" type="varchar(255)"/>
+            <column name="post" type="varchar(320)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="varchar(5)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="passport_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_user_passport"
+                             referencedTableName="passports"
+                             referencedColumnNames="passport_id"/>
+            </column>
+            <column name="org_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_user_organization"
+                             referencedTableName="organizations"
+                             referencedColumnNames="org_id"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,24 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="v1.5_create_table_document_types" author="nikita_glushko">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+            <sqlCheck expectedResult="document-flow">SELECT current_database()</sqlCheck>
+            <not>
+                <tableExists tableName="document_types"/>
+            </not>
+        </preConditions>
+        <createTable tableName="document_types">
+            <column name="type_id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(320)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="agreement_type" type="varchar(16)" defaultValue="'EVERYONE'"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
