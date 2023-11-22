@@ -11,7 +11,7 @@ public interface UserOrganizationRepository extends JpaRepository<UserOrganizati
 
     Optional<UserOrganization> findByName(String name);
 
-    List<UserOrganization> findByNameContains(String name);
+    List<UserOrganization> findByNameContainsIgnoreCase(String name);
 
     @Query("select org from UserOrganization org " +
             "inner join User u on u.organization.id=org.id " +
