@@ -15,7 +15,9 @@ import ru.rosatom.documentflow.dto.DocumentUpdateDto;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
 import ru.rosatom.documentflow.mappers.UserMapper;
 import ru.rosatom.documentflow.models.*;
-import ru.rosatom.documentflow.repositories.*;
+import ru.rosatom.documentflow.repositories.DocAttributeValuesRepository;
+import ru.rosatom.documentflow.repositories.DocChangesRepository;
+import ru.rosatom.documentflow.repositories.DocumentRepository;
 import ru.rosatom.documentflow.services.DocAttributeService;
 import ru.rosatom.documentflow.services.UserOrganizationService;
 import ru.rosatom.documentflow.services.UserService;
@@ -71,7 +73,7 @@ public class DocumentServiceImplTest {
 
 
     @BeforeEach
-    public void setup(){
+    public void setup() {
         //documentRepository = Mockito.mock(DocumentRepository.class);
         //documentService = new DocumentServiceImpl(documentRepository);
         UserOrganization userOrganization = UserOrganization.builder()
@@ -117,7 +119,7 @@ public class DocumentServiceImplTest {
     }
 
     @Test
-    public void getAllDocumentsTest(){
+    public void getAllDocumentsTest() {
         java.time.LocalDateTime time = LocalDateTime.now();
         Document document2 = Document.builder()
                 .id(2L)
@@ -127,22 +129,22 @@ public class DocumentServiceImplTest {
                 .ownerId(2L)
                 .build();
 
-        given(documentRepository.findAll()).willReturn(List.of(document,document2));
+        given(documentRepository.findAll()).willReturn(List.of(document, document2));
         List<Document> documentList = documentService.getAllDocuments();
         assertThat(documentList).isNotNull();
         assertThat(documentList.size()).isEqualTo(2);
     }
 
-    void deleteFileIfExist(Path path){
+    void deleteFileIfExist(Path path) {
         File file = new File(path.toUri());
-        if (file.exists()){
+        if (file.exists()) {
             file.delete();
         }
     }
 
     @SneakyThrows
     @Test
-    public void createDocumentTest(){
+    public void createDocumentTest() {
 
         String fileName = TranslitText.transliterate(user.getLastName()).replaceAll(" ", "").toLowerCase() + document.getId() + ".docx";
         Path path = Paths.get(DocumentServiceImpl.pathToFiles, fileName).toAbsolutePath();
@@ -187,13 +189,13 @@ public class DocumentServiceImplTest {
     }
 
     @Test
-    public void findDocumentByIdWhenFoundTest(){
+    public void findDocumentByIdWhenFoundTest() {
         Mockito.when(documentRepository.findById(document.getId())).thenReturn(Optional.ofNullable(document));
         assertThat(documentService.findDocumentById(document.getId())).isEqualTo(document);
     }
 
     @Test
-    public void findDocumentByIdWhenNotFoundTest(){
+    public void findDocumentByIdWhenNotFoundTest() {
         Throwable exception = assertThrows(ObjectNotFoundException.class, () -> documentService.findDocumentById(document.getId()));
         assertThat("Не найден документ с id " + document.getId()).isEqualTo(exception.getMessage());
     }

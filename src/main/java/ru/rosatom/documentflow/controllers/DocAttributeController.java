@@ -37,59 +37,59 @@ public class DocAttributeController {
     private final ModelMapper modelMapper;
 
 
-  @Operation(
-      summary = "Получить все атрибуты",
-      description = "Все атрибуты с пагинацией и сортировкой")
-  @GetMapping
-  @SecurityRequirement(name = "JWT")
-  List<DocAttributeDto> getAllDocTypes(
-      @RequestParam @Parameter(description = "Номер страницы") Optional<Integer> page,
-      @RequestParam @Parameter(description = "Сортировка") Optional<String> sortBy) {
-    return docAttributeService.getAllDocAttributes(page, sortBy).stream()
-            .map(o -> modelMapper.map(o, DocAttributeDto.class))
-            .collect(Collectors.toList());
-  }
+    @Operation(
+            summary = "Получить все атрибуты",
+            description = "Все атрибуты с пагинацией и сортировкой")
+    @GetMapping
+    @SecurityRequirement(name = "JWT")
+    List<DocAttributeDto> getAllDocTypes(
+            @RequestParam @Parameter(description = "Номер страницы") Optional<Integer> page,
+            @RequestParam @Parameter(description = "Сортировка") Optional<String> sortBy) {
+        return docAttributeService.getAllDocAttributes(page, sortBy).stream()
+                .map(o -> modelMapper.map(o, DocAttributeDto.class))
+                .collect(Collectors.toList());
+    }
 
-  @Operation(summary = "Получить атрибут по ID")
-  @GetMapping("/{docAttributeId}")
-  @SecurityRequirement(name = "JWT")
-  public DocAttributeDto getAttribute(
-      @PathVariable @Parameter(description = "ID атрибута") Long docAttributeId) {
-    DocAttribute docAttribute = docAttributeService.getDocAttributeById(docAttributeId);
-    log.info("Получен запрос на получение DocAttribute с ID: {}", docAttributeId);
-    return modelMapper.map(docAttribute, DocAttributeDto.class);
-  }
+    @Operation(summary = "Получить атрибут по ID")
+    @GetMapping("/{docAttributeId}")
+    @SecurityRequirement(name = "JWT")
+    public DocAttributeDto getAttribute(
+            @PathVariable @Parameter(description = "ID атрибута") Long docAttributeId) {
+        DocAttribute docAttribute = docAttributeService.getDocAttributeById(docAttributeId);
+        log.info("Получен запрос на получение DocAttribute с ID: {}", docAttributeId);
+        return modelMapper.map(docAttribute, DocAttributeDto.class);
+    }
 
-  @Operation(summary = "Создать атрибут")
-  @PostMapping
-  @ResponseStatus(HttpStatus.CREATED)
-  @SecurityRequirement(name = "JWT")
-  public DocAttributeDto createAttribute(
-      @Valid @RequestBody @Parameter(description = "DTO создания атрибута") DocAttributeCreateDto docAttributeCreateDto) {
-    DocAttributeCreationRequest docAttributeCreationRequest =
-        modelMapper.map(docAttributeCreateDto, DocAttributeCreationRequest.class);
-    DocAttribute docAttribute = docAttributeService.createDocAttribute(docAttributeCreationRequest);
-    log.info("Получен запрос на создание DocAttribute: {}", docAttributeCreateDto);
-    return modelMapper.map(docAttribute, DocAttributeDto.class);
-  }
+    @Operation(summary = "Создать атрибут")
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    @SecurityRequirement(name = "JWT")
+    public DocAttributeDto createAttribute(
+            @Valid @RequestBody @Parameter(description = "DTO создания атрибута") DocAttributeCreateDto docAttributeCreateDto) {
+        DocAttributeCreationRequest docAttributeCreationRequest =
+                modelMapper.map(docAttributeCreateDto, DocAttributeCreationRequest.class);
+        DocAttribute docAttribute = docAttributeService.createDocAttribute(docAttributeCreationRequest);
+        log.info("Получен запрос на создание DocAttribute: {}", docAttributeCreateDto);
+        return modelMapper.map(docAttribute, DocAttributeDto.class);
+    }
 
-  @Operation(summary = "Изменить атрибут")
-  @RequestMapping(value = "/{docAttributeId}", method = RequestMethod.PATCH)
-  @SecurityRequirement(name = "JWT")
-  public DocAttributeDto updateAttribute(
-      @PathVariable @Parameter(description = "ID атрибута") Long docAttributeId,
-      @Valid @RequestBody @Parameter(description = "DTO изменения типа") DocAttributeUpdateRequestDto docAttributeUpdateRequestDto) {
-    DocAttributeUpdateRequest docAttributeUpdateRequest =
-        modelMapper.map(docAttributeUpdateRequestDto, DocAttributeUpdateRequest.class);
-    DocAttribute docAttribute =
-        docAttributeService.updateDocAttribute(docAttributeId, docAttributeUpdateRequest);
+    @Operation(summary = "Изменить атрибут")
+    @RequestMapping(value = "/{docAttributeId}", method = RequestMethod.PATCH)
+    @SecurityRequirement(name = "JWT")
+    public DocAttributeDto updateAttribute(
+            @PathVariable @Parameter(description = "ID атрибута") Long docAttributeId,
+            @Valid @RequestBody @Parameter(description = "DTO изменения типа") DocAttributeUpdateRequestDto docAttributeUpdateRequestDto) {
+        DocAttributeUpdateRequest docAttributeUpdateRequest =
+                modelMapper.map(docAttributeUpdateRequestDto, DocAttributeUpdateRequest.class);
+        DocAttribute docAttribute =
+                docAttributeService.updateDocAttribute(docAttributeId, docAttributeUpdateRequest);
 
-    log.info(
-        "Получен запрос на обновление DocAttribute с ID: {}. Обновлённый DocAttribute: {}",
-        docAttributeId,
-        docAttribute);
-    return modelMapper.map(docAttribute, DocAttributeDto.class);
-  }
+        log.info(
+                "Получен запрос на обновление DocAttribute с ID: {}. Обновлённый DocAttribute: {}",
+                docAttributeId,
+                docAttribute);
+        return modelMapper.map(docAttribute, DocAttributeDto.class);
+    }
 
     @Operation(summary = "Поиск атрибута по подстроке в имени")
     @GetMapping("/name/{name}")
