@@ -20,40 +20,40 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DocumentDto {
-    @Schema(name = "ID документа")
+    @Schema(description = "ID документа")
     Long id;
 
-    @Schema(name = "Название")
+    @Schema(description = "Название")
     @NotNull
     @NotEmpty
     String name;
 
-    @Schema(name = "Путь документа")
+    @Schema(description = "Путь документа")
     @NotNull
     @NotEmpty
     String documentPath;
 
-    @Schema(name = "Дата последнего обновления")
+    @Schema(description = "Дата последнего обновления")
     @NotNull
     @JsonFormat(pattern = CommonUtils.DATE_TIME_PATTERN)
     LocalDateTime date;
 
-    @Schema(name = "ID организации")
+    @Schema(description = "ID организации")
     @NotNull
     Long idOrganization;
 
-    @Schema(name = "ID создателя")
+    @Schema(description = "ID создателя")
     Long ownerId;
 
-    @Schema(name = "Тип документа")
+    @Schema(description = "Тип документа")
     @NotNull
     DocTypeDto docTypeDto;
 
-    @Schema(name = "Список атрибутов")
+    @Schema(description = "Список атрибутов")
     @NotNull
     List<DocAttributeValues> attributeValues;
 
-    @Schema(name = "Статус")
+    @Schema(description = "Статус")
     DocProcessStatus finalDocStatus;
 }
 
