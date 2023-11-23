@@ -6,16 +6,15 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
-import ru.rosatom.documentflow.models.DocProcess;
-import ru.rosatom.documentflow.models.DocProcessStatus;
-import ru.rosatom.documentflow.models.Document;
-import ru.rosatom.documentflow.models.ProcessUpdateRequest;
-import ru.rosatom.documentflow.models.User;
+import ru.rosatom.documentflow.models.*;
+import ru.rosatom.documentflow.repositories.DocProcessCommentRepository;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
+import ru.rosatom.documentflow.services.DocProcessCommentService;
 import ru.rosatom.documentflow.services.DocumentProcessService;
 import ru.rosatom.documentflow.services.DocumentService;
 import ru.rosatom.documentflow.services.UserService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -30,11 +29,15 @@ class DocumentProcessServiceImplTest {
     private final DocumentService documentService = Mockito.mock(DocumentService.class);
     private final UserService userService = Mockito.mock(UserService.class);
     private final DocProcessRepository docProcessRepository = Mockito.mock(DocProcessRepository.class);
+    private final DocProcessCommentRepository docProcessCommentRepository = Mockito.mock(DocProcessCommentRepository.class);
+    private final DocProcessCommentService docProcessCommentService = Mockito.mock(DocProcessCommentService.class);
 
     private final DocumentProcessService documentProcessService = new DocumentProcessServiceImpl(
             documentService,
             userService,
-            docProcessRepository);
+            docProcessRepository,
+            docProcessCommentService,
+            docProcessCommentRepository);
 
 
 
@@ -57,7 +60,7 @@ class DocumentProcessServiceImplTest {
                     Mockito.mock(User.class),
                     Mockito.mock(User.class),
                     DocProcessStatus.WAITING_FOR_APPROVE,
-                    "");
+                    docProcessCommentRepository.findAllByDocumentId(1L));
             processUpdateRequest.setProcessId(updatableDocProcess.getId());
             Mockito.doReturn(Optional.of(updatableDocProcess))
                     .when(docProcessRepository).findById(updatableDocProcess.getId());
@@ -66,7 +69,7 @@ class DocumentProcessServiceImplTest {
         }
         @Test
         void testSendToCorrectionWithOneDocProcess() {
-            documentProcessService.sendToCorrection(processUpdateRequest);
+            documentProcessService.sendToCorrection(processUpdateRequest, " text");
             Mockito.verify(docProcessRepository).save(updatableDocProcess);
             Assertions.assertEquals(DocProcessStatus.CORRECTING, updatableDocProcess.getStatus());
         }
@@ -88,7 +91,7 @@ class DocumentProcessServiceImplTest {
             ).flatMap(List::stream).collect(Collectors.toList());
             Mockito.when(docProcessRepository.findAllByDocumentId( updatableDocProcessDocument.getId() ))
                   .thenReturn(docProcesses);
-            documentProcessService.sendToCorrection(processUpdateRequest);
+            documentProcessService.sendToCorrection(processUpdateRequest, "text");
             Mockito.verify(docProcessRepository).saveAll(ArgumentMatchers.anyIterable());
             docProcessesWhoseStatusShouldChange.forEach(docProcess -> Assertions.assertEquals(DocProcessStatus.CORRECTING, docProcess.getStatus()));
             docProcessesWhoseStatusShouldNotChange.forEach(docProcess -> Assertions.assertNotEquals(DocProcessStatus.CORRECTING, docProcess.getStatus()));
@@ -107,6 +110,6 @@ class DocumentProcessServiceImplTest {
                 Mockito.mock(User.class),
                 Mockito.mock(User.class),
                 status,
-                "");
+                new ArrayList<>());
     }
 }
