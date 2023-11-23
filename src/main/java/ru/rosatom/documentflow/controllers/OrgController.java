@@ -28,68 +28,68 @@ import java.util.stream.Collectors;
 @Tag(name = "Организации")
 public class OrgController {
 
-  UserOrganizationService userOrganizationService;
-  ModelMapper modelMapper;
+    UserOrganizationService userOrganizationService;
+    ModelMapper modelMapper;
 
-  @Operation(summary = "Получить все организации")
-  @GetMapping
-  @SecurityRequirement(name = "JWT")
-  public List<OrgDto> getAllOrgs() {
-    List<UserOrganization> organizations = userOrganizationService.getAllOrganizations();
-    return organizations.stream()
-        .map(o -> modelMapper.map(o, OrgDto.class))
-        .collect(Collectors.toList());
-  }
+    @Operation(summary = "Получить все организации")
+    @GetMapping
+    @SecurityRequirement(name = "JWT")
+    public List<OrgDto> getAllOrgs() {
+        List<UserOrganization> organizations = userOrganizationService.getAllOrganizations();
+        return organizations.stream()
+                .map(o -> modelMapper.map(o, OrgDto.class))
+                .collect(Collectors.toList());
+    }
 
-  @Operation(summary = "Добавить организацию")
-  @PostMapping
-  @ResponseStatus(HttpStatus.CREATED)
-  @SecurityRequirement(name = "JWT")
-  public OrgDto createOrg(
-      @Valid @RequestBody @Parameter(description = "DTO создания организации") OrgCreateRequestDto orgCreateRequestDto) {
-    OrgCreationRequest orgCreationRequest =
-        modelMapper.map(orgCreateRequestDto, OrgCreationRequest.class);
-    UserOrganization organization = userOrganizationService.createOrganization(orgCreationRequest);
-    return modelMapper.map(organization, OrgDto.class);
-  }
+    @Operation(summary = "Добавить организацию")
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    @SecurityRequirement(name = "JWT")
+    public OrgDto createOrg(@Valid @RequestBody OrgCreateRequestDto orgCreateRequestDto) {
+        OrgCreationRequest orgCreationRequest =
+                modelMapper.map(orgCreateRequestDto, OrgCreationRequest.class);
+        UserOrganization organization = userOrganizationService.createOrganization(orgCreationRequest);
+        return modelMapper.map(organization, OrgDto.class);
+    }
 
-  @Operation(summary = "Получить организацию по Id")
-  @GetMapping("/{orgId}")
-  @SecurityRequirement(name = "JWT")
-  public OrgDto getOrg(@PathVariable @Parameter(description = "ID организации") Long orgId) {
-    UserOrganization organization = userOrganizationService.getOrganization(orgId);
-    return modelMapper.map(organization, OrgDto.class);
-  }
 
-  @Operation(summary = "Поиск организации по подстроке в имени")
-  @GetMapping("/name/{name}")
-  @SecurityRequirement(name = "JWT")
-  public List<OrgDto> getOrgsByNameLike(
-      @PathVariable @Parameter(description = "Подстрока в имени") String name) {
-    List<UserOrganization> organizations = userOrganizationService.getOrganizationsByNameLike(name);
-    return organizations.stream()
-        .map(o -> modelMapper.map(o, OrgDto.class))
-        .collect(Collectors.toList());
-  }
+    @Operation(summary = "Получить организацию по Id")
+    @GetMapping("/{orgId}")
+    @SecurityRequirement(name = "JWT")
+    public OrgDto getOrg(@PathVariable @Parameter(description = "ID организации") Long orgId) {
+        UserOrganization organization = userOrganizationService.getOrganization(orgId);
+        return modelMapper.map(organization, OrgDto.class);
+    }
 
-  @Operation(summary = "Изменить организацию")
-  @RequestMapping(value = "/{orgId}", method = RequestMethod.PATCH)
-  @SecurityRequirement(name = "JWT")
-  public OrgDto updateOrg(
-      @PathVariable @Parameter(description = "ID организации") Long orgId,
-      @Valid @RequestBody OrgUpdateRequestDto orgUpdateRequestDto) {
-    OrgUpdateRequest orgUpdateRequest =
-        modelMapper.map(orgUpdateRequestDto, OrgUpdateRequest.class);
-    UserOrganization organization =
-        userOrganizationService.updateOrganization(orgId, orgUpdateRequest);
-    return modelMapper.map(organization, OrgDto.class);
-  }
+    @Operation(summary = "Поиск организации по подстроке в имени")
+    @GetMapping("/name/{name}")
+    @SecurityRequirement(name = "JWT")
+    public List<OrgDto> getOrgsByNameLike(
+            @PathVariable @Parameter(description = "Подстрока в имени") String name) {
+        List<UserOrganization> organizations = userOrganizationService.getOrganizationsByNameLike(name);
+        return organizations.stream()
+                .map(o -> modelMapper.map(o, OrgDto.class))
+                .collect(Collectors.toList());
+    }
 
-  @Operation(summary = "Удалить организацию")
-  @DeleteMapping("/{orgId}")
-  @SecurityRequirement(name = "JWT")
-  public OrgDto deleteOrg(@PathVariable @Parameter(description = "ID организации") Long orgId) {
-    UserOrganization organization = userOrganizationService.deleteOrganization(orgId);
-    return modelMapper.map(organization, OrgDto.class);
-  }
+    @Operation(summary = "Изменить организацию")
+    @RequestMapping(value = "/{orgId}", method = RequestMethod.PATCH)
+    @SecurityRequirement(name = "JWT")
+    public OrgDto updateOrg(
+            @PathVariable @Parameter(description = "ID организации") Long orgId,
+            @Valid @RequestBody OrgUpdateRequestDto orgUpdateRequestDto) {
+        OrgUpdateRequest orgUpdateRequest =
+                modelMapper.map(orgUpdateRequestDto, OrgUpdateRequest.class);
+        UserOrganization organization =
+                userOrganizationService.updateOrganization(orgId, orgUpdateRequest);
+        return modelMapper.map(organization, OrgDto.class);
+    }
+
+    @Operation(summary = "Удалить организацию")
+    @DeleteMapping("/{orgId}")
+    @SecurityRequirement(name = "JWT")
+    public OrgDto deleteOrg(@PathVariable @Parameter(description = "ID организации") Long orgId) {
+        UserOrganization organization = userOrganizationService.deleteOrganization(orgId);
+        return modelMapper.map(organization, OrgDto.class);
+    }
 }
