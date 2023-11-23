@@ -78,10 +78,11 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
 
     /**
      * Получить список процессов по id получателя
+     *
      * @param userId - id получателя
      * @return Список процессов
      */
-    public List<DocProcess> getIncomingProcessesByUserId(Long userId){
+    public List<DocProcess> getIncomingProcessesByUserId(Long userId) {
         return docProcessRepository.findAllByRecipientId(userId)
                 .stream()
                 .filter(docProcess -> !docProcess.getStatus().equals(NEW))
@@ -90,6 +91,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
 
     /**
      * Получить список процессов по id отправителя
+     *
      * @param userId - id отправителя
      * @return Список процессов
      */
@@ -146,11 +148,12 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
 
     /**
      * Установить статус для всех процессов по документу кроме процессов со статусами из списка exceptStatuses
-     * @param document - документ для которого нужно установить статус
-     * @param newStatus - новый статус
+     *
+     * @param document       - документ для которого нужно установить статус
+     * @param newStatus      - новый статус
      * @param exceptStatuses - список статусов, которые нужно исключить
      */
-    public void setStatusForAllProcessesExceptByDocument(Document document, DocProcessStatus newStatus, List<DocProcessStatus> exceptStatuses){
+    public void setStatusForAllProcessesExceptByDocument(Document document, DocProcessStatus newStatus, List<DocProcessStatus> exceptStatuses) {
         List<DocProcess> processes = docProcessRepository.findAllByDocumentId(document.getId());
         processes.stream()
                 .filter(process -> !exceptStatuses.contains(process.getStatus()))

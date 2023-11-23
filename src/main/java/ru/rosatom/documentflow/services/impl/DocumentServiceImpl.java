@@ -76,8 +76,8 @@ public class DocumentServiceImpl implements DocumentService {
     public Document updateDocument(DocumentUpdateDto documentUpdateDto, Long id, Long userId) {
         Document newDocument = findDocumentById(id);
 
-        if (newDocument.getFinalDocStatus() != null){
-            if (newDocument.getFinalDocStatus().equals(DocProcessStatus.APPROVED) || newDocument.getFinalDocStatus().equals(DocProcessStatus.REJECTED)){
+        if (newDocument.getFinalDocStatus() != null) {
+            if (newDocument.getFinalDocStatus().equals(DocProcessStatus.APPROVED) || newDocument.getFinalDocStatus().equals(DocProcessStatus.REJECTED)) {
                 throw new BadRequestException("Запрещено изменять документы, находящиеся в конечном статусе");
             }
         }
@@ -187,8 +187,8 @@ public class DocumentServiceImpl implements DocumentService {
 
         Document document = findDocumentById(id);
 
-        if (document.getFinalDocStatus() != null){
-            if (document.getFinalDocStatus().equals(DocProcessStatus.APPROVED) || document.getFinalDocStatus().equals(DocProcessStatus.REJECTED)){
+        if (document.getFinalDocStatus() != null) {
+            if (document.getFinalDocStatus().equals(DocProcessStatus.APPROVED) || document.getFinalDocStatus().equals(DocProcessStatus.REJECTED)) {
                 throw new BadRequestException("Запрещено удалять документы, находящиеся в конечном статусе");
             }
         }
@@ -221,7 +221,7 @@ public class DocumentServiceImpl implements DocumentService {
     public void updateFinalStatus(Document newDocument, DocProcessStatus status, Collection<DocProcess> docProcess) {
         newDocument.setFinalDocStatus(status);
 
-        if (status.equals(DocProcessStatus.APPROVED)){
+        if (status.equals(DocProcessStatus.APPROVED)) {
             Document oldDocument = findDocumentById(newDocument.getId());
             Document correctDocument = fileService.updateFile(newDocument, oldDocument, docProcess);
 
