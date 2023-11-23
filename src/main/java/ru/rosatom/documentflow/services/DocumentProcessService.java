@@ -15,6 +15,7 @@ public interface DocumentProcessService {
     DocProcess findProcessById(Long processId);
 
     Collection<DocProcess> findProcessesByDocumentId(Long documentId);
+
     List<DocProcess> getIncomingProcessesByUserId(Long userId);
 
     List<DocProcess> getOutgoingProcessesByUserId(Long userId);
