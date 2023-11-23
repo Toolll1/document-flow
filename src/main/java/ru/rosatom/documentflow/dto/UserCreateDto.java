@@ -16,9 +16,6 @@ import javax.validation.constraints.Size;
 @Schema(description = "Данные для создания пользователя")
 public class UserCreateDto {
 
-    @Schema(name = "ID пользователя")
-    private final Long id;
-
     @Schema(name = "Фамилия", minLength = 2, maxLength = 100)
     @NotBlank
     @Size(min = 2, max = 100)
