@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -153,10 +152,15 @@ public class DocProcessController {
                 DocProcessDto.class);
     }
 
-    @PatchMapping("/processes/{processId}/delegate-to-other-user")
+    @Operation(summary = "Делегировать согласование документа")
+    @PatchMapping("/processes/{processId}/delegate-to-other-user/{recipientId}")
     @PreAuthorize("@documentProcessSecurityService.isRecipient(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('USER')")
+    @SecurityRequirement(name = "JWT")
+    @Parameter(name = "processUpdateRequestDto", hidden = true)
+    @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
+    @Parameter(name = "comment", description = "Комментарий")
     public DocProcessDto delegateToOtherUser(ProcessUpdateRequestDto processUpdateRequestDto,
-                                    @RequestParam Long recipientId) {
+                                             @PathVariable @Parameter(description = "ID сотрудника") Long recipientId) {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
         return modelMapper.map(
                 documentProcessService.delegateToOtherUser(processUpdateRequest, recipientId),
