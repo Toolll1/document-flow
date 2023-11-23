@@ -4,12 +4,18 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.rosatom.documentflow.exceptions.IllegalProcessStatusException;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
-import ru.rosatom.documentflow.models.*;
+import ru.rosatom.documentflow.models.AgreementType;
+import ru.rosatom.documentflow.models.DocProcess;
+import ru.rosatom.documentflow.models.DocProcessStatus;
+import ru.rosatom.documentflow.models.Document;
+import ru.rosatom.documentflow.models.ProcessUpdateRequest;
+import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
 import ru.rosatom.documentflow.services.DocumentProcessService;
 import ru.rosatom.documentflow.services.DocumentService;
 import ru.rosatom.documentflow.services.UserService;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,12 +78,10 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
 
     /**
      * Получить список процессов по id получателя
-     *
      * @param userId - id получателя
      * @return Список процессов
      */
-
-    public List<DocProcess> getIncomingProcessesByUserId(Long userId) {
+    public List<DocProcess> getIncomingProcessesByUserId(Long userId){
         return docProcessRepository.findAllByRecipientId(userId)
                 .stream()
                 .filter(docProcess -> !docProcess.getStatus().equals(NEW))
@@ -86,7 +90,6 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
 
     /**
      * Получить список процессов по id отправителя
-     *
      * @param userId - id отправителя
      * @return Список процессов
      */
@@ -143,12 +146,11 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
 
     /**
      * Установить статус для всех процессов по документу кроме процессов со статусами из списка exceptStatuses
-     *
-     * @param document       - документ для которого нужно установить статус
-     * @param newStatus      - новый статус
+     * @param document - документ для которого нужно установить статус
+     * @param newStatus - новый статус
      * @param exceptStatuses - список статусов, которые нужно исключить
      */
-    public void setStatusForAllProcessesExceptByDocument(Document document, DocProcessStatus newStatus, List<DocProcessStatus> exceptStatuses) {
+    public void setStatusForAllProcessesExceptByDocument(Document document, DocProcessStatus newStatus, List<DocProcessStatus> exceptStatuses){
         List<DocProcess> processes = docProcessRepository.findAllByDocumentId(document.getId());
         processes.stream()
                 .filter(process -> !exceptStatuses.contains(process.getStatus()))
@@ -197,7 +199,8 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     }
 
     private void finalStatusUpdate(Long documentId) {
-        List<DocProcessStatus> processes = findProcessesByDocumentId(documentId)
+        Collection<DocProcess> docProcess = findProcessesByDocumentId(documentId);
+        List<DocProcessStatus> processes = docProcess
                 .stream()
                 .map(DocProcess::getStatus)
                 .collect(Collectors.toList());
@@ -209,16 +212,16 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         switch (agreementType) {
             case EVERYONE:
                 if (processes.contains(REJECTED)) {
-                    documentService.updateFinalStatus(document, REJECTED);
+                    documentService.updateFinalStatus(document, REJECTED, null);
                 } else {
-                    documentService.updateFinalStatus(document, APPROVED);
+                    documentService.updateFinalStatus(document, APPROVED, docProcess);
                 }
                 break;
             case ANYONE:
                 if (processes.contains(APPROVED)) {
-                    documentService.updateFinalStatus(document, APPROVED);
+                    documentService.updateFinalStatus(document, APPROVED, docProcess);
                 } else {
-                    documentService.updateFinalStatus(document, REJECTED);
+                    documentService.updateFinalStatus(document, REJECTED, null);
                 }
                 break;
             case QUORUM:
@@ -242,7 +245,12 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
                     }
                 }
                 if (maxVotes != secondVotes) {
-                    documentService.updateFinalStatus(document, finalStatus);
+
+                    if (finalStatus.equals(APPROVED)) {
+                        documentService.updateFinalStatus(document, finalStatus, docProcess);
+                    } else {
+                        documentService.updateFinalStatus(document, finalStatus, null);
+                    }
                 }
         }
     }
