@@ -6,11 +6,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
-import ru.rosatom.documentflow.models.DocProcess;
-import ru.rosatom.documentflow.models.DocProcessStatus;
-import ru.rosatom.documentflow.models.Document;
-import ru.rosatom.documentflow.models.ProcessUpdateRequest;
-import ru.rosatom.documentflow.models.User;
+import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
 import ru.rosatom.documentflow.services.DocumentProcessService;
 import ru.rosatom.documentflow.services.DocumentService;
@@ -21,7 +17,6 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 
 
 class DocumentProcessServiceImplTest {
@@ -35,11 +30,6 @@ class DocumentProcessServiceImplTest {
             documentService,
             userService,
             docProcessRepository);
-
-
-
-
-
 
 
     @Nested
@@ -64,6 +54,7 @@ class DocumentProcessServiceImplTest {
             Mockito.when(docProcessRepository.findAllByDocumentId(updatableDocProcessDocument.getId()))
                     .thenReturn(List.of(updatableDocProcess));
         }
+
         @Test
         void testSendToCorrectionWithOneDocProcess() {
             documentProcessService.sendToCorrection(processUpdateRequest);
@@ -86,13 +77,12 @@ class DocumentProcessServiceImplTest {
                     docProcessesWhoseStatusShouldNotChange,
                     docProcessesWhoseStatusShouldChange
             ).flatMap(List::stream).collect(Collectors.toList());
-            Mockito.when(docProcessRepository.findAllByDocumentId( updatableDocProcessDocument.getId() ))
-                  .thenReturn(docProcesses);
+            Mockito.when(docProcessRepository.findAllByDocumentId(updatableDocProcessDocument.getId()))
+                    .thenReturn(docProcesses);
             documentProcessService.sendToCorrection(processUpdateRequest);
             Mockito.verify(docProcessRepository).saveAll(ArgumentMatchers.anyIterable());
             docProcessesWhoseStatusShouldChange.forEach(docProcess -> Assertions.assertEquals(DocProcessStatus.CORRECTING, docProcess.getStatus()));
             docProcessesWhoseStatusShouldNotChange.forEach(docProcess -> Assertions.assertNotEquals(DocProcessStatus.CORRECTING, docProcess.getStatus()));
-
 
 
         }
