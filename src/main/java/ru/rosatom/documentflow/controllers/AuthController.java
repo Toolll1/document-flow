@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.rosatom.documentflow.dto.UserCredentialsDto;
 import ru.rosatom.documentflow.services.AuthService;
+import io.swagger.v3.oas.annotations.Parameter;
 
 @Slf4j
 @RestController
@@ -23,7 +24,8 @@ public class AuthController {
     @Operation(summary = "Авторизация")
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ResponseEntity<?> login(@RequestBody UserCredentialsDto userCredentialsDto) {
+    public ResponseEntity<?> login(@RequestBody @Parameter(description = "Учетные данные пользователя")
+                                       UserCredentialsDto userCredentialsDto) {
         log.info("Received a request to login user with email = {}", userCredentialsDto.getEmail());
         return authService.loginUser(userCredentialsDto.getEmail(), userCredentialsDto.getPassword());
     }
