@@ -30,7 +30,10 @@ VALUES
     ('Test Document 1', '/path/to/document1', NOW(), 1, 1, 1),
     ('Test Document 2', '/path/to/document2', NOW(), 2, 2, 2),
     ('Test Document 3', '/path/to/document3', NOW(), 2, 4, 2);
+INSERT INTO document_process_comment (user_id, text_comment, date_comment, document_id )
+VALUES
+    (1, 'Text',  NOW(), 1);
 INSERT INTO document_process (document_id, sender_id, recipient_id, status, comment)
 VALUES
-    (1, 1, 2, 'NEW', 'Test Comment 1'),
-    (2, 3, 3, 'NEW', '');
+    (1, 1, 2, 'NEW', 1),
+    (2, 3, 3, 'NEW', 1);

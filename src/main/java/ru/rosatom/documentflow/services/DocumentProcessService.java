@@ -10,7 +10,7 @@ public interface DocumentProcessService {
 
     DocProcess createNewProcess(Long documentId, Long recipientId);
 
-    void sendToApprove(ProcessUpdateRequest processUpdateRequest);
+    void sendToApprove(ProcessUpdateRequest processUpdateRequest, String textComment);
 
     DocProcess findProcessById(Long processId);
 
@@ -19,11 +19,11 @@ public interface DocumentProcessService {
 
     List<DocProcess> getOutgoingProcessesByUserId(Long userId);
 
-    void approve(ProcessUpdateRequest processUpdateRequest);
+    void approve(ProcessUpdateRequest processUpdateRequest, String textComment);
 
-    void reject(ProcessUpdateRequest processUpdateRequest);
+    void reject(ProcessUpdateRequest processUpdateRequest, String textComment);
 
-    void sendToCorrection(ProcessUpdateRequest processUpdateRequest);
+    void sendToCorrection(ProcessUpdateRequest processUpdateRequest, String textComment);
 
     void deleteProcess(Long processId);
 }

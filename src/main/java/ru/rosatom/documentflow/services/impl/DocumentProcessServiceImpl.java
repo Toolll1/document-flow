@@ -4,13 +4,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.rosatom.documentflow.exceptions.IllegalProcessStatusException;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
-import ru.rosatom.documentflow.models.AgreementType;
-import ru.rosatom.documentflow.models.DocProcess;
-import ru.rosatom.documentflow.models.DocProcessStatus;
-import ru.rosatom.documentflow.models.Document;
-import ru.rosatom.documentflow.models.ProcessUpdateRequest;
-import ru.rosatom.documentflow.models.User;
+import ru.rosatom.documentflow.models.*;
+import ru.rosatom.documentflow.repositories.DocProcessCommentRepository;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
+import ru.rosatom.documentflow.services.DocProcessCommentService;
 import ru.rosatom.documentflow.services.DocumentProcessService;
 import ru.rosatom.documentflow.services.DocumentService;
 import ru.rosatom.documentflow.services.UserService;
@@ -24,7 +21,6 @@ import static ru.rosatom.documentflow.models.DocProcessStatus.*;
 @AllArgsConstructor
 public class DocumentProcessServiceImpl implements DocumentProcessService {
 
-    private final static String EMPTY_COMMENT = "";
     private final static Map<DocProcessStatus, List<DocProcessStatus>> ALLOWED_STATUS_CHANGES = Map.of(
             DocProcessStatus.NEW, List.of(DocProcessStatus.WAITING_FOR_APPROVE),
             DocProcessStatus.WAITING_FOR_APPROVE, List.of(DocProcessStatus.APPROVED, DocProcessStatus.REJECTED, DocProcessStatus.CORRECTING),
@@ -35,6 +31,8 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     private final DocumentService documentService;
     private final UserService userService;
     private final DocProcessRepository docProcessRepository;
+    private final DocProcessCommentService docProcessCommentService;
+    private final DocProcessCommentRepository docProcessCommentRepository;
 
 
     /**
@@ -54,7 +52,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
                 .recipient(recipient)
                 .sender(sender)
                 .status(DocProcessStatus.NEW)
-                .comment(EMPTY_COMMENT)
+                .comment(docProcessCommentRepository.findAllByDocumentId(documentId))
                 .build();
         return docProcessRepository.save(docProcess);
     }
@@ -65,10 +63,15 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
      * @param processUpdateRequest - запрос на обновление процесса
      */
     @Override
-    public void sendToApprove(ProcessUpdateRequest processUpdateRequest) {
+    public void sendToApprove(ProcessUpdateRequest processUpdateRequest, String textComment) { // сюда текст
         DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
         throwIfStatusNotCorrect(docProcess, DocProcessStatus.WAITING_FOR_APPROVE);
         docProcess.setStatus(DocProcessStatus.WAITING_FOR_APPROVE);
+        List<DocProcessComment> comments = docProcess.getComment();
+        DocProcessComment comment = docProcessCommentService.createComment(textComment, docProcess.getSender());
+        comments.add(comment);
+        docProcess.setComment(comments);
+        docProcessCommentRepository.save(comment);
         docProcessRepository.save(docProcess);
     }
 
@@ -107,10 +110,15 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
      * @param processUpdateRequest - запрос на обновление процесса
      */
     @Override
-    public void approve(ProcessUpdateRequest processUpdateRequest) {
+    public void approve(ProcessUpdateRequest processUpdateRequest, String textComment) {
         DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
         throwIfStatusNotCorrect(docProcess, DocProcessStatus.APPROVED);
         docProcess.setStatus(DocProcessStatus.APPROVED);
+        List<DocProcessComment> comments = docProcess.getComment();
+        DocProcessComment comment = docProcessCommentService.createComment(textComment, docProcess.getSender());
+        comments.add(comment);
+        docProcess.setComment(comments);
+        docProcessCommentRepository.save(comment);
         docProcessRepository.save(docProcess);
         finalStatusUpdate(docProcess.getDocument().getId());
     }
@@ -121,10 +129,15 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
      * @param processUpdateRequest - запрос на обновление процесса
      */
     @Override
-    public void reject(ProcessUpdateRequest processUpdateRequest) {
+    public void reject(ProcessUpdateRequest processUpdateRequest, String textComment) {
         DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
         throwIfStatusNotCorrect(docProcess, DocProcessStatus.REJECTED);
         docProcess.setStatus(DocProcessStatus.REJECTED);
+        List<DocProcessComment> comments = docProcess.getComment();
+        DocProcessComment comment = docProcessCommentService.createComment(textComment, docProcess.getSender());
+        comments.add(comment);
+        docProcess.setComment(comments);
+        docProcessCommentRepository.save(comment);
         docProcessRepository.save(docProcess);
         finalStatusUpdate(docProcess.getDocument().getId());
     }
@@ -135,10 +148,15 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
      * @param processUpdateRequest - запрос на обновление процесса
      */
     @Override
-    public void sendToCorrection(ProcessUpdateRequest processUpdateRequest) {
+    public void sendToCorrection(ProcessUpdateRequest processUpdateRequest, String textComment) {
         DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
         throwIfStatusNotCorrect(docProcess, DocProcessStatus.CORRECTING);
         setStatusForAllProcessesExceptByDocument(docProcess.getDocument(), CORRECTING, List.of(CORRECTING, NEW));
+        List<DocProcessComment> comments = docProcess.getComment();
+        DocProcessComment comment = docProcessCommentService.createComment(textComment, docProcess.getSender());
+        comments.add(comment);
+        docProcess.setComment(comments);
+        docProcessCommentRepository.save(comment);
         docProcessRepository.save(docProcess);
     }
 
@@ -168,9 +186,11 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     }
 
 
-    private DocProcess getProcessAndApplyRequest(ProcessUpdateRequest processUpdateRequest) {
+    private DocProcess getProcessAndApplyRequest(ProcessUpdateRequest processUpdateRequest) { // добавить текст коммента
         DocProcess docProcess = findProcessById(processUpdateRequest.getProcessId());
-        docProcess.setComment(Objects.requireNonNullElse(processUpdateRequest.getComment(), docProcess.getComment()));
+        List<DocProcessComment> comments = docProcess.getComment();
+        comments.add(docProcessCommentService.createComment(" ", docProcess.getSender())); // сюда новый коммент
+        docProcess.setComment(comments);
         return docProcess;
     }
 

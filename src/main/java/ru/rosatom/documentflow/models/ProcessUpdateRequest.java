@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @Data
 public class ProcessUpdateRequest {
     private Long processId;
-    private String comment;
+    private DocProcessComment comment;
 }

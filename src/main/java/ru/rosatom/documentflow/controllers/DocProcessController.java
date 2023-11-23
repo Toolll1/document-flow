@@ -10,14 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.rosatom.documentflow.dto.DocProcessDto;
 import ru.rosatom.documentflow.dto.ProcessUpdateRequestDto;
 import ru.rosatom.documentflow.models.ProcessUpdateRequest;
@@ -43,7 +36,7 @@ public class DocProcessController {
   @SecurityRequirement(name = "JWT")
   public DocProcessDto createNewProcess(
       @PathVariable @Parameter(description = "ID документа") Long documentId,
-      @PathVariable @Parameter(description = "ID получателя") Long recipientId) {
+      @PathVariable @Parameter(description = "ID получателя") Long recipientId){
     return modelMapper.map(
         documentProcessService.createNewProcess(documentId, recipientId), DocProcessDto.class);
   }
@@ -102,9 +95,10 @@ public class DocProcessController {
     @Parameter(name="processUpdateRequestDto", hidden = true)
     @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
     @Parameter(name = "comment", description = "Комментарий")
-    public DocProcessDto sendToApprove(ProcessUpdateRequestDto processUpdateRequestDto) {
+    public DocProcessDto sendToApprove(@RequestParam @Parameter(description = "Текст комментария") String textComment,
+                                       ProcessUpdateRequestDto processUpdateRequestDto) {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
-        documentProcessService.sendToApprove(processUpdateRequest);
+        documentProcessService.sendToApprove(processUpdateRequest, textComment); // сюда комментарий текст
         return modelMapper.map(documentProcessService.findProcessById(processUpdateRequest.getProcessId()),
                 DocProcessDto.class);
     }
@@ -117,9 +111,10 @@ public class DocProcessController {
     @Parameter(name="processUpdateRequestDto", hidden = true)
     @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
     @Parameter(name = "comment", description = "Комментарий")
-    public DocProcessDto approve( ProcessUpdateRequestDto processUpdateRequestDto) {
+    public DocProcessDto approve(@RequestParam @Parameter(description = "Текст комментария") String textComment,
+                                 ProcessUpdateRequestDto processUpdateRequestDto) {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
-        documentProcessService.approve(processUpdateRequest);
+        documentProcessService.approve(processUpdateRequest, textComment);
         return modelMapper.map(documentProcessService.findProcessById(processUpdateRequest.getProcessId()),
                 DocProcessDto.class);
     }
@@ -131,9 +126,10 @@ public class DocProcessController {
     @Parameter(name="processUpdateRequestDto", hidden = true)
     @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
     @Parameter(name = "comment", description = "Комментарий")
-    public DocProcessDto reject(ProcessUpdateRequestDto processUpdateRequestDto) {
+    public DocProcessDto reject(@RequestParam @Parameter(description = "Текст комментария") String textComment,
+                                ProcessUpdateRequestDto processUpdateRequestDto) {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
-        documentProcessService.reject(processUpdateRequest);
+        documentProcessService.reject(processUpdateRequest, textComment);
         return modelMapper.map(documentProcessService.findProcessById(processUpdateRequest.getProcessId()),
                 DocProcessDto.class);
     }
@@ -145,9 +141,10 @@ public class DocProcessController {
     @Parameter(name="processUpdateRequestDto", hidden = true)
     @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
     @Parameter(name = "comment", description = "Комментарий")
-    public DocProcessDto sendToCorrection( ProcessUpdateRequestDto processUpdateRequestDto) {
+    public DocProcessDto sendToCorrection(@RequestParam @Parameter(description = "Текс комментария") String textComment,
+                                          ProcessUpdateRequestDto processUpdateRequestDto) {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
-        documentProcessService.sendToCorrection(processUpdateRequest);
+        documentProcessService.sendToCorrection(processUpdateRequest, textComment);
         return modelMapper.map(documentProcessService.findProcessById(processUpdateRequest.getProcessId()),
                 DocProcessDto.class);
     }
