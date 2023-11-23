@@ -2,11 +2,14 @@ package ru.rosatom.documentflow.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import ru.rosatom.documentflow.adapters.CommonUtils;
 import ru.rosatom.documentflow.models.DocAttributeValues;
-import ru.rosatom.documentflow.models.DocProcessStatus;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -47,13 +50,13 @@ public class DocumentDto {
 
     @Schema(description = "Тип документа")
     @NotNull
-    DocTypeDto docTypeDto;
+    String docTypeName;
 
     @Schema(description = "Список атрибутов")
     @NotNull
     List<DocAttributeValues> attributeValues;
 
     @Schema(description = "Статус")
-    DocProcessStatus finalDocStatus;
+    String finalDocStatus;
 }
 
