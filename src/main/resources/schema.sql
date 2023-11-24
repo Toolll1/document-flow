@@ -115,7 +115,7 @@ create table if not exists document_process
     sender_id    bigint        not null references users (user_id),
     recipient_id bigint        not null references users (user_id),
     status       varchar(20)   not null,
-    comment      varchar(1000) not null
+    comment      varchar(1000)
 );
 
 create table if not exists document_process_comment
