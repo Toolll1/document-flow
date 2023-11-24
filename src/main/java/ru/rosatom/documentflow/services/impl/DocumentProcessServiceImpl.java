@@ -4,14 +4,21 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.rosatom.documentflow.exceptions.IllegalProcessStatusException;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
-import ru.rosatom.documentflow.models.*;
+import ru.rosatom.documentflow.models.AgreementType;
+import ru.rosatom.documentflow.models.DocProcess;
+import ru.rosatom.documentflow.models.DocProcessStatus;
+import ru.rosatom.documentflow.models.Document;
+import ru.rosatom.documentflow.models.ProcessUpdateRequest;
+import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
 import ru.rosatom.documentflow.services.DocumentProcessService;
 import ru.rosatom.documentflow.services.DocumentService;
 import ru.rosatom.documentflow.services.EmailService;
 import ru.rosatom.documentflow.services.UserService;
 
+
 import javax.mail.MessagingException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,10 +34,12 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     private final static String EMPTY_COMMENT = "";
     private final static Map<DocProcessStatus, List<DocProcessStatus>> ALLOWED_STATUS_CHANGES = Map.of(
             DocProcessStatus.NEW, List.of(DocProcessStatus.WAITING_FOR_APPROVE),
-            DocProcessStatus.WAITING_FOR_APPROVE, List.of(DocProcessStatus.APPROVED, DocProcessStatus.REJECTED, DocProcessStatus.CORRECTING),
+            DocProcessStatus.WAITING_FOR_APPROVE, List.of(DocProcessStatus.APPROVED, DocProcessStatus.REJECTED
+                    , DocProcessStatus.CORRECTING, DocProcessStatus.DELEGATED),
             DocProcessStatus.CORRECTING, List.of(DocProcessStatus.WAITING_FOR_APPROVE),
             DocProcessStatus.APPROVED, List.of(),
-            DocProcessStatus.REJECTED, List.of()
+            DocProcessStatus.REJECTED, List.of(),
+            DocProcessStatus.DELEGATED, List.of()
     );
     private final DocumentService documentService;
     private final UserService userService;
@@ -80,7 +89,6 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
      * @param userId - id получателя
      * @return Список процессов
      */
-
     public List<DocProcess> getIncomingProcessesByUserId(Long userId) {
         return docProcessRepository.findAllByRecipientId(userId)
                 .stream()
@@ -204,7 +212,8 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     }
 
     private void finalStatusUpdate(Long documentId) {
-        List<DocProcessStatus> processes = findProcessesByDocumentId(documentId)
+        Collection<DocProcess> docProcess = findProcessesByDocumentId(documentId);
+        List<DocProcessStatus> processes = docProcess
                 .stream()
                 .map(DocProcess::getStatus)
                 .collect(Collectors.toList());
@@ -216,25 +225,27 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         switch (agreementType) {
             case EVERYONE:
                 if (processes.contains(REJECTED)) {
-                    documentService.updateFinalStatus(document, REJECTED);
+                    documentService.updateFinalStatus(document, REJECTED, null);
                 } else {
-                    documentService.updateFinalStatus(document, APPROVED);
+                    documentService.updateFinalStatus(document, APPROVED, docProcess);
                 }
                 break;
             case ANYONE:
                 if (processes.contains(APPROVED)) {
-                    documentService.updateFinalStatus(document, APPROVED);
+                    documentService.updateFinalStatus(document, APPROVED, docProcess);
                 } else {
-                    documentService.updateFinalStatus(document, REJECTED);
+                    documentService.updateFinalStatus(document, REJECTED, null);
                 }
                 break;
             case QUORUM:
                 Map<DocProcessStatus, Integer> voteCount = new HashMap<>();
                 for (DocProcessStatus vote : processes) {
-                    if (voteCount.containsKey(vote)) {
-                        voteCount.put(vote, voteCount.get(vote) + 1);
-                    } else {
-                        voteCount.put(vote, 1);
+                    if (!vote.equals(DELEGATED)) {
+                        if (voteCount.containsKey(vote)) {
+                            voteCount.put(vote, voteCount.get(vote) + 1);
+                        } else {
+                            voteCount.put(vote, 1);
+                        }
                     }
                 }
                 int maxVotes = 0;
@@ -249,9 +260,27 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
                     }
                 }
                 if (maxVotes != secondVotes) {
-                    documentService.updateFinalStatus(document, finalStatus);
+
+                    if (finalStatus.equals(APPROVED)) {
+                        documentService.updateFinalStatus(document, finalStatus, docProcess);
+                    } else {
+                        documentService.updateFinalStatus(document, finalStatus, null);
+                    }
                 }
         }
     }
 
+    /**
+     * Делегировать согласование другому пользователю. Статус процесса - DELEGATED
+     *
+     * @param processUpdateRequest - запрос на обновление процесса
+     * @param recipientId - id получателя, которому делегировано согласование
+     */
+    @Override
+    public DocProcess delegateToOtherUser(ProcessUpdateRequest processUpdateRequest, Long recipientId) {
+        DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
+        docProcess.setStatus(DELEGATED);
+        docProcessRepository.save(docProcess);
+        return createNewProcess(docProcess.getDocument().getId(), recipientId);
+    }
 }

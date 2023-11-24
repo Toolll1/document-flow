@@ -8,7 +8,6 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.lang.Nullable;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -16,28 +15,27 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Schema(description = "Обновление документа")
 public class DocumentUpdateDto {
-
-    @Schema(name = "Название")
+    @Schema(description = "Название")
     @Nullable
     String name;
 
-    @Schema(name = "Путь документа")
+    @Schema(description = "Путь документа")
     @Nullable
     String documentPath;
 
-    @Schema(name = "Дата обновления")
+    @Schema(description = "Дата обновления")
     @Nullable
     LocalDateTime date;
 
-    @Schema(name = "ID типа")
+    @Schema(description = "ID типа")
     @Nullable
     Long docTypeId;
 
-    @Schema(name = "Предыдущая версия")
+    @Schema(description = "Предыдущая версия")
     @Nullable
     String previousVersion;
 
-    @Schema(name = "Список атрибутов")
+    @Schema(description = "Список атрибутов")
     @Nullable
-    List<DocAttributeValueCreateDto> attributeValues = new ArrayList<>();
+    List<DocAttributeValueCreateDto> attributeValues;
 }

@@ -15,15 +15,15 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DocumentCreateDto {
 
-    @Schema(name = "ID организации")
+    @Schema(description = "ID организации")
     @NotNull
     Long idOrganization;
 
-    @Schema(name = "Тип документа")
+    @Schema(description = "Тип документа")
     @NotNull
     Long docTypId;
 
-    @Schema(name = "Список атрибутов")
+    @Schema(description = "Список атрибутов")
     @NotNull
     List<DocAttributeValueCreateDto> docAttributeValueCreateDtos;
 

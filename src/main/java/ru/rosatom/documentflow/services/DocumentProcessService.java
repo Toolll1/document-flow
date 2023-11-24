@@ -28,4 +28,6 @@ public interface DocumentProcessService {
     void sendToCorrection(ProcessUpdateRequest processUpdateRequest) throws MessagingException;
 
     void deleteProcess(Long processId);
+
+    DocProcess delegateToOtherUser(ProcessUpdateRequest processUpdateRequest, Long recipientId);
 }
