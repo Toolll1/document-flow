@@ -1,6 +1,7 @@
 package ru.rosatom.documentflow.services.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,9 @@ import javax.mail.internet.MimeMessage;
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
 
+    @Value("${spring.mail.username}")
+    private String from;
+
     private final String MESSAGE_ENCODING = "UTF-8";
 
     private final JavaMailSenderImpl javaMailSender;
@@ -30,6 +34,7 @@ public class EmailServiceImpl implements EmailService {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, MESSAGE_ENCODING);
         helper.setTo(to);
+        helper.setFrom(from);
         helper.setSubject(subject);
         helper.setText(text, true);
         javaMailSender.send(mimeMessage);
@@ -43,7 +48,7 @@ public class EmailServiceImpl implements EmailService {
                 docProcess.getDocument().getName(),
                 docProcess.getSender().getEmail(),
                 docProcess.getSender().getLastName() + ' ' + docProcess.getSender().getFirstName() + ' ' + docProcess.getSender().getPatronymic());
-        sendDocProcessMessage(text, docProcess.getRecipient().getEmail(), messageTemplate.getSubject());
+        sendDocProcessMessage(docProcess.getRecipient().getEmail(), text, messageTemplate.getSubject());
     }
 
     @Override
@@ -52,7 +57,7 @@ public class EmailServiceImpl implements EmailService {
         String text = String.format(messageTemplate.getBody(),
                 docProcess.getSender().getFirstName(),
                 docProcess.getDocument().getName());
-        sendDocProcessMessage(text, docProcess.getSender().getEmail(), messageTemplate.getSubject());
+        sendDocProcessMessage(docProcess.getSender().getEmail(), text, messageTemplate.getSubject());
 
     }
 
