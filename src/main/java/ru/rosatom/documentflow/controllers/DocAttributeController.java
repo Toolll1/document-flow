@@ -4,17 +4,22 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import ru.rosatom.documentflow.dto.DocAttributeCreateDto;
 import ru.rosatom.documentflow.dto.DocAttributeDto;
 import ru.rosatom.documentflow.dto.DocAttributeUpdateRequestDto;
@@ -22,6 +27,11 @@ import ru.rosatom.documentflow.models.DocAttribute;
 import ru.rosatom.documentflow.models.DocAttributeCreationRequest;
 import ru.rosatom.documentflow.models.DocAttributeUpdateRequest;
 import ru.rosatom.documentflow.services.DocAttributeService;
+
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Validated
@@ -40,6 +50,7 @@ public class DocAttributeController {
       description = "Все атрибуты с пагинацией и сортировкой")
   @GetMapping
   @SecurityRequirement(name = "JWT")
+  @PreAuthorize("hasAuthority('USER')")
   List<DocAttributeDto> getAllDocTypes(
       @RequestParam @Parameter(description = "Номер страницы") Optional<Integer> page,
       @RequestParam @Parameter(description = "Сортировка") Optional<String> sortBy) {
@@ -51,6 +62,7 @@ public class DocAttributeController {
   @Operation(summary = "Получить атрибут по ID")
   @GetMapping("/{docAttributeId}")
   @SecurityRequirement(name = "JWT")
+  @PreAuthorize("hasAuthority('USER')")
   public DocAttributeDto getAttribute(
       @PathVariable @Parameter(description = "ID атрибута") Long docAttributeId) {
     DocAttribute docAttribute = docAttributeService.getDocAttributeById(docAttributeId);
@@ -92,6 +104,7 @@ public class DocAttributeController {
   @Operation(summary = "Поиск атрибута по подстроке в имени")
   @GetMapping("/name/{name}")
   @SecurityRequirement(name = "JWT")
+  @PreAuthorize("hasAuthority('USER')")
   public List<DocAttributeDto> getDocAttributesByNameLike(
       @PathVariable @Parameter(description = "Подстрока имени") String name) {
     List<DocAttribute> docAttributes = docAttributeService.getDocAttributesByName(name);
@@ -110,7 +123,4 @@ public class DocAttributeController {
     docAttributeService.deleteDocAttribute(docAttributeId);
   }
 
-  private DocAttributeDto convertToDto(DocAttribute docAttribute) {
-    return modelMapper.map(docAttribute, DocAttributeDto.class);
-  }
 }
