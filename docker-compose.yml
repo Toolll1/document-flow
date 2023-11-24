@@ -2,7 +2,7 @@ services:
 
   document-flow:
     build: ./
-    image: document-flow
+    image: document-flow:1.0
     container_name: document-flow
     ports:
       - "8080:8080"
