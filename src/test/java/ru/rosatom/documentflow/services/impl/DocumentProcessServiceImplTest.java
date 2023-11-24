@@ -10,8 +10,10 @@ import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
 import ru.rosatom.documentflow.services.DocumentProcessService;
 import ru.rosatom.documentflow.services.DocumentService;
+import ru.rosatom.documentflow.services.EmailService;
 import ru.rosatom.documentflow.services.UserService;
 
+import javax.mail.MessagingException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -25,11 +27,13 @@ class DocumentProcessServiceImplTest {
     private final DocumentService documentService = Mockito.mock(DocumentService.class);
     private final UserService userService = Mockito.mock(UserService.class);
     private final DocProcessRepository docProcessRepository = Mockito.mock(DocProcessRepository.class);
+    private final EmailService emailService=Mockito.mock(EmailService.class);
 
     private final DocumentProcessService documentProcessService = new DocumentProcessServiceImpl(
             documentService,
             userService,
-            docProcessRepository);
+            docProcessRepository,
+            emailService);
 
 
     @Nested
@@ -56,14 +60,14 @@ class DocumentProcessServiceImplTest {
         }
 
         @Test
-        void testSendToCorrectionWithOneDocProcess() {
+        void testSendToCorrectionWithOneDocProcess() throws MessagingException {
             documentProcessService.sendToCorrection(processUpdateRequest);
             Mockito.verify(docProcessRepository).save(updatableDocProcess);
             Assertions.assertEquals(DocProcessStatus.CORRECTING, updatableDocProcess.getStatus());
         }
 
         @Test
-        void testSendToCorrectionWithMultipleDocProcesses() {
+        void testSendToCorrectionWithMultipleDocProcesses() throws MessagingException {
             List<DocProcess> docProcessesWhoseStatusShouldNotChange = List.of(
                     generateMockDocProcessWithStatus(DocProcessStatus.NEW, updatableDocProcessDocument)
             );
