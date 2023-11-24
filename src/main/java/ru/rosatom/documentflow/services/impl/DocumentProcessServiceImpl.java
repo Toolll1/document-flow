@@ -31,10 +31,12 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     private final static String EMPTY_COMMENT = "";
     private final static Map<DocProcessStatus, List<DocProcessStatus>> ALLOWED_STATUS_CHANGES = Map.of(
             DocProcessStatus.NEW, List.of(DocProcessStatus.WAITING_FOR_APPROVE),
-            DocProcessStatus.WAITING_FOR_APPROVE, List.of(DocProcessStatus.APPROVED, DocProcessStatus.REJECTED, DocProcessStatus.CORRECTING),
+            DocProcessStatus.WAITING_FOR_APPROVE, List.of(DocProcessStatus.APPROVED, DocProcessStatus.REJECTED
+                    , DocProcessStatus.CORRECTING, DocProcessStatus.DELEGATED),
             DocProcessStatus.CORRECTING, List.of(DocProcessStatus.WAITING_FOR_APPROVE),
             DocProcessStatus.APPROVED, List.of(),
-            DocProcessStatus.REJECTED, List.of()
+            DocProcessStatus.REJECTED, List.of(),
+            DocProcessStatus.DELEGATED, List.of()
     );
     private final DocumentService documentService;
     private final UserService userService;
@@ -230,10 +232,12 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
             case QUORUM:
                 Map<DocProcessStatus, Integer> voteCount = new HashMap<>();
                 for (DocProcessStatus vote : processes) {
-                    if (voteCount.containsKey(vote)) {
-                        voteCount.put(vote, voteCount.get(vote) + 1);
-                    } else {
-                        voteCount.put(vote, 1);
+                    if (!vote.equals(DELEGATED)) {
+                        if (voteCount.containsKey(vote)) {
+                            voteCount.put(vote, voteCount.get(vote) + 1);
+                        } else {
+                            voteCount.put(vote, 1);
+                        }
                     }
                 }
                 int maxVotes = 0;
@@ -258,4 +262,17 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         }
     }
 
+    /**
+     * Делегировать согласование другому пользователю. Статус процесса - DELEGATED
+     *
+     * @param processUpdateRequest - запрос на обновление процесса
+     * @param recipientId - id получателя, которому делегировано согласование
+     */
+    @Override
+    public DocProcess delegateToOtherUser(ProcessUpdateRequest processUpdateRequest, Long recipientId) {
+        DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
+        docProcess.setStatus(DELEGATED);
+        docProcessRepository.save(docProcess);
+        return createNewProcess(docProcess.getDocument().getId(), recipientId);
+    }
 }
