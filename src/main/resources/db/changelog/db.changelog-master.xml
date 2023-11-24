@@ -1,20 +1,22 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
-    <include file="classpath:db/changelog/v1.0_create_table_organizations.xml" relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/v1.1_create_table_passports.xml" relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/v1.2_create_table_users.xml" relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/v1.3_create_table_attributes.xml" relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/v1.4_create_table_attribute_values.xml" relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/v1.5_create_table_document_types.xml" relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/v1.6_create_table_documents.xml" relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/v1.7_create_table_type_attributes.xml" relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/v1.8_create_table_document_changes.xml" relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/v1.9_create_table_document_process.xml" relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/v1.10_insert_organizations.xml" relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/v1.11_insert_passports.xml" relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/v1.12_insert_users.xml" relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/v1.13_insert_document_types.xml" relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/v1.14_insert_documents.xml" relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/v1.15_insert_document_process.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.0_create_table_organizations.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.1_create_table_passports.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.2_create_table_users.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.3_create_table_attributes.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.4_create_table_attribute_values.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.5_create_table_document_types.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.6_create_table_documents.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.7_create_table_type_attributes.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.8_create_table_document_changes.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.9_create_table_document_process.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.10_create_table_message_templates.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-data/v1.0_insert_organizations.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-data/v1.1_insert_passports.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-data/v1.2_insert_users.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-data/v1.3_insert_document_types.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-data/v1.4_insert_documents.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-data/v1.5_insert_document_process.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-data/v1.6_insert_message_templates.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

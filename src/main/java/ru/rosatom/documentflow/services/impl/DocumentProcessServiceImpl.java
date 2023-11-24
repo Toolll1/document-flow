@@ -8,8 +8,10 @@ import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
 import ru.rosatom.documentflow.services.DocumentProcessService;
 import ru.rosatom.documentflow.services.DocumentService;
+import ru.rosatom.documentflow.services.EmailService;
 import ru.rosatom.documentflow.services.UserService;
 
+import javax.mail.MessagingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +35,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     private final DocumentService documentService;
     private final UserService userService;
     private final DocProcessRepository docProcessRepository;
+    private final EmailService emailService;
 
 
     /**
@@ -63,10 +66,11 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
      * @param processUpdateRequest - запрос на обновление процесса
      */
     @Override
-    public void sendToApprove(ProcessUpdateRequest processUpdateRequest) {
+    public void sendToApprove(ProcessUpdateRequest processUpdateRequest) throws MessagingException {
         DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
         throwIfStatusNotCorrect(docProcess, DocProcessStatus.WAITING_FOR_APPROVE);
         docProcess.setStatus(DocProcessStatus.WAITING_FOR_APPROVE);
+        emailService.formatMessageForRecipient(docProcess, MessagePattern.AGREEMENT);
         docProcessRepository.save(docProcess);
     }
 
@@ -106,11 +110,12 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
      * @param processUpdateRequest - запрос на обновление процесса
      */
     @Override
-    public void approve(ProcessUpdateRequest processUpdateRequest) {
+    public void approve(ProcessUpdateRequest processUpdateRequest) throws MessagingException {
         DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
         throwIfStatusNotCorrect(docProcess, DocProcessStatus.APPROVED);
         docProcess.setStatus(DocProcessStatus.APPROVED);
         docProcessRepository.save(docProcess);
+        emailService.formatMessageForSender(docProcess, MessagePattern.APPROVE);
         finalStatusUpdate(docProcess.getDocument().getId());
     }
 
@@ -120,11 +125,12 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
      * @param processUpdateRequest - запрос на обновление процесса
      */
     @Override
-    public void reject(ProcessUpdateRequest processUpdateRequest) {
+    public void reject(ProcessUpdateRequest processUpdateRequest) throws MessagingException {
         DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
         throwIfStatusNotCorrect(docProcess, DocProcessStatus.REJECTED);
         docProcess.setStatus(DocProcessStatus.REJECTED);
         docProcessRepository.save(docProcess);
+        emailService.formatMessageForSender(docProcess, MessagePattern.REJECT);
         finalStatusUpdate(docProcess.getDocument().getId());
     }
 
@@ -134,11 +140,12 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
      * @param processUpdateRequest - запрос на обновление процесса
      */
     @Override
-    public void sendToCorrection(ProcessUpdateRequest processUpdateRequest) {
+    public void sendToCorrection(ProcessUpdateRequest processUpdateRequest) throws MessagingException {
         DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
         throwIfStatusNotCorrect(docProcess, DocProcessStatus.CORRECTING);
         setStatusForAllProcessesExceptByDocument(docProcess.getDocument(), CORRECTING, List.of(CORRECTING, NEW));
         docProcessRepository.save(docProcess);
+        emailService.formatMessageForSender(docProcess, MessagePattern.CORRECTING);
     }
 
     /**

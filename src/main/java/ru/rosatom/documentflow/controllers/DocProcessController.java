@@ -17,6 +17,7 @@ import ru.rosatom.documentflow.models.ProcessUpdateRequest;
 import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.services.DocumentProcessService;
 
+import javax.mail.MessagingException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -97,7 +98,7 @@ public class DocProcessController {
     @Parameter(name = "processUpdateRequestDto", hidden = true)
     @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
     @Parameter(name = "comment", description = "Комментарий")
-    public DocProcessDto sendToApprove(ProcessUpdateRequestDto processUpdateRequestDto) {
+    public DocProcessDto sendToApprove(ProcessUpdateRequestDto processUpdateRequestDto) throws MessagingException {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
         documentProcessService.sendToApprove(processUpdateRequest);
         return modelMapper.map(documentProcessService.findProcessById(processUpdateRequest.getProcessId()),
@@ -112,7 +113,7 @@ public class DocProcessController {
     @Parameter(name = "processUpdateRequestDto", hidden = true)
     @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
     @Parameter(name = "comment", description = "Комментарий")
-    public DocProcessDto approve(ProcessUpdateRequestDto processUpdateRequestDto) {
+    public DocProcessDto approve(ProcessUpdateRequestDto processUpdateRequestDto) throws MessagingException {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
         documentProcessService.approve(processUpdateRequest);
         return modelMapper.map(documentProcessService.findProcessById(processUpdateRequest.getProcessId()),
@@ -126,7 +127,7 @@ public class DocProcessController {
     @Parameter(name = "processUpdateRequestDto", hidden = true)
     @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
     @Parameter(name = "comment", description = "Комментарий")
-    public DocProcessDto reject(ProcessUpdateRequestDto processUpdateRequestDto) {
+    public DocProcessDto reject(ProcessUpdateRequestDto processUpdateRequestDto) throws MessagingException {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
         documentProcessService.reject(processUpdateRequest);
         return modelMapper.map(documentProcessService.findProcessById(processUpdateRequest.getProcessId()),
@@ -140,7 +141,7 @@ public class DocProcessController {
     @Parameter(name = "processUpdateRequestDto", hidden = true)
     @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
     @Parameter(name = "comment", description = "Комментарий")
-    public DocProcessDto sendToCorrection(ProcessUpdateRequestDto processUpdateRequestDto) {
+    public DocProcessDto sendToCorrection(ProcessUpdateRequestDto processUpdateRequestDto) throws MessagingException {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
         documentProcessService.sendToCorrection(processUpdateRequest);
         return modelMapper.map(documentProcessService.findProcessById(processUpdateRequest.getProcessId()),

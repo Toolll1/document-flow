@@ -6,6 +6,7 @@ import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.rosatom.documentflow.dto.AppError;
@@ -22,6 +23,11 @@ public class ErrorHandler {
     @ExceptionHandler
     public ResponseEntity<AppError> handleBadRequest(final BadRequestException e) {
         return createAppError(e, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<AppError> handleBadCredentials(final BadCredentialsException e) {
+        return createAppError(e, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler

@@ -5,18 +5,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.rosatom.documentflow.configuration.JWT.JWTUtil;
 import ru.rosatom.documentflow.mappers.UserMapper;
 import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.services.AuthService;
 import ru.rosatom.documentflow.services.CustomUserDetailsService;
 
-import javax.transaction.Transactional;
 
 @Slf4j
 @Service
