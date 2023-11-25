@@ -11,21 +11,22 @@ import java.util.List;
 @Schema(description = "Процесс изменения документа")
 public class DocProcessDto {
 
-  @Schema(description = "ID процесса")
-  private Long id;
+    @Schema(description = "ID процесса")
+    private Long id;
 
-  @Schema(description = "Документ")
-  private Long document;
+    @Schema(description = "Документ")
+    private Long document;
 
-  @Schema(description = "Отправитель")
-  private Long sender;
+    @Schema(description = "Отправитель")
+    private Long sender;
 
-  @Schema(description = "Получатель")
-  private Long recipient;
+    @Schema(description = "Получатель")
+    private Long recipient;
 
-  @Schema(description = "Статус")
-  private String status;
+    @Schema(description = "Статус")
+    private String status;
 
   @Schema(description = "Комментарии")
   private List<DocProcessCommentDto> comment;
+
 }

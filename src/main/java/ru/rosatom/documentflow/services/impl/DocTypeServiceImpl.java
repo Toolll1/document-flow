@@ -24,68 +24,68 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class DocTypeServiceImpl implements DocTypeService {
 
-  private final DocTypeRepository docTypeRepository;
-  private final DocAttributeRepository docAttributeRepository;
+    private final DocTypeRepository docTypeRepository;
+    private final DocAttributeRepository docAttributeRepository;
 
-  @Override
-  public Page<DocType> getAllDocTypes(Optional<Integer> page, Optional<String> sortBy) {
-    return docTypeRepository.findAll(
-            PageRequest.of(page.orElse(0), 20, Sort.Direction.ASC, sortBy.orElse("id")));
-  }
-
-  @Override
-  public DocType getDocTypeById(Long id) {
-    Optional<DocType> docType = docTypeRepository.findById(id);
-    if (docType.isPresent()) {
-      return docType.get();
+    @Override
+    public Page<DocType> getAllDocTypes(Optional<Integer> page, Optional<String> sortBy) {
+        return docTypeRepository.findAll(
+                PageRequest.of(page.orElse(0), 20, Sort.Direction.ASC, sortBy.orElse("id")));
     }
-    throw new ObjectNotFoundException("Тип документа с ID " + id + " не найден.");
-  }
 
-  @Override
-  public DocType createDocType(DocTypeCreationRequest docTypeCreationRequest) {
-    DocType docType = DocType.builder()
-            .name(docTypeCreationRequest.getName())
-            .agreementType(docTypeCreationRequest.getAgreementType())
-            .build();
-    return docTypeRepository.save(docType);
-  }
-
-  @Override
-  public DocType updateDocType(Long docTypeId, DocTypeUpdateRequest docTypeUpdateRequest) {
-
-    if (docTypeRepository.existsById(docTypeId)) {
-      DocType docType = getDocTypeById(docTypeId);
-      docType.setName(
-              Objects.requireNonNullElse(docTypeUpdateRequest.getName(), docType.getName()));
-
-      return docTypeRepository.save(docType);
-    } else {
-      throw new ObjectNotFoundException("Тип документа с ID " + docTypeId + " не найден.");
+    @Override
+    public DocType getDocTypeById(Long id) {
+        Optional<DocType> docType = docTypeRepository.findById(id);
+        if (docType.isPresent()) {
+            return docType.get();
+        }
+        throw new ObjectNotFoundException("Тип документа с ID " + id + " не найден.");
     }
-  }
 
-  @Override
-  public void deleteDocType(Long id) {
-    if (docTypeRepository.existsById(id)) {
-      docTypeRepository.deleteById(id);
-    } else {
-      throw new ObjectNotFoundException("Тип документа с ID " + id + " не найден.");
+    @Override
+    public DocType createDocType(DocTypeCreationRequest docTypeCreationRequest) {
+        DocType docType = DocType.builder()
+                .name(docTypeCreationRequest.getName())
+                .agreementType(docTypeCreationRequest.getAgreementType())
+                .build();
+        return docTypeRepository.save(docType);
     }
-  }
 
-  @Override
-  public List<DocType> getDocTypesByName(String name) {
-    return docTypeRepository.findByNameContains(name);
-  }
+    @Override
+    public DocType updateDocType(Long docTypeId, DocTypeUpdateRequest docTypeUpdateRequest) {
 
-  @Override
-  public DocType attributeToType(Long docTypeId, Long docAttributeId) {
-    DocType docType = docTypeRepository.findById(docTypeId).get();
-    DocAttribute docAttribute = docAttributeRepository.findById(docAttributeId).get();
+        if (docTypeRepository.existsById(docTypeId)) {
+            DocType docType = getDocTypeById(docTypeId);
+            docType.setName(
+                    Objects.requireNonNullElse(docTypeUpdateRequest.getName(), docType.getName()));
 
-    docType.addAttributes(docAttribute);
+            return docTypeRepository.save(docType);
+        } else {
+            throw new ObjectNotFoundException("Тип документа с ID " + docTypeId + " не найден.");
+        }
+    }
 
-    return docTypeRepository.save(docType);
-  }
+    @Override
+    public void deleteDocType(Long id) {
+        if (docTypeRepository.existsById(id)) {
+            docTypeRepository.deleteById(id);
+        } else {
+            throw new ObjectNotFoundException("Тип документа с ID " + id + " не найден.");
+        }
+    }
+
+    @Override
+    public List<DocType> getDocTypesByName(String name) {
+        return docTypeRepository.findByNameContains(name);
+    }
+
+    @Override
+    public DocType attributeToType(Long docTypeId, Long docAttributeId) {
+        DocType docType = docTypeRepository.findById(docTypeId).get();
+        DocAttribute docAttribute = docAttributeRepository.findById(docAttributeId).get();
+
+        docType.addAttributes(docAttribute);
+
+        return docTypeRepository.save(docType);
+    }
 }

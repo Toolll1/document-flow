@@ -5,5 +5,6 @@ public enum DocProcessStatus {
     WAITING_FOR_APPROVE,
     APPROVED,
     REJECTED,
-    CORRECTING
+    CORRECTING,
+    DELEGATED
 }

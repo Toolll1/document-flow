@@ -1,4 +1,5 @@
 package ru.rosatom.documentflow.models;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

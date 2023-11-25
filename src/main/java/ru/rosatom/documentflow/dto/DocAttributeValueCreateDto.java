@@ -13,12 +13,12 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DocAttributeValueCreateDto {
-  @Schema(description = "ID атрибута")
-  @NotNull
-  Long attributeId;
+    @Schema(description = "ID атрибута")
+    @NotNull
+    Long attributeId;
 
-  @Schema(description = "Значение")
-  @NotNull
-  @NotEmpty
-  String value;
+    @Schema(description = "Значение")
+    @NotNull
+    @NotEmpty
+    String value;
 }

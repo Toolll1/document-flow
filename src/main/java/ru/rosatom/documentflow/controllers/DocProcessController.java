@@ -26,20 +26,21 @@ import java.util.stream.Collectors;
 @Tag(name = "Бизнес процесс")
 public class DocProcessController {
 
-  private final DocumentProcessService documentProcessService;
-  private final ModelMapper modelMapper;
+    private final DocumentProcessService documentProcessService;
+    private final ModelMapper modelMapper;
 
-  @Operation(summary = "Создать запрос на согласование")
-  @PostMapping("/{documentId}/recipient/{recipientId}/new-process")
-  @PreAuthorize(
-      "@documentProcessSecurityService.isCanManageProcess(#documentId, authentication.principal.id) && hasAuthority('USER')")
-  @SecurityRequirement(name = "JWT")
-  public DocProcessDto createNewProcess(
-      @PathVariable @Parameter(description = "ID документа") Long documentId,
-      @PathVariable @Parameter(description = "ID получателя") Long recipientId){
-    return modelMapper.map(
-        documentProcessService.createNewProcess(documentId, recipientId), DocProcessDto.class);
-  }
+    @Operation(summary = "Создать запрос на согласование")
+    @PostMapping("/{documentId}/recipient/{recipientId}/new-process")
+    @PreAuthorize(
+            "@documentProcessSecurityService.isCanManageProcess(#documentId, authentication.principal.id) && hasAuthority('USER')")
+    @SecurityRequirement(name = "JWT")
+    public DocProcessDto createNewProcess(
+            @PathVariable @Parameter(description = "ID документа") Long documentId,
+            @PathVariable @Parameter(description = "ID получателя") Long recipientId) {
+        return modelMapper.map(
+                documentProcessService.createNewProcess(documentId, recipientId), DocProcessDto.class);
+    }
+
     @Operation(summary = "Посмотреть все процессы по документу")
     @GetMapping("{documentId}/processes")
     @PreAuthorize("@documentProcessSecurityService.isHasAccessToProcess(#documentId, authentication.principal.id) && hasAuthority('USER')")
@@ -73,18 +74,19 @@ public class DocProcessController {
     @Operation(summary = "Получить все процессы, где текущий пользователь является отправителем")
     @GetMapping("/processes/outgoing")
     @SecurityRequirement(name = "JWT")
-    public List<DocProcessDto> findOutgoingProcesses(@AuthenticationPrincipal @Parameter(description = "Текущий пользователь",hidden = true)User currentUser) {
+    public List<DocProcessDto> findOutgoingProcesses(@AuthenticationPrincipal @Parameter(description = "Текущий пользователь", hidden = true) User currentUser) {
         return documentProcessService.getOutgoingProcessesByUserId(currentUser.getId()).stream()
                 .map(docProcess -> modelMapper.map(docProcess, DocProcessDto.class))
                 .collect(Collectors.toList());
     }
+
     @Operation(summary = "Удалить процесс")
     @DeleteMapping("/processes/{processId}")
     @PreAuthorize("@documentProcessSecurityService.isCanManageProcess(#processId, authentication.principal.id) " +
             "&& !@documentProcessSecurityService.isProcessDone(#processId) && hasAuthority('USER')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @SecurityRequirement(name = "JWT")
-    public void deleteProcess(@PathVariable @Parameter(description = "ID процесса")Long processId) {
+    public void deleteProcess(@PathVariable @Parameter(description = "ID процесса") Long processId) {
         documentProcessService.deleteProcess(processId);
     }
 
@@ -92,7 +94,7 @@ public class DocProcessController {
     @PatchMapping("/processes/{processId}/send-to-approve")
     @PreAuthorize("@documentProcessSecurityService.isHasAccessToProcess(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('USER')")
     @SecurityRequirement(name = "JWT")
-    @Parameter(name="processUpdateRequestDto", hidden = true)
+    @Parameter(name = "processUpdateRequestDto", hidden = true)
     @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
     @Parameter(name = "comment", description = "Комментарий")
     public DocProcessDto sendToApprove(@RequestParam @Parameter(description = "Текст комментария") String textComment,
@@ -108,9 +110,10 @@ public class DocProcessController {
     @PatchMapping("/processes/{processId}/approve")
     @PreAuthorize("@documentProcessSecurityService.isRecipient(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('USER')")
     @SecurityRequirement(name = "JWT")
-    @Parameter(name="processUpdateRequestDto", hidden = true)
+    @Parameter(name = "processUpdateRequestDto", hidden = true)
     @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
     @Parameter(name = "comment", description = "Комментарий")
+
     public DocProcessDto approve(@RequestParam @Parameter(description = "Текст комментария") String textComment,
                                  ProcessUpdateRequestDto processUpdateRequestDto) {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
@@ -123,7 +126,7 @@ public class DocProcessController {
     @PatchMapping("/processes/{processId}/reject")
     @PreAuthorize("@documentProcessSecurityService.isRecipient(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('USER')")
     @SecurityRequirement(name = "JWT")
-    @Parameter(name="processUpdateRequestDto", hidden = true)
+    @Parameter(name = "processUpdateRequestDto", hidden = true)
     @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
     @Parameter(name = "comment", description = "Комментарий")
     public DocProcessDto reject(@RequestParam @Parameter(description = "Текст комментария") String textComment,
@@ -138,16 +141,32 @@ public class DocProcessController {
     @PatchMapping("/processes/{processId}/send-to-correction")
     @PreAuthorize("@documentProcessSecurityService.isRecipient(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('USER')")
     @SecurityRequirement(name = "JWT")
-    @Parameter(name="processUpdateRequestDto", hidden = true)
+    @Parameter(name = "processUpdateRequestDto", hidden = true)
     @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
     @Parameter(name = "comment", description = "Комментарий")
+
     public DocProcessDto sendToCorrection(@RequestParam @Parameter(description = "Текс комментария") String textComment,
                                           ProcessUpdateRequestDto processUpdateRequestDto) {
+
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
         documentProcessService.sendToCorrection(processUpdateRequest, textComment);
         return modelMapper.map(documentProcessService.findProcessById(processUpdateRequest.getProcessId()),
                 DocProcessDto.class);
     }
 
-
+    @Operation(summary = "Делегировать согласование документа")
+    @PatchMapping("/processes/{processId}/delegate-to-other-user/{recipientId}")
+    @PreAuthorize("@documentProcessSecurityService.isRecipient(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('USER')")
+    @SecurityRequirement(name = "JWT")
+    @Parameter(name = "processUpdateRequestDto", hidden = true)
+    @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
+    @Parameter(name = "comment", description = "Комментарий")
+    public DocProcessDto delegateToOtherUser(ProcessUpdateRequestDto processUpdateRequestDto,
+                                             @PathVariable @Parameter(description = "ID сотрудника") Long recipientId) {
+        ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
+        return modelMapper.map(
+                documentProcessService.delegateToOtherUser(processUpdateRequest, recipientId),
+                DocProcessDto.class
+        );
+    }
 }

@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
-
 class DocumentProcessServiceImplTest {
     private final Random random = new Random();
 
@@ -38,11 +37,6 @@ class DocumentProcessServiceImplTest {
             docProcessRepository,
             docProcessCommentService,
             docProcessCommentRepository);
-
-
-
-
-
 
 
     @Nested
@@ -67,6 +61,7 @@ class DocumentProcessServiceImplTest {
             Mockito.when(docProcessRepository.findAllByDocumentId(updatableDocProcessDocument.getId()))
                     .thenReturn(List.of(updatableDocProcess));
         }
+
         @Test
         void testSendToCorrectionWithOneDocProcess() {
             documentProcessService.sendToCorrection(processUpdateRequest, " text");
@@ -89,13 +84,14 @@ class DocumentProcessServiceImplTest {
                     docProcessesWhoseStatusShouldNotChange,
                     docProcessesWhoseStatusShouldChange
             ).flatMap(List::stream).collect(Collectors.toList());
+
             Mockito.when(docProcessRepository.findAllByDocumentId( updatableDocProcessDocument.getId() ))
                   .thenReturn(docProcesses);
             documentProcessService.sendToCorrection(processUpdateRequest, "text");
+
             Mockito.verify(docProcessRepository).saveAll(ArgumentMatchers.anyIterable());
             docProcessesWhoseStatusShouldChange.forEach(docProcess -> Assertions.assertEquals(DocProcessStatus.CORRECTING, docProcess.getStatus()));
             docProcessesWhoseStatusShouldNotChange.forEach(docProcess -> Assertions.assertNotEquals(DocProcessStatus.CORRECTING, docProcess.getStatus()));
-
 
 
         }
