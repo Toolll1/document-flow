@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "c4007025-a6a6-4b98-a806-849af3f2c01a",
+		"_postman_id": "357c3d22-f905-4434-b2df-98980cece975",
 		"name": "document-flow",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "26417847"
+		"_exporter_id": "28827974"
 	},
 	"item": [
 		{
@@ -1560,6 +1560,366 @@
 		{
 			"name": "Documents",
 			"item": [
+				{
+					"name": "Types",
+					"item": [
+						{
+							"name": "Получить все типы документов",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/v1/doctypes",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"doctypes"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Получить тип документа по id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/v1/doctypes/2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"doctypes",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Создать тип документа",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\":\"New type document\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/v1/doctypes/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"doctypes",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Обновить тип документа",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\":\"Update document type\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/v1/doctypes/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"doctypes",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Удалить тип документа",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/v1/doctypes/4",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"doctypes",
+										"4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Поиск типа документа по подстроке в имени",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/v1/doctypes/name/type",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"doctypes",
+										"name",
+										"type"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Пагинация и сортировка",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/v1/doctypes?sortBy=name&page=0",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"doctypes"
+									],
+									"query": [
+										{
+											"key": "sortBy",
+											"value": "name"
+										},
+										{
+											"key": "page",
+											"value": "0"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Добавление атрибута к документу",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/v1/doctypes/1/attributes/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"doctypes",
+										"1",
+										"attributes",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Attributes",
+					"item": [
+						{
+							"name": "Получить все атрибуты",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/v1/docattributes",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"docattributes"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Получить атрибут по id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/v1/docattributes/2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"docattributes",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Создать атрибут",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"New attribute\",\r\n    \"type\": \"New type\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/v1/docattributes/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"docattributes",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Обновить атрибут",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"name has changed\",\r\n    \"type\": \"type has changed\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/v1/docattributes/3",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"docattributes",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Поиск атрибута по подстроке в имени",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/v1/docattributes/name/changed",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"docattributes",
+										"name",
+										"changed"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Пагинация и сортировка",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/v1/docattributes?sortBy=type&page=0",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"docattributes"
+									],
+									"query": [
+										{
+											"key": "sortBy",
+											"value": "type"
+										},
+										{
+											"key": "page",
+											"value": "0"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
 				{
 					"name": "публикация документа user3 id6",
 					"event": [

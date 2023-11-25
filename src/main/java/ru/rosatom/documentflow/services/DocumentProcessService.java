@@ -4,6 +4,7 @@ import ru.rosatom.documentflow.models.DocProcess;
 import ru.rosatom.documentflow.models.ProcessUpdateRequest;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface DocumentProcessService {
 
@@ -15,6 +16,10 @@ public interface DocumentProcessService {
 
     Collection<DocProcess> findProcessesByDocumentId(Long documentId);
 
+    List<DocProcess> getIncomingProcessesByUserId(Long userId);
+
+    List<DocProcess> getOutgoingProcessesByUserId(Long userId);
+
     void approve(ProcessUpdateRequest processUpdateRequest);
 
     void reject(ProcessUpdateRequest processUpdateRequest);
@@ -22,4 +27,6 @@ public interface DocumentProcessService {
     void sendToCorrection(ProcessUpdateRequest processUpdateRequest);
 
     void deleteProcess(Long processId);
+
+    DocProcess delegateToOtherUser(ProcessUpdateRequest processUpdateRequest, Long recipientId);
 }

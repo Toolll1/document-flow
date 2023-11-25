@@ -31,7 +31,11 @@ public class DocType {
             @JoinColumn(name = "attribute_id", referencedColumnName = "attribute_id"))
     private List<DocAttribute> attributes = new ArrayList<>();
 
-    @Column(name = "agreement_type",  length = 16)
+    @Column(name = "agreement_type", length = 16)
     @Enumerated(EnumType.STRING)
     private AgreementType agreementType;
+
+    public void addAttributes(DocAttribute docAttribute) {
+        attributes.add(docAttribute);
+    }
 }

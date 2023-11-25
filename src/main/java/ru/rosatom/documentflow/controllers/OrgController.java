@@ -1,5 +1,9 @@
 package ru.rosatom.documentflow.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -21,12 +25,15 @@ import java.util.stream.Collectors;
 @RequestMapping("/v1/org")
 @AllArgsConstructor
 @PreAuthorize("hasAuthority('ADMIN')")
+@Tag(name = "Организации")
 public class OrgController {
 
     UserOrganizationService userOrganizationService;
     ModelMapper modelMapper;
 
+    @Operation(summary = "Получить все организации")
     @GetMapping
+    @SecurityRequirement(name = "JWT")
     public List<OrgDto> getAllOrgs() {
         List<UserOrganization> organizations = userOrganizationService.getAllOrganizations();
         return organizations.stream()
@@ -34,8 +41,10 @@ public class OrgController {
                 .collect(Collectors.toList());
     }
 
+    @Operation(summary = "Добавить организацию")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @SecurityRequirement(name = "JWT")
     public OrgDto createOrg(@Valid @RequestBody OrgCreateRequestDto orgCreateRequestDto) {
         OrgCreationRequest orgCreationRequest =
                 modelMapper.map(orgCreateRequestDto, OrgCreationRequest.class);
@@ -43,23 +52,32 @@ public class OrgController {
         return modelMapper.map(organization, OrgDto.class);
     }
 
+
+    @Operation(summary = "Получить организацию по Id")
     @GetMapping("/{orgId}")
-    public OrgDto getOrg(@PathVariable Long orgId) {
+    @SecurityRequirement(name = "JWT")
+    public OrgDto getOrg(@PathVariable @Parameter(description = "ID организации") Long orgId) {
         UserOrganization organization = userOrganizationService.getOrganization(orgId);
         return modelMapper.map(organization, OrgDto.class);
     }
 
+    @Operation(summary = "Поиск организации по подстроке в имени")
     @GetMapping("/name/{name}")
-    public List<OrgDto> getOrgsByNameLike(@PathVariable String name) {
+    @SecurityRequirement(name = "JWT")
+    public List<OrgDto> getOrgsByNameLike(
+            @PathVariable @Parameter(description = "Подстрока в имени") String name) {
         List<UserOrganization> organizations = userOrganizationService.getOrganizationsByNameLike(name);
         return organizations.stream()
                 .map(o -> modelMapper.map(o, OrgDto.class))
                 .collect(Collectors.toList());
     }
 
+    @Operation(summary = "Изменить организацию")
     @RequestMapping(value = "/{orgId}", method = RequestMethod.PATCH)
+    @SecurityRequirement(name = "JWT")
     public OrgDto updateOrg(
-            @PathVariable Long orgId, @Valid @RequestBody OrgUpdateRequestDto orgUpdateRequestDto) {
+            @PathVariable @Parameter(description = "ID организации") Long orgId,
+            @Valid @RequestBody OrgUpdateRequestDto orgUpdateRequestDto) {
         OrgUpdateRequest orgUpdateRequest =
                 modelMapper.map(orgUpdateRequestDto, OrgUpdateRequest.class);
         UserOrganization organization =
@@ -67,8 +85,10 @@ public class OrgController {
         return modelMapper.map(organization, OrgDto.class);
     }
 
+    @Operation(summary = "Удалить организацию")
     @DeleteMapping("/{orgId}")
-    public OrgDto deleteOrg(@PathVariable Long orgId) {
+    @SecurityRequirement(name = "JWT")
+    public OrgDto deleteOrg(@PathVariable @Parameter(description = "ID организации") Long orgId) {
         UserOrganization organization = userOrganizationService.deleteOrganization(orgId);
         return modelMapper.map(organization, OrgDto.class);
     }

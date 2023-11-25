@@ -3,9 +3,10 @@ package ru.rosatom.documentflow.services.impl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.rosatom.documentflow.dto.DocStatisticDTO;
-import ru.rosatom.documentflow.dto.StatisticUsersAndOrg;
+import ru.rosatom.documentflow.dto.StatisticUsersAndOrgDto;
 import ru.rosatom.documentflow.dto.UserRatingDto;
 import ru.rosatom.documentflow.models.DocProcessStatus;
+import ru.rosatom.documentflow.models.UserOrganization;
 import ru.rosatom.documentflow.repositories.UserRepository;
 import ru.rosatom.documentflow.services.DocumentService;
 import ru.rosatom.documentflow.services.StatisticsService;
@@ -41,14 +42,19 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public StatisticUsersAndOrg statisticsUserAndOrganization() {
+    public StatisticUsersAndOrgDto statisticsUserAndOrganization() {
         int countUser = userService.getAllUsers().size();
         int countOrganization = userOrganizationService.getAllOrganizations().size();
-        return new StatisticUsersAndOrg(countUser, countOrganization);
+        return new StatisticUsersAndOrgDto(countUser, countOrganization);
     }
 
     @Override
     public List<UserRatingDto> getRatingAllUsersByOrgId(Long orgId) {
         return userRepository.findRatingForAllUsersByOrganizationId(orgId);
+    }
+
+    @Override
+    public List<UserOrganization> getAllActiveOrganization() {
+        return userOrganizationService.getAllActiveOrganization();
     }
 }

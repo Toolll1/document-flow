@@ -13,20 +13,34 @@ import ru.rosatom.documentflow.dto.DocParams;
 import ru.rosatom.documentflow.dto.DocumentUpdateDto;
 import ru.rosatom.documentflow.exceptions.BadRequestException;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
-import ru.rosatom.documentflow.models.*;
+import ru.rosatom.documentflow.models.DocAttributeValues;
+import ru.rosatom.documentflow.models.DocChanges;
+import ru.rosatom.documentflow.models.DocProcess;
+import ru.rosatom.documentflow.models.DocProcessStatus;
+import ru.rosatom.documentflow.models.Document;
+import ru.rosatom.documentflow.models.QDocAttributeValues;
+import ru.rosatom.documentflow.models.QDocument;
+import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.repositories.DocAttributeValuesRepository;
 import ru.rosatom.documentflow.repositories.DocChangesRepository;
 import ru.rosatom.documentflow.repositories.DocumentRepository;
-import ru.rosatom.documentflow.services.*;
+import ru.rosatom.documentflow.services.DocAttributeService;
+import ru.rosatom.documentflow.services.DocTypeService;
+import ru.rosatom.documentflow.services.DocumentService;
+import ru.rosatom.documentflow.services.FileService;
+import ru.rosatom.documentflow.services.UserOrganizationService;
+import ru.rosatom.documentflow.services.UserService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import static ru.rosatom.documentflow.adapters.CommonUtils.*;
+import static ru.rosatom.documentflow.adapters.CommonUtils.CHANGE_DOCUMENT_ATTRIBUTES;
+import static ru.rosatom.documentflow.adapters.CommonUtils.CHANGE_DOCUMENT_TYPE;
 
 @Service
 @Transactional
@@ -41,59 +55,71 @@ public class DocumentServiceImpl implements DocumentService {
     final DocTypeService docTypeService;
     final DocAttributeValuesRepository docAttributeValuesRepository;
     final DocAttributeService docAttributeService;
+    private final FileService fileService;
 
     @Override
     @Transactional
     public Document createDocument(Document document, Long userId) {
+
         userOrganizationService.getOrganization(document.getIdOrganization());
         document.setOwnerId(userId);
+        document.setDate(LocalDateTime.now());
         docAttributeValuesRepository.saveAll(document.getAttributeValues());
-        return documentRepository.save(document);
+
+        Document newDocument = fileService.createFile(document, null);
+
+        return documentRepository.save(newDocument);
     }
 
     @Override
     @Transactional
     public Document updateDocument(DocumentUpdateDto documentUpdateDto, Long id, Long userId) {
-        Document document = documentRepository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("Не найден документ с id " + id));
+        Document newDocument = findDocumentById(id);
+
+        if (newDocument.getFinalDocStatus() != null) {
+            if (newDocument.getFinalDocStatus().equals(DocProcessStatus.APPROVED) || newDocument.getFinalDocStatus().equals(DocProcessStatus.REJECTED)) {
+                throw new BadRequestException("Запрещено изменять документы, находящиеся в конечном статусе");
+            }
+        }
+
+        Document oldDocument = findDocumentById(id);
         DocChanges docChanges = new DocChanges();
+        StringBuilder sb = new StringBuilder();
+
         docChanges.setDocumentId(id);
         docChanges.setDateChange(LocalDate.now());
-        docChanges.setPreviousVersion(document.getDocumentPath());
+        docChanges.setPreviousVersion(newDocument.getDocumentPath());
         docChanges.setUserChangerId(userId);
-        StringBuilder sb = new StringBuilder();
-        if (documentUpdateDto.getTitle() != null) {
-            sb.append(String.format(CHANGE_TITLE, userId, document.getTitle(), documentUpdateDto.getTitle()));
-            document.setTitle(documentUpdateDto.getTitle());
-        }
-        if (documentUpdateDto.getDate() != null) {
-            sb.append(String.format(CHANGE_DATE, userId, document.getDate(), documentUpdateDto.getDate()));
-            document.setDate(documentUpdateDto.getDate());
-        }
-        if (documentUpdateDto.getDocumentPath() != null) {
-            sb.append(String.format(CHANGE_DOCUMENT_PATH, userId, document.getDocumentPath(), documentUpdateDto.getDocumentPath()));
-            document.setDocumentPath(documentUpdateDto.getDocumentPath());
-        }
+
         if (documentUpdateDto.getDocTypeId() != null) {
-            sb.append(String.format(CHANGE_DOCUMENT_TYPE, userId, document.getDocType().getId(), documentUpdateDto.getDocTypeId()));
-            document.setDocType(docTypeService.getDocTypeById(documentUpdateDto.getDocTypeId()));
+            sb.append(String.format(CHANGE_DOCUMENT_TYPE, userId, newDocument.getDocType().getId(), documentUpdateDto.getDocTypeId()));
+            newDocument.setDocType(docTypeService.getDocTypeById(documentUpdateDto.getDocTypeId()));
         }
-        if (documentUpdateDto.getAttributeValues().size() != 0) {
-            List<DocAttributeValues> attributeValues = new ArrayList<>();
-            for (DocAttributeValueCreateDto value : documentUpdateDto.getAttributeValues()) {
-                DocAttributeValues values = new DocAttributeValues();
-                values.setValue(value.getValue());
-                values.setAttribute(docAttributeService.getDocAttributeById(value.getAttributeId()));
-                attributeValues.add(values);
+
+        if (documentUpdateDto.getAttributeValues() != null) {
+            if (documentUpdateDto.getAttributeValues().size() != 0) {
+                List<DocAttributeValues> attributeValues = new ArrayList<>();
+                for (DocAttributeValueCreateDto value : documentUpdateDto.getAttributeValues()) {
+                    DocAttributeValues values = new DocAttributeValues();
+                    values.setValue(value.getValue());
+                    values.setAttribute(docAttributeService.getDocAttributeById(value.getAttributeId()));
+                    attributeValues.add(values);
+                }
+                sb.append(String.format(CHANGE_DOCUMENT_ATTRIBUTES,
+                        userId, newDocument.getAttributeValues().toString(), documentUpdateDto.getAttributeValues().toString()));
+                newDocument.setAttributeValues(attributeValues);
             }
-            sb.append(String.format(CHANGE_DOCUMENT_ATTRIBUTES,
-                    userId, document.getAttributeValues().toString(), documentUpdateDto.getAttributeValues().toString()));
-            document.setAttributeValues(attributeValues);
         }
-        docChanges.setChanges(sb.deleteCharAt(sb.length() - 1).toString());
-        docAttributeValuesRepository.saveAll(document.getAttributeValues());
-        docChangesRepository.save(docChanges);
-        return documentRepository.save(document);
+
+        if (!sb.toString().isBlank() && !sb.toString().isEmpty()) {
+            docChanges.setChanges(sb.deleteCharAt(sb.length() - 1).toString());
+            docAttributeValuesRepository.saveAll(newDocument.getAttributeValues());
+            docChangesRepository.save(docChanges);
+        }
+
+        Document correctDocument = fileService.updateFile(newDocument, oldDocument, null);
+
+        return documentRepository.save(correctDocument);
     }
 
     @Override
@@ -128,7 +154,7 @@ public class DocumentServiceImpl implements DocumentService {
             throw new BadRequestException("Даты поиска событий не верны");
         }
         if (p.getText() != null && !p.getText().isBlank()) {
-            booleanBuilder.and(QDocument.document.title.likeIgnoreCase("%" + p.getText() + "%"));
+            booleanBuilder.and(QDocument.document.name.likeIgnoreCase("%" + p.getText() + "%"));
         }
         if (p.getCreatorId() != null) {
             booleanBuilder.and(QDocument.document.ownerId.eq(p.getCreatorId()));
@@ -152,15 +178,23 @@ public class DocumentServiceImpl implements DocumentService {
                             .where(qAttributeValue.value.lower().likeIgnoreCase("%" + p.getAttributeValue().toLowerCase() + "%"))
             ));
         }
-        List<Document> documents = new ArrayList<>();
-        documents.addAll(documentRepository.findAll(booleanBuilder, pageable).getContent());
-        return documents;
+        return new ArrayList<>(documentRepository.findAll(booleanBuilder, pageable).getContent());
     }
 
     @Override
     @Transactional
     public void deleteDocumentById(Long id, Long userId) {
-        if (Objects.equals(findDocumentById(id).getOwnerId(), userId)) {
+
+        Document document = findDocumentById(id);
+
+        if (document.getFinalDocStatus() != null) {
+            if (document.getFinalDocStatus().equals(DocProcessStatus.APPROVED) || document.getFinalDocStatus().equals(DocProcessStatus.REJECTED)) {
+                throw new BadRequestException("Запрещено удалять документы, находящиеся в конечном статусе");
+            }
+        }
+
+        if (Objects.equals(document.getOwnerId(), userId)) {
+            fileService.deleteFile(document);
             documentRepository.deleteById(id);
         } else {
             throw new BadRequestException("Можно удалять только свои документы");
@@ -184,8 +218,16 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public void updateFinalStatus(Document document, DocProcessStatus status) {
-        document.setFinalDocStatus(status);
-        documentRepository.save(document);
+    public void updateFinalStatus(Document newDocument, DocProcessStatus status, Collection<DocProcess> docProcess) {
+        newDocument.setFinalDocStatus(status);
+
+        if (status.equals(DocProcessStatus.APPROVED)) {
+            Document oldDocument = findDocumentById(newDocument.getId());
+            Document correctDocument = fileService.updateFile(newDocument, oldDocument, docProcess);
+
+            documentRepository.save(correctDocument);
+        } else {
+            documentRepository.save(newDocument);
+        }
     }
 }
