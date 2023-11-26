@@ -5,8 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.text.StringSubstitutor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import ru.rosatom.documentflow.models.DocProcess;
 import ru.rosatom.documentflow.models.MessagePattern;
@@ -14,40 +12,27 @@ import ru.rosatom.documentflow.models.MessageTemplate;
 import ru.rosatom.documentflow.services.EmailService;
 import ru.rosatom.documentflow.services.MessageTemplateService;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import java.util.Map;
 
 @Service
 @Slf4j
-@Profile("prod")
+@Profile("dev")
 @RequiredArgsConstructor
-public class EmailServiceImpl implements EmailService {
+public class EmailServiceStub implements EmailService {
 
     @Value("${spring.mail.username}")
     private String from;
-
-    private final String MESSAGE_ENCODING = "UTF-8";
-
-    private final JavaMailSenderImpl javaMailSender;
 
     private final MessageTemplateService messageTemplateService;
 
 
     @Override
     public void sendDocProcessMessage(String to, String text, String subject) {
-        try {
-            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, MESSAGE_ENCODING);
-            helper.setTo(to);
-            helper.setFrom(from);
-            helper.setSubject(subject);
-            helper.setText(text, true);
-            javaMailSender.send(mimeMessage);
-        } catch (MessagingException e) {
-            log.warn("Unable to send message: ", e);
-        }
-
+        log.info("Message sent successfully\n" +
+                "From: {}\n" +
+                "To: {}\n" +
+                "Subject: {}\n" +
+                "Body: {}\n", from, to, subject, text);
     }
 
     @Override
