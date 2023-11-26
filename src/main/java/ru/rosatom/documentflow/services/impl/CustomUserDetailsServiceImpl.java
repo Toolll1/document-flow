@@ -8,11 +8,8 @@ import org.springframework.stereotype.Service;
 import ru.rosatom.documentflow.repositories.UserRepository;
 import ru.rosatom.documentflow.services.CustomUserDetailsService;
 
-import javax.transaction.Transactional;
-
 @Slf4j
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
     private final UserRepository userRepository;

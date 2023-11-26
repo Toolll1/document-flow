@@ -1,6 +1,6 @@
 package ru.rosatom.documentflow.configuration;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,32 +11,27 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import ru.rosatom.documentflow.configuration.JWT.JWTAuthFilter;
 import ru.rosatom.documentflow.configuration.JWT.JWTUtil;
+import ru.rosatom.documentflow.configuration.JWT.RestAuthEntryPoint;
 import ru.rosatom.documentflow.services.CustomUserDetailsService;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfiguration {
-    @Autowired
-    private CustomUserDetailsService userService;
+    private final CustomUserDetailsService userService;
 
-    @Autowired
-    private JWTUtil jwtUtil;
+    private final JWTUtil jwtUtil;
 
-    @Autowired
-    private AuthenticationEntryPoint authenticationEntryPoint;
+    private final RestAuthEntryPoint restAuthEntryPoint;
 
     @Bean
     public JWTAuthFilter jwtAuthFilter() {
-        return new JWTAuthFilter(userService, jwtUtil);
+        return new JWTAuthFilter(userService, jwtUtil, restAuthEntryPoint);
     }
 
     @Bean
@@ -64,7 +59,7 @@ public class SecurityConfiguration {
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
+                .exceptionHandling().authenticationEntryPoint(restAuthEntryPoint)
                 .and()
                 .authorizeHttpRequests()
                 .antMatchers("/auth/login", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
@@ -74,13 +69,6 @@ public class SecurityConfiguration {
                 .authenticationManager(authenticationManager(httpSecurity))
                 .build();
 
-    }
-
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
-        return source;
     }
 
 }

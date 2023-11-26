@@ -8,9 +8,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.rosatom.documentflow.dto.UserCredentialsDto;
+import ru.rosatom.documentflow.mappers.UserMapper;
+import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.services.AuthService;
 
 @Slf4j
@@ -20,22 +22,24 @@ import ru.rosatom.documentflow.services.AuthService;
 @Tag(name = "Авторизация")
 public class AuthController {
 
-  private final AuthService authService;
+    private final AuthService authService;
 
-  @Operation(summary = "Авторизация")
-  @PostMapping("/login")
-  @ResponseStatus(HttpStatus.ACCEPTED)
-  public ResponseEntity<?> login(@RequestBody @Parameter(description = "DTO Учетных данных пользователя") UserCredentialsDto userCredentialsDto) {
-    log.info("Received a request to login user with email = {}", userCredentialsDto.getEmail());
-    return authService.loginUser(userCredentialsDto.getEmail(), userCredentialsDto.getPassword());
-  }
+    private final UserMapper userMapper;
 
-  @Operation(summary = "Получить информацию о пользователе по токену авторизации")
-  @GetMapping("/info")
-  @SecurityRequirement(name = "JWT")
-  public ResponseEntity<?> getUserInfo(
-      @Parameter(description = "Аутентификация", hidden = true) Authentication authentication) {
-    log.info("Received a request to get info about user with email = {}", authentication.getName());
-    return authService.userInfo(authentication);
-  }
+    @Operation(summary = "Авторизация")
+    @PostMapping("/login")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public ResponseEntity<?> login(@RequestBody @Parameter(description = "DTO Учетных данных пользователя") UserCredentialsDto userCredentialsDto) {
+        log.info("Received a request to login user with email = {}", userCredentialsDto.getEmail());
+        return authService.loginUser(userCredentialsDto.getEmail(), userCredentialsDto.getPassword());
+    }
+
+    @Operation(summary = "Получить информацию о пользователе по токену авторизации")
+    @GetMapping("/info")
+    @SecurityRequirement(name = "JWT")
+    public ResponseEntity<?> getUserInfo(
+            @Parameter(description = "Аутентификация", hidden = true) @AuthenticationPrincipal User user) {
+        log.info("Received a request to get info about user with email = {}", user.getEmail());
+        return ResponseEntity.ok(userMapper.objectToReplyDto(user));
+    }
 }

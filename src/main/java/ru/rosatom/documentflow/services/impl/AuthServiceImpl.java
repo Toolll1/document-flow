@@ -10,13 +10,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.rosatom.documentflow.configuration.JWT.JWTUtil;
-import ru.rosatom.documentflow.mappers.UserMapper;
-import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.services.AuthService;
-import ru.rosatom.documentflow.services.CustomUserDetailsService;
 
-import javax.transaction.Transactional;
 
 @Slf4j
 @Service
@@ -26,11 +23,7 @@ public class AuthServiceImpl implements AuthService {
 
     private final JWTUtil jwtUtil;
 
-    private final CustomUserDetailsService customUserDetailsService;
-
     private final AuthenticationManager authenticationManager;
-
-    private final UserMapper userMapper;
 
 
     @Override
@@ -47,9 +40,4 @@ public class AuthServiceImpl implements AuthService {
 
     }
 
-    @Override
-    public ResponseEntity<?> userInfo(Authentication authentication) {
-        User user = (User) customUserDetailsService.loadUserByUsername(authentication.getName());
-        return ResponseEntity.ok(userMapper.objectToReplyDto(user));
-    }
 }

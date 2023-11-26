@@ -48,7 +48,7 @@ public class DocTypeController {
   @Operation(summary = "Получить все типы", description = "Все типы с пагинацией и сортировкой")
   @GetMapping
   @SecurityRequirement(name = "JWT")
-  @PreAuthorize("hasAuthority('USER')")
+  @PreAuthorize("hasAuthority('USER') || hasAuthority('ADMIN')")
   List<DocTypeDto> getAllDocTypes(
       @RequestParam @Parameter(description = "Номер страницы") Optional<Integer> page,
       @RequestParam @Parameter(description = "Сортировка") Optional<String> sortBy) {
@@ -60,7 +60,7 @@ public class DocTypeController {
   @Operation(summary = "Получить тип по ID")
   @GetMapping("/{docTypeId}")
   @SecurityRequirement(name = "JWT")
-  @PreAuthorize("hasAuthority('USER')")
+  @PreAuthorize("hasAuthority('USER') || hasAuthority('ADMIN')")
   public DocTypeDto getDocType(@PathVariable @Parameter(description = "ID типа") Long docTypeId) {
     DocType docType = docTypeService.getDocTypeById(docTypeId);
     log.info("Получен запрос на получение DocType с ID: {}", docTypeId);
@@ -98,7 +98,7 @@ public class DocTypeController {
   @Operation(summary = "Поиск типа по подстроке в имени")
   @GetMapping("/name/{name}")
   @SecurityRequirement(name = "JWT")
-  @PreAuthorize("hasAuthority('USER')")
+  @PreAuthorize("hasAuthority('USER') || hasAuthority('ADMIN')")
   public List<DocTypeDto> getDocTypesByNameLike(
       @PathVariable @Parameter(description = "Подстрока имени") String name) {
     List<DocType> docTypes = docTypeService.getDocTypesByName(name);
