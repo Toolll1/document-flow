@@ -18,7 +18,7 @@
             <column name="name" type="varchar(320)">
                 <constraints nullable="false"/>
             </column>
-            <column name="agreement_type" type="varchar(16)" defaultValue="'EVERYONE'"/>
+            <column name="agreement_type" type="varchar(16)" defaultValue="EVERYONE"/>
         </createTable>
     </changeSet>
 </databaseChangeLog>
