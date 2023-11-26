@@ -13,7 +13,6 @@ import ru.rosatom.documentflow.services.DocumentService;
 import ru.rosatom.documentflow.services.EmailService;
 import ru.rosatom.documentflow.services.UserService;
 
-import javax.mail.MessagingException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -27,7 +26,7 @@ class DocumentProcessServiceImplTest {
     private final DocumentService documentService = Mockito.mock(DocumentService.class);
     private final UserService userService = Mockito.mock(UserService.class);
     private final DocProcessRepository docProcessRepository = Mockito.mock(DocProcessRepository.class);
-    private final EmailService emailService=Mockito.mock(EmailService.class);
+    private final EmailService emailService = Mockito.mock(EmailService.class);
 
     private final DocumentProcessService documentProcessService = new DocumentProcessServiceImpl(
             documentService,
@@ -60,14 +59,14 @@ class DocumentProcessServiceImplTest {
         }
 
         @Test
-        void testSendToCorrectionWithOneDocProcess() throws MessagingException {
+        void testSendToCorrectionWithOneDocProcess() {
             documentProcessService.sendToCorrection(processUpdateRequest);
             Mockito.verify(docProcessRepository).save(updatableDocProcess);
             Assertions.assertEquals(DocProcessStatus.CORRECTING, updatableDocProcess.getStatus());
         }
 
         @Test
-        void testSendToCorrectionWithMultipleDocProcesses() throws MessagingException {
+        void testSendToCorrectionWithMultipleDocProcesses() {
             List<DocProcess> docProcessesWhoseStatusShouldNotChange = List.of(
                     generateMockDocProcessWithStatus(DocProcessStatus.NEW, updatableDocProcessDocument)
             );

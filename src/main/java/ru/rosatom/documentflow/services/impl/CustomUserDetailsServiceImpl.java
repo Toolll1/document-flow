@@ -20,7 +20,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
         return userRepository.findByEmail(email).orElseThrow(() ->
         {
             log.error("No user found with email: {}", email);
-            return new UsernameNotFoundException("No user with email" + email);
+            return new UsernameNotFoundException("No user with email " + email);
         });
     }
 }

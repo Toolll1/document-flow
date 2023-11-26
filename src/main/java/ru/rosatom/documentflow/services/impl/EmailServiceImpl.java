@@ -1,6 +1,8 @@
 package ru.rosatom.documentflow.services.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.text.StringSubstitutor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -13,8 +15,10 @@ import ru.rosatom.documentflow.services.MessageTemplateService;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.util.Map;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
 
@@ -29,36 +33,41 @@ public class EmailServiceImpl implements EmailService {
 
 
     @Override
-    public void sendDocProcessMessage(String to, String text, String subject)
-            throws MessagingException {
-        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, MESSAGE_ENCODING);
-        helper.setTo(to);
-        helper.setFrom(from);
-        helper.setSubject(subject);
-        helper.setText(text, true);
-        javaMailSender.send(mimeMessage);
+    public void sendDocProcessMessage(String to, String text, String subject) {
+        try {
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, MESSAGE_ENCODING);
+            helper.setTo(to);
+            helper.setFrom(from);
+            helper.setSubject(subject);
+            helper.setText(text, true);
+            javaMailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            log.warn("Unable to send message: ", e);
+        }
+
     }
 
     @Override
-    public void formatMessageForRecipient(DocProcess docProcess, MessagePattern messagePattern) throws MessagingException {
+    public void sendDocProcessAgreementMessageForRecipient(DocProcess docProcess) {
         MessageTemplate messageTemplate = messageTemplateService.getMessageTemplateByPattern(MessagePattern.AGREEMENT);
-        String text = String.format(messageTemplate.getBody(),
-                docProcess.getRecipient().getFirstName(),
-                docProcess.getDocument().getName(),
-                docProcess.getSender().getEmail(),
-                docProcess.getSender().getLastName() + ' ' + docProcess.getSender().getFirstName() + ' ' + docProcess.getSender().getPatronymic());
-        sendDocProcessMessage(docProcess.getRecipient().getEmail(), text, messageTemplate.getSubject());
+        Map<String, String> messageParams = Map.of(
+                "firstName", docProcess.getRecipient().getFirstName(),
+                "documentName", docProcess.getDocument().getName(),
+                "mail", docProcess.getSender().getEmail(),
+                "fullName", docProcess.getSender().getLastName() + ' ' + docProcess.getSender().getFirstName() + ' ' + docProcess.getSender().getPatronymic());
+        StringSubstitutor substitutor = new StringSubstitutor(messageParams);
+        sendDocProcessMessage(docProcess.getRecipient().getEmail(), substitutor.replace(messageTemplate.getBody()), messageTemplate.getSubject());
     }
 
     @Override
-    public void formatMessageForSender(DocProcess docProcess, MessagePattern messagePattern) throws MessagingException {
+    public void sendDocProcessResultMessageForOwner(DocProcess docProcess, MessagePattern messagePattern) {
         MessageTemplate messageTemplate = messageTemplateService.getMessageTemplateByPattern(messagePattern);
-        String text = String.format(messageTemplate.getBody(),
-                docProcess.getSender().getFirstName(),
-                docProcess.getDocument().getName());
-        sendDocProcessMessage(docProcess.getSender().getEmail(), text, messageTemplate.getSubject());
-
+        Map<String, String> messageParams = Map.of(
+                "firstName", docProcess.getSender().getFirstName(),
+                "documentName", docProcess.getDocument().getName());
+        StringSubstitutor substitutor = new StringSubstitutor(messageParams);
+        sendDocProcessMessage(docProcess.getSender().getEmail(), substitutor.replace(messageTemplate.getBody()), messageTemplate.getSubject());
     }
 
 

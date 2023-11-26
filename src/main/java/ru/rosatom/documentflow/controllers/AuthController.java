@@ -1,16 +1,19 @@
 package ru.rosatom.documentflow.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.rosatom.documentflow.dto.UserCredentialsDto;
+import ru.rosatom.documentflow.mappers.UserMapper;
+import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.services.AuthService;
-import io.swagger.v3.oas.annotations.Parameter;
 
 @Slf4j
 @RestController
@@ -20,6 +23,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 public class AuthController {
 
     private final AuthService authService;
+
+    private final UserMapper userMapper;
 
     @Operation(summary = "Авторизация")
     @PostMapping("/login")
@@ -32,8 +37,9 @@ public class AuthController {
 
     @Operation(summary = "Получить информацию о пользователе по токену авторизации")
     @GetMapping("/info")
-    public ResponseEntity<?> getUserInfo(Authentication authentication) {
-        log.info("Received a request to get info about user with email = {}", authentication.getName());
-        return authService.userInfo(authentication);
+    @SecurityRequirement(name = "JWT")
+    public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal User user) {
+        log.info("Received a request to get info about user with email = {}", user.getEmail());
+        return ResponseEntity.ok(userMapper.objectToReplyDto(user));
     }
 }

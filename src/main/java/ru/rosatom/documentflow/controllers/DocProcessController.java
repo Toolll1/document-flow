@@ -10,21 +10,13 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.rosatom.documentflow.dto.DocProcessDto;
 import ru.rosatom.documentflow.dto.ProcessUpdateRequestDto;
 import ru.rosatom.documentflow.models.ProcessUpdateRequest;
 import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.services.DocumentProcessService;
 
-import javax.mail.MessagingException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -105,7 +97,7 @@ public class DocProcessController {
     @Parameter(name = "processUpdateRequestDto", hidden = true)
     @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
     @Parameter(name = "comment", description = "Комментарий")
-    public DocProcessDto sendToApprove(ProcessUpdateRequestDto processUpdateRequestDto) throws MessagingException {
+    public DocProcessDto sendToApprove(ProcessUpdateRequestDto processUpdateRequestDto) {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
         documentProcessService.sendToApprove(processUpdateRequest);
         return modelMapper.map(documentProcessService.findProcessById(processUpdateRequest.getProcessId()),
@@ -120,7 +112,7 @@ public class DocProcessController {
     @Parameter(name = "processUpdateRequestDto", hidden = true)
     @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
     @Parameter(name = "comment", description = "Комментарий")
-    public DocProcessDto approve(ProcessUpdateRequestDto processUpdateRequestDto) throws MessagingException {
+    public DocProcessDto approve(ProcessUpdateRequestDto processUpdateRequestDto) {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
         documentProcessService.approve(processUpdateRequest);
         return modelMapper.map(documentProcessService.findProcessById(processUpdateRequest.getProcessId()),
@@ -134,7 +126,7 @@ public class DocProcessController {
     @Parameter(name = "processUpdateRequestDto", hidden = true)
     @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
     @Parameter(name = "comment", description = "Комментарий")
-    public DocProcessDto reject(ProcessUpdateRequestDto processUpdateRequestDto) throws MessagingException {
+    public DocProcessDto reject(ProcessUpdateRequestDto processUpdateRequestDto) {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
         documentProcessService.reject(processUpdateRequest);
         return modelMapper.map(documentProcessService.findProcessById(processUpdateRequest.getProcessId()),
@@ -148,7 +140,7 @@ public class DocProcessController {
     @Parameter(name = "processUpdateRequestDto", hidden = true)
     @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
     @Parameter(name = "comment", description = "Комментарий")
-    public DocProcessDto sendToCorrection(ProcessUpdateRequestDto processUpdateRequestDto) throws MessagingException {
+    public DocProcessDto sendToCorrection(ProcessUpdateRequestDto processUpdateRequestDto) {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
         documentProcessService.sendToCorrection(processUpdateRequest);
         return modelMapper.map(documentProcessService.findProcessById(processUpdateRequest.getProcessId()),
