@@ -50,7 +50,7 @@ public class DocAttributeController {
       description = "Все атрибуты с пагинацией и сортировкой")
   @GetMapping
   @SecurityRequirement(name = "JWT")
-  @PreAuthorize("hasAuthority('USER')")
+  @PreAuthorize("hasAuthority('USER') || hasAuthority('ADMIN')")
   List<DocAttributeDto> getAllDocTypes(
       @RequestParam @Parameter(description = "Номер страницы") Optional<Integer> page,
       @RequestParam @Parameter(description = "Сортировка") Optional<String> sortBy) {
@@ -62,7 +62,7 @@ public class DocAttributeController {
   @Operation(summary = "Получить атрибут по ID")
   @GetMapping("/{docAttributeId}")
   @SecurityRequirement(name = "JWT")
-  @PreAuthorize("hasAuthority('USER')")
+  @PreAuthorize("hasAuthority('USER') || hasAuthority('ADMIN')")
   public DocAttributeDto getAttribute(
       @PathVariable @Parameter(description = "ID атрибута") Long docAttributeId) {
     DocAttribute docAttribute = docAttributeService.getDocAttributeById(docAttributeId);
@@ -104,7 +104,7 @@ public class DocAttributeController {
   @Operation(summary = "Поиск атрибута по подстроке в имени")
   @GetMapping("/name/{name}")
   @SecurityRequirement(name = "JWT")
-  @PreAuthorize("hasAuthority('USER')")
+  @PreAuthorize("hasAuthority('USER') || hasAuthority('ADMIN')")
   public List<DocAttributeDto> getDocAttributesByNameLike(
       @PathVariable @Parameter(description = "Подстрока имени") String name) {
     List<DocAttribute> docAttributes = docAttributeService.getDocAttributesByName(name);
