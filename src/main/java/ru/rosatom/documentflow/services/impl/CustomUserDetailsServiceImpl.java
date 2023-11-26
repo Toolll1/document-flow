@@ -5,10 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.rosatom.documentflow.repositories.UserRepository;
 import ru.rosatom.documentflow.services.CustomUserDetailsService;
-
-import javax.transaction.Transactional;
 
 @Slf4j
 @Service

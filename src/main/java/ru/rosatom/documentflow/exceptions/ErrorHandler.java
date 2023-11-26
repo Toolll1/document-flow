@@ -1,6 +1,7 @@
 package ru.rosatom.documentflow.exceptions;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.auth.AuthenticationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,11 @@ public class ErrorHandler {
     @ExceptionHandler
     public ResponseEntity<AppError> handleWrongSortParameter(PropertyReferenceException e) {
         return createAppError(e, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<AppError> handleAuthenticationException(final AuthenticationException e) {
+        return createAppError(e, HttpStatus.UNAUTHORIZED);
     }
 
 
