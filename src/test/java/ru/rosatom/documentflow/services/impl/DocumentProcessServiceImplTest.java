@@ -10,6 +10,7 @@ import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
 import ru.rosatom.documentflow.services.DocumentProcessService;
 import ru.rosatom.documentflow.services.DocumentService;
+import ru.rosatom.documentflow.services.EmailService;
 import ru.rosatom.documentflow.services.UserService;
 
 import java.util.List;
@@ -25,11 +26,13 @@ class DocumentProcessServiceImplTest {
     private final DocumentService documentService = Mockito.mock(DocumentService.class);
     private final UserService userService = Mockito.mock(UserService.class);
     private final DocProcessRepository docProcessRepository = Mockito.mock(DocProcessRepository.class);
+    private final EmailService emailService = Mockito.mock(EmailService.class);
 
     private final DocumentProcessService documentProcessService = new DocumentProcessServiceImpl(
             documentService,
             userService,
-            docProcessRepository);
+            docProcessRepository,
+            emailService);
 
 
     @Nested

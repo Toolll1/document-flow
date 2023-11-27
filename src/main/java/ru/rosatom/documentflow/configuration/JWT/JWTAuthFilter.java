@@ -3,6 +3,7 @@ package ru.rosatom.documentflow.configuration.JWT;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
@@ -21,23 +22,27 @@ import java.util.Objects;
 public class JWTAuthFilter extends OncePerRequestFilter {
     private final CustomUserDetailsService userService;
     private final JWTUtil jwtUtil;
+    private final RestAuthEntryPoint restAuthEntryPoint;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authToken = jwtUtil.getToken(request);
-
-        if (!Objects.isNull(authToken)) {
-            String username = jwtUtil.getUsernameFromToken(authToken);
-            if (!Objects.isNull(username)) {
-                UserDetails userDetails = userService.loadUserByUsername(username);
-                if (jwtUtil.validateToken(authToken, userDetails)) {
-                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                    usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetails(request));
-
-                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+        try {
+            if (!Objects.isNull(authToken)) {
+                String username = jwtUtil.getUsernameFromToken(authToken);
+                if (!Objects.isNull(username)) {
+                    UserDetails userDetails = userService.loadUserByUsername(username);
+                    if (jwtUtil.validateToken(authToken, userDetails)) {
+                        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                        usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetails(request));
+                        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                    }
                 }
             }
+            filterChain.doFilter(request, response);
+        } catch (AuthenticationException authenticationException) {
+            SecurityContextHolder.clearContext();
+            restAuthEntryPoint.commence(request, response, authenticationException);
         }
-        filterChain.doFilter(request, response);
     }
 }
