@@ -7,5 +7,4 @@ public interface AuthService {
 
     ResponseEntity<?> loginUser(String email, String password);
 
-    ResponseEntity<?> userInfo(Authentication authentication);
 }

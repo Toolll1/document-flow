@@ -6,4 +6,4 @@ RUN mvn -f /home/app/pom.xml clean package
 FROM amazoncorretto:11-alpine-jdk
 COPY --from=build /home/app/target/*.jar document-flow.jar
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","/document-flow.jar"]
+ENTRYPOINT ["java","-jar","/document-flow.jar", "--service.file=minio"]

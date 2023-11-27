@@ -4,20 +4,34 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import ru.rosatom.documentflow.dto.*;
-import ru.rosatom.documentflow.models.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import ru.rosatom.documentflow.dto.DocTypeCreateDto;
+import ru.rosatom.documentflow.dto.DocTypeDto;
+import ru.rosatom.documentflow.dto.DocTypeUpdateRequestDto;
+import ru.rosatom.documentflow.models.DocType;
+import ru.rosatom.documentflow.models.DocTypeCreationRequest;
+import ru.rosatom.documentflow.models.DocTypeUpdateRequest;
 import ru.rosatom.documentflow.services.DocTypeService;
+
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Validated
@@ -34,6 +48,7 @@ public class DocTypeController {
   @Operation(summary = "Получить все типы", description = "Все типы с пагинацией и сортировкой")
   @GetMapping
   @SecurityRequirement(name = "JWT")
+  @PreAuthorize("hasAuthority('USER') || hasAuthority('ADMIN')")
   List<DocTypeDto> getAllDocTypes(
       @RequestParam @Parameter(description = "Номер страницы") Optional<Integer> page,
       @RequestParam @Parameter(description = "Сортировка") Optional<String> sortBy) {
@@ -45,6 +60,7 @@ public class DocTypeController {
   @Operation(summary = "Получить тип по ID")
   @GetMapping("/{docTypeId}")
   @SecurityRequirement(name = "JWT")
+  @PreAuthorize("hasAuthority('USER') || hasAuthority('ADMIN')")
   public DocTypeDto getDocType(@PathVariable @Parameter(description = "ID типа") Long docTypeId) {
     DocType docType = docTypeService.getDocTypeById(docTypeId);
     log.info("Получен запрос на получение DocType с ID: {}", docTypeId);
@@ -82,6 +98,7 @@ public class DocTypeController {
   @Operation(summary = "Поиск типа по подстроке в имени")
   @GetMapping("/name/{name}")
   @SecurityRequirement(name = "JWT")
+  @PreAuthorize("hasAuthority('USER') || hasAuthority('ADMIN')")
   public List<DocTypeDto> getDocTypesByNameLike(
       @PathVariable @Parameter(description = "Подстрока имени") String name) {
     List<DocType> docTypes = docTypeService.getDocTypesByName(name);
@@ -110,7 +127,4 @@ public class DocTypeController {
     docTypeService.deleteDocType(docTypeId);
   }
 
-  private DocTypeDto convertToDto(DocType docType) {
-    return modelMapper.map(docType, DocTypeDto.class);
-  }
 }
