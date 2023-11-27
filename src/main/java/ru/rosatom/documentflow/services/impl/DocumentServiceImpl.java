@@ -60,11 +60,7 @@ public class DocumentServiceImpl implements DocumentService {
     public Document updateDocument(DocumentUpdateDto documentUpdateDto, Long id, Long userId) {
         Document newDocument = findDocumentById(id);
 
-        if (newDocument.getFinalDocStatus() != null) {
-            if (newDocument.getFinalDocStatus().equals(DocProcessStatus.APPROVED) || newDocument.getFinalDocStatus().equals(DocProcessStatus.REJECTED)) {
-                throw new BadRequestException("Запрещено изменять документы, находящиеся в конечном статусе");
-            }
-        }
+        checkFinalStatus(newDocument, "Запрещено изменять документы, находящиеся в конечном статусе");
 
         Document oldDocument = findDocumentById(id);
         DocChanges docChanges = new DocChanges();
@@ -171,11 +167,7 @@ public class DocumentServiceImpl implements DocumentService {
 
         Document document = findDocumentById(id);
 
-        if (document.getFinalDocStatus() != null) {
-            if (document.getFinalDocStatus().equals(DocProcessStatus.APPROVED) || document.getFinalDocStatus().equals(DocProcessStatus.REJECTED)) {
-                throw new BadRequestException("Запрещено удалять документы, находящиеся в конечном статусе");
-            }
-        }
+        checkFinalStatus(document, "Запрещено удалять документы, находящиеся в конечном статусе");
 
         if (Objects.equals(document.getOwnerId(), userId)) {
             fileService.deleteFile(document);
@@ -184,6 +176,16 @@ public class DocumentServiceImpl implements DocumentService {
             throw new BadRequestException("Можно удалять только свои документы");
         }
     }
+
+    private void checkFinalStatus(Document document, String text) {
+
+        if (document.getFinalDocStatus() != null) {
+            if (document.getFinalDocStatus().equals(DocProcessStatus.APPROVED) || document.getFinalDocStatus().equals(DocProcessStatus.REJECTED)) {
+                throw new BadRequestException(text);
+            }
+        }
+    }
+
 
     @Override
     public List<DocChanges> findDocChangesByDocumentId(Long id, Long userId) {
