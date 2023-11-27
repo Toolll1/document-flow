@@ -3,6 +3,7 @@ package ru.rosatom.documentflow.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 import javax.validation.constraints.Email;
@@ -13,6 +14,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @Builder
 @RequiredArgsConstructor
+@Data
 public class AuthTokenDto {
     private String token;
 
