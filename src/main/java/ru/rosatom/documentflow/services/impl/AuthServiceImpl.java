@@ -2,6 +2,7 @@ package ru.rosatom.documentflow.services.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,6 +26,8 @@ public class AuthServiceImpl implements AuthService {
 
     private final JWTUtil jwtUtil;
 
+    private final ModelMapper mapper;
+
     private final AuthenticationManager authenticationManager;
 
     private final UserRepository userRepository;
@@ -36,14 +39,17 @@ public class AuthServiceImpl implements AuthService {
                     new UsernamePasswordAuthenticationToken(email, password));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String token = jwtUtil.generateToken(email);
-            log.info(token);
-            var user = userRepository.findByEmail(email).orElseThrow();
 
-            return ResponseEntity.ok(AuthTokenDto.builder()
+            var user = userRepository.findByEmail(email).orElseThrow();
+            AuthTokenDto authToken = new AuthTokenDto();
+            mapper.map(user, authToken);
+            authToken.setToken(token);
+            /*return ResponseEntity.ok(AuthTokenDto.builder()
                     .dateOfBirth(String.valueOf(user.getDateOfBirth())).phone(user.getPhone())
                     .lastName(user.getLastName()).firstName(user.getFirstName()).patronymic(user.getPatronymic())
                     .post(user.getPost()).role(String.valueOf(user.getRole())).email(user.getEmail())
-                    .organizationId(user.getOrganization().getId()).token(token).build());
+                    .organizationId(user.getOrganization().getId()).token(token).build());*/
+            return ResponseEntity.ok(authToken);
         } catch (AuthenticationException authenticationException) {
             log.error("Authentication failed: ", authenticationException);
             return new ResponseEntity<>(authenticationException.getMessage(), HttpStatus.UNAUTHORIZED);
