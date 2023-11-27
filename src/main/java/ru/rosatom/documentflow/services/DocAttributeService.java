@@ -1,23 +1,24 @@
 package ru.rosatom.documentflow.services;
 
-import java.util.List;
-import java.util.Optional;
 import org.springframework.data.domain.Page;
 import ru.rosatom.documentflow.models.DocAttribute;
 import ru.rosatom.documentflow.models.DocAttributeCreationRequest;
 import ru.rosatom.documentflow.models.DocAttributeUpdateRequest;
 
+import java.util.List;
+import java.util.Optional;
+
 public interface DocAttributeService {
-  Page<DocAttribute> getAllDocAttributes(Optional<Integer> page, Optional<String> sortBy);
+    Page<DocAttribute> getAllDocAttributes(Optional<Integer> page, Optional<String> sortBy);
 
-  DocAttribute createDocAttribute(DocAttributeCreationRequest docAttributeCreationRequest);
+    DocAttribute createDocAttribute(DocAttributeCreationRequest docAttributeCreationRequest);
 
-  DocAttribute updateDocAttribute(
-      Long docAttributeId, DocAttributeUpdateRequest docAttributeUpdateRequest);
+    DocAttribute updateDocAttribute(
+            Long docAttributeId, DocAttributeUpdateRequest docAttributeUpdateRequest);
 
-  void deleteDocAttribute(Long id);
+    void deleteDocAttribute(Long id);
 
-  List<DocAttribute> getDocAttributesByName(String name);
+    List<DocAttribute> getDocAttributesByName(String name);
 
-  DocAttribute getDocAttributeById(Long id);
+    DocAttribute getDocAttributeById(Long id);
 }

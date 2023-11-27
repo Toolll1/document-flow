@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.rosatom.documentflow.dto.DocTypeCreateDto;
 import ru.rosatom.documentflow.dto.DocTypeDto;
 import ru.rosatom.documentflow.dto.DocTypeUpdateRequestDto;
@@ -127,4 +128,87 @@ public class DocTypeController {
     docTypeService.deleteDocType(docTypeId);
   }
 
+    @Operation(summary = "Получить все типы", description = "Все типы с пагинацией и сортировкой")
+    @GetMapping
+    @SecurityRequirement(name = "JWT")
+    List<DocTypeDto> getAllDocTypes(
+            @RequestParam @Parameter(description = "Номер страницы") Optional<Integer> page,
+            @RequestParam @Parameter(description = "Сортировка") Optional<String> sortBy) {
+        return docTypeService.getAllDocTypes(page, sortBy).stream()
+                .map(o -> modelMapper.map(o, DocTypeDto.class))
+                .collect(Collectors.toList());
+    }
+
+    @Operation(summary = "Получить тип по ID")
+    @GetMapping("/{docTypeId}")
+    @SecurityRequirement(name = "JWT")
+    public DocTypeDto getDocType(@PathVariable @Parameter(description = "ID типа") Long docTypeId) {
+        DocType docType = docTypeService.getDocTypeById(docTypeId);
+        log.info("Получен запрос на получение DocType с ID: {}", docTypeId);
+        return modelMapper.map(docType, DocTypeDto.class);
+    }
+
+    @Operation(summary = "Создать тип")
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    @SecurityRequirement(name = "JWT")
+    public DocTypeDto createDocType(@Valid @RequestBody @Parameter(description = "DTO создания типа") DocTypeCreateDto docTypeCreateDto) {
+        DocTypeCreationRequest docTypeCreationRequest =
+                modelMapper.map(docTypeCreateDto, DocTypeCreationRequest.class);
+        DocType docType = docTypeService.createDocType(docTypeCreationRequest);
+        log.info("Получен запрос на создание DocType: {}", docTypeCreateDto);
+
+        return modelMapper.map(docType, DocTypeDto.class);
+    }
+
+    @Operation(summary = "Изменить тип")
+    @RequestMapping(value = "/{docTypeId}", method = RequestMethod.PATCH)
+    @SecurityRequirement(name = "JWT")
+    public DocTypeDto updateDocType(
+            @PathVariable @Parameter(description = "ID типа") Long docTypeId,
+            @Valid @RequestBody @Parameter(description = "DTO изменения типа") DocTypeUpdateRequestDto docTypeUpdateRequestDto) {
+        DocTypeUpdateRequest docTypeUpdateRequest =
+                modelMapper.map(docTypeUpdateRequestDto, DocTypeUpdateRequest.class);
+        DocType docType = docTypeService.updateDocType(docTypeId, docTypeUpdateRequest);
+
+        log.info(
+                "Получен запрос на обновление DocType с ID: {}. Обновлен DocType: {}", docTypeId, docType);
+        return modelMapper.map(docType, DocTypeDto.class);
+    }
+
+    @Operation(summary = "Поиск типа по подстроке в имени")
+    @GetMapping("/name/{name}")
+    @SecurityRequirement(name = "JWT")
+    public List<DocTypeDto> getDocTypesByNameLike(
+            @PathVariable @Parameter(description = "Подстрока имени") String name) {
+        List<DocType> docTypes = docTypeService.getDocTypesByName(name);
+        return docTypes.stream()
+                .map(o -> modelMapper.map(o, DocTypeDto.class))
+                .collect(Collectors.toList());
+    }
+
+    @Operation(summary = "Добавить атрибут к типу")
+    @RequestMapping(value = "/{docTypeId}/attributes/{docAttributeId}", method = RequestMethod.PUT)
+    @SecurityRequirement(name = "JWT")
+    public DocTypeDto addAttributeToType(
+            @PathVariable @Parameter(description = "ID типа") Long docTypeId,
+            @PathVariable @Parameter(description = "ID атрибута") Long docAttributeId) {
+        log.info("Добавлен атрибут с ID: {} к документу с ID: {}", docAttributeId, docTypeId);
+
+        return modelMapper.map(docTypeService.attributeToType(docTypeId, docAttributeId), DocTypeDto.class);
+    }
+
+
+    @Operation(summary = "Удалить тип")
+    @DeleteMapping("/{docTypeId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @SecurityRequirement(name = "JWT")
+    public void deleteDocType(@PathVariable @Parameter(description = "ID типа") Long docTypeId) {
+        log.info("Получен запрос на удаление DocType с ID: {}", docTypeId);
+        docTypeService.deleteDocType(docTypeId);
+    }
+
+    private DocTypeDto convertToDto(DocType docType) {
+        return modelMapper.map(docType, DocTypeDto.class);
+    }
 }

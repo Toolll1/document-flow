@@ -1,4 +1,5 @@
 package ru.rosatom.documentflow.services.impl;
+
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,8 +16,12 @@ import ru.rosatom.documentflow.models.UserPassport;
 import ru.rosatom.documentflow.models.UserRole;
 import ru.rosatom.documentflow.repositories.UserPassportRepository;
 import ru.rosatom.documentflow.repositories.UserRepository;
+
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 @SpringBootTest
 class UserServiceImplTest {
@@ -32,10 +37,10 @@ class UserServiceImplTest {
 
     @BeforeEach
     void setUp() {
-         userPassport = new UserPassport(111L,"2222","333333","444", LocalDate.of(2020, 02, 10),"105" );
-         userOrganization = new UserOrganization();
-         user  = new User(11L, "Andrey", "Andreev" , "Andreevich" , LocalDate.of(2000, 02, 10),
-                " qqq@mail.ru", "79262555555" , "password", "post" , UserRole.USER , userPassport, userOrganization );
+        userPassport = new UserPassport(111L, "2222", "333333", "444", LocalDate.of(2020, 02, 10), "105");
+        userOrganization = new UserOrganization();
+        user = new User(11L, "Andrey", "Andreev", "Andreevich", LocalDate.of(2000, 02, 10),
+                " qqq@mail.ru", "79262555555", "password", "post", UserRole.USER, userPassport, userOrganization);
     }
 
     @Test
@@ -46,24 +51,24 @@ class UserServiceImplTest {
     }
 
     @Test
-    void createUserFalse(){
+    void createUserFalse() {
         userRepository.save(user);
-        UserPassport userPassport2 = new UserPassport(111L,"2222","333333","444", LocalDate.of(2020, 02, 10),"105" );
+        UserPassport userPassport2 = new UserPassport(111L, "2222", "333333", "444", LocalDate.of(2020, 02, 10), "105");
         UserOrganization userOrganization2 = new UserOrganization();
-        User user2 = new User(11L, "Andrey", "Andreev" , "Andreevich" , LocalDate.of(2000, 02, 10),
-                " qqq@mail.ru", "79262555555" , "password", "post" , UserRole.USER , userPassport2, userOrganization2 );
+        User user2 = new User(11L, "Andrey", "Andreev", "Andreevich", LocalDate.of(2000, 02, 10),
+                " qqq@mail.ru", "79262555555", "password", "post", UserRole.USER, userPassport2, userOrganization2);
         Mockito.when(userRepository.save(user2)).thenThrow(ConflictException.class);
     }
 
     @Test
-    void updateUser(){
-        UserUpdateDto dto = new UserUpdateDto(111L,"Kirill", "Kirillov" , "Kirillovich" ,
-                "02.02.2000",  " qqq@mail.ru",  "79262555333" ,  "1212",
-                "333444" , "3333", "02.02.2022", "104", 1L,
+    void updateUser() {
+        UserUpdateDto dto = new UserUpdateDto(111L, "Kirill", "Kirillov", "Kirillovich",
+                "02.02.2000", " qqq@mail.ru", "79262555333", "1212",
+                "333444", "3333", "02.02.2022", "104", 1L,
                 "USER", "post");
-       Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-       Assert.assertEquals(Optional.of(user), userRepository.findById(user.getId()));
-       Assert.assertEquals(userService.updateUser(dto, user.getId()), user);
+        Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        Assert.assertEquals(Optional.of(user), userRepository.findById(user.getId()));
+        Assert.assertEquals(userService.updateUser(dto, user.getId()), user);
     }
 
     @Test
@@ -106,7 +111,7 @@ class UserServiceImplTest {
         userPassport.setNumber("222222");
         userPassport.setSeries("1111");
         user.setPassport(userPassport);
-        Mockito.when(userRepository.findByPassportSeriesAndPassportNumber("1111" , "222222"))
+        Mockito.when(userRepository.findByPassportSeriesAndPassportNumber("1111", "222222"))
                 .thenReturn(Optional.of(user));
     }
 
@@ -116,9 +121,9 @@ class UserServiceImplTest {
         userPassport.setSeries("1111");
         user.setPassport(userPassport);
         Assert.assertFalse(userRepository.findByPassportSeriesAndPassportNumber
-                ("2222" , "333333").isPresent());
+                ("2222", "333333").isPresent());
         Mockito.when(userRepository.findByPassportSeriesAndPassportNumber
-                ("2222" , "333333")).thenThrow(ObjectNotFoundException.class);
+                ("2222", "333333")).thenThrow(ObjectNotFoundException.class);
     }
 
     @Test

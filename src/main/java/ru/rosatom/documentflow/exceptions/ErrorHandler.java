@@ -50,7 +50,7 @@ public class ErrorHandler {
     public ResponseEntity<AppError> handleAccessDenied(final AccessDeniedException e) {
         return createAppError(e, HttpStatus.FORBIDDEN);
     }
-    
+
 
     @ExceptionHandler
     public ResponseEntity<AppError> handleRemainingErrors(final Exception e) {
@@ -58,8 +58,6 @@ public class ErrorHandler {
         return createAppError(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-
-    
 
     private ResponseEntity<AppError> createAppError(Throwable e, HttpStatus status) {
         return new ResponseEntity<>(

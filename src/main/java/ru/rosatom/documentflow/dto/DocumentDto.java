@@ -23,40 +23,40 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DocumentDto {
-  @Schema(name = "ID документа")
-  Long id;
+    @Schema(description = "ID документа")
+    Long id;
 
-  @Schema(description = "Название")
-  @NotNull
-  @NotEmpty
-  String name;
+    @Schema(description = "Название")
+    @NotNull
+    @NotEmpty
+    String name;
 
-  @Schema(description = "Путь документа")
-  @NotNull
-  @NotEmpty
-  String documentPath;
+    @Schema(description = "Путь документа")
+    @NotNull
+    @NotEmpty
+    String documentPath;
 
-  @Schema(description = "Дата последнего обновления")
-  @NotNull
-  @JsonFormat(pattern = CommonUtils.DATE_TIME_PATTERN)
-  LocalDateTime date;
+    @Schema(description = "Дата последнего обновления")
+    @NotNull
+    @JsonFormat(pattern = CommonUtils.DATE_TIME_PATTERN)
+    LocalDateTime date;
 
-  @Schema(description = "ID организации")
-  @NotNull
-  Long idOrganization;
+    @Schema(description = "ID организации")
+    @NotNull
+    Long idOrganization;
 
-  @Schema(description = "ID создателя")
-  Long ownerId;
+    @Schema(description = "ID создателя")
+    Long ownerId;
 
-  @Schema(description = "Тип документа")
-  @NotNull
-  String docTypeName;
+    @Schema(description = "Тип документа")
+    @NotNull
+    String docTypeName;
 
-  @Schema(description = "Список атрибутов")
-  @NotNull
-  List<DocAttributeValues> attributeValues;
+    @Schema(description = "Список атрибутов")
+    @NotNull
+    List<DocAttributeValues> attributeValues;
 
-  @Schema(description = "Статус")
-  String finalDocStatus;
+    @Schema(description = "Статус")
+    String finalDocStatus;
 }
 

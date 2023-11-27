@@ -8,6 +8,6 @@ import lombok.Data;
 @Builder
 @Schema(description = "Описание ошибки")
 public class AppError {
-  @Schema(description = "Текст ошибки")
-  private String message;
+    @Schema(description = "Текст ошибки")
+    private String message;
 }

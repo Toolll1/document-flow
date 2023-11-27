@@ -13,18 +13,34 @@ import ru.rosatom.documentflow.dto.DocParams;
 import ru.rosatom.documentflow.dto.DocumentUpdateDto;
 import ru.rosatom.documentflow.exceptions.BadRequestException;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
-import ru.rosatom.documentflow.models.*;
+import ru.rosatom.documentflow.models.DocAttributeValues;
+import ru.rosatom.documentflow.models.DocChanges;
+import ru.rosatom.documentflow.models.DocProcess;
+import ru.rosatom.documentflow.models.DocProcessStatus;
 import ru.rosatom.documentflow.models.Document;
+import ru.rosatom.documentflow.models.QDocAttributeValues;
+import ru.rosatom.documentflow.models.QDocument;
+import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.repositories.DocAttributeValuesRepository;
 import ru.rosatom.documentflow.repositories.DocChangesRepository;
 import ru.rosatom.documentflow.repositories.DocumentRepository;
-import ru.rosatom.documentflow.services.*;
+import ru.rosatom.documentflow.services.DocAttributeService;
+import ru.rosatom.documentflow.services.DocTypeService;
+import ru.rosatom.documentflow.services.DocumentService;
+import ru.rosatom.documentflow.services.FileService;
+import ru.rosatom.documentflow.services.UserOrganizationService;
+import ru.rosatom.documentflow.services.UserService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
-import static ru.rosatom.documentflow.adapters.CommonUtils.*;
+import static ru.rosatom.documentflow.adapters.CommonUtils.CHANGE_DOCUMENT_ATTRIBUTES;
+import static ru.rosatom.documentflow.adapters.CommonUtils.CHANGE_DOCUMENT_TYPE;
 
 @Service
 @Transactional
@@ -60,8 +76,8 @@ public class DocumentServiceImpl implements DocumentService {
     public Document updateDocument(DocumentUpdateDto documentUpdateDto, Long id, Long userId) {
         Document newDocument = findDocumentById(id);
 
-        if (newDocument.getFinalDocStatus() != null){
-            if (newDocument.getFinalDocStatus().equals(DocProcessStatus.APPROVED) || newDocument.getFinalDocStatus().equals(DocProcessStatus.REJECTED)){
+        if (newDocument.getFinalDocStatus() != null) {
+            if (newDocument.getFinalDocStatus().equals(DocProcessStatus.APPROVED) || newDocument.getFinalDocStatus().equals(DocProcessStatus.REJECTED)) {
                 throw new BadRequestException("Запрещено изменять документы, находящиеся в конечном статусе");
             }
         }
@@ -171,8 +187,8 @@ public class DocumentServiceImpl implements DocumentService {
 
         Document document = findDocumentById(id);
 
-        if (document.getFinalDocStatus() != null){
-            if (document.getFinalDocStatus().equals(DocProcessStatus.APPROVED) || document.getFinalDocStatus().equals(DocProcessStatus.REJECTED)){
+        if (document.getFinalDocStatus() != null) {
+            if (document.getFinalDocStatus().equals(DocProcessStatus.APPROVED) || document.getFinalDocStatus().equals(DocProcessStatus.REJECTED)) {
                 throw new BadRequestException("Запрещено удалять документы, находящиеся в конечном статусе");
             }
         }
@@ -205,7 +221,7 @@ public class DocumentServiceImpl implements DocumentService {
     public void updateFinalStatus(Document newDocument, DocProcessStatus status, Collection<DocProcess> docProcess) {
         newDocument.setFinalDocStatus(status);
 
-        if (status.equals(DocProcessStatus.APPROVED)){
+        if (status.equals(DocProcessStatus.APPROVED)) {
             Document oldDocument = findDocumentById(newDocument.getId());
             Document correctDocument = fileService.updateFile(newDocument, oldDocument, docProcess);
 

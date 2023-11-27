@@ -9,6 +9,6 @@ import lombok.Data;
 @Schema(description = "Статистика по документам")
 public class DocStatisticDTO {
 
-  @Schema(description = "Количество")
-  private long count;
+    @Schema(description = "Количество")
+    private long count;
 }
