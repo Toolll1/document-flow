@@ -2,8 +2,8 @@
 ER-диаграмма:
 ![This is an image](https://i.postimg.cc/vBLDgNG7/ER.png)
 
-Для изменения конфигурации на сохранение файла в minio необходимо изменить 
-значение константы service.file в application.properties на minio
+Для изменения конфигурации по сохранению файлов (minio или local), необходимо откорректировать 
+значение константы service.file в application.properties
 
 ## Запуск через Docker
 
