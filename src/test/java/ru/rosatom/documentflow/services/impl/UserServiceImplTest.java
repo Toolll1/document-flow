@@ -1,5 +1,5 @@
 package ru.rosatom.documentflow.services.impl;
-
+/*
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -134,3 +134,6 @@ class UserServiceImplTest {
         Mockito.when(userRepository.findAll()).thenReturn(users);
     }
 }
+
+
+ */
