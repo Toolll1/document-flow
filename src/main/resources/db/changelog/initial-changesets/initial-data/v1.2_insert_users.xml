@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="v1.12_insert_users" author="nikita_glushko">
+    <changeSet id="v1.2_insert_users" author="nikita_glushko">
         <preConditions onFail="MARK_RAN">
             <dbms type="postgresql"/>
             <sqlCheck expectedResult="document-flow">SELECT current_database()</sqlCheck>
@@ -30,7 +30,7 @@
             <column name="date_of_birth" value="2002-09-26 00:00:00.000000"/>
             <column name="email" value="user1@mail.ru"/>
             <column name="phone" value="89999999991"/>
-            <column name="user_password" value="$2a$10$zXJXdvir4P4ZYQEsIF4mSOzVLG2fAzdFBTnZreyLb6zly3L9CHTOS"/>
+            <column name="user_password" value="$2a$12$rVw4uFi3bdAgINhwLhbcKOuUiR44lwrNWx5.5Ysg0agGrreIxTFGK"/>
             <column name="post" value="none"/>
             <column name="role" value="USER"/>
             <column name="passport_id" value="1"/>
@@ -43,7 +43,7 @@
             <column name="date_of_birth" value="2002-09-26 00:00:00.000000"/>
             <column name="email" value="user2@mail.ru"/>
             <column name="phone" value="89999999992"/>
-            <column name="user_password" value="$2a$10$zXJXdvir4P4ZYQEsIF4mSOzVLG2fAzdFBTnZreyLb6zly3L9CHTOS"/>
+            <column name="user_password" value="$2a$12$rVw4uFi3bdAgINhwLhbcKOuUiR44lwrNWx5.5Ysg0agGrreIxTFGK"/>
             <column name="post" value="none"/>
             <column name="role" value="USER"/>
             <column name="passport_id" value="1"/>
@@ -56,7 +56,7 @@
             <column name="date_of_birth" value="2002-09-26 00:00:00.000000"/>
             <column name="email" value="user3@mail.ru"/>
             <column name="phone" value="89999999993"/>
-            <column name="user_password" value="$2a$10$zXJXdvir4P4ZYQEsIF4mSOzVLG2fAzdFBTnZreyLb6zly3L9CHTOS"/>
+            <column name="user_password" value="$2a$12$rVw4uFi3bdAgINhwLhbcKOuUiR44lwrNWx5.5Ysg0agGrreIxTFGK"/>
             <column name="post" value="none"/>
             <column name="role" value="USER"/>
             <column name="passport_id" value="1"/>

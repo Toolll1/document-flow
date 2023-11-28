@@ -4,22 +4,14 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.rosatom.documentflow.exceptions.IllegalProcessStatusException;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
-import ru.rosatom.documentflow.models.AgreementType;
-import ru.rosatom.documentflow.models.DocProcess;
-import ru.rosatom.documentflow.models.DocProcessStatus;
-import ru.rosatom.documentflow.models.Document;
-import ru.rosatom.documentflow.models.ProcessUpdateRequest;
-import ru.rosatom.documentflow.models.User;
+import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
 import ru.rosatom.documentflow.services.DocumentProcessService;
 import ru.rosatom.documentflow.services.DocumentService;
+import ru.rosatom.documentflow.services.EmailService;
 import ru.rosatom.documentflow.services.UserService;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static ru.rosatom.documentflow.models.DocProcessStatus.*;
@@ -41,6 +33,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     private final DocumentService documentService;
     private final UserService userService;
     private final DocProcessRepository docProcessRepository;
+    private final EmailService emailService;
 
 
     /**
@@ -75,6 +68,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
         throwIfStatusNotCorrect(docProcess, DocProcessStatus.WAITING_FOR_APPROVE);
         docProcess.setStatus(DocProcessStatus.WAITING_FOR_APPROVE);
+        emailService.sendDocProcessAgreementMessageForRecipient(docProcess);
         docProcessRepository.save(docProcess);
     }
 
@@ -118,6 +112,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         throwIfStatusNotCorrect(docProcess, DocProcessStatus.APPROVED);
         docProcess.setStatus(DocProcessStatus.APPROVED);
         docProcessRepository.save(docProcess);
+        emailService.sendDocProcessResultMessageForOwner(docProcess, MessagePattern.APPROVE);
         finalStatusUpdate(docProcess.getDocument().getId());
     }
 
@@ -132,6 +127,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         throwIfStatusNotCorrect(docProcess, DocProcessStatus.REJECTED);
         docProcess.setStatus(DocProcessStatus.REJECTED);
         docProcessRepository.save(docProcess);
+        emailService.sendDocProcessResultMessageForOwner(docProcess, MessagePattern.REJECT);
         finalStatusUpdate(docProcess.getDocument().getId());
     }
 
@@ -146,6 +142,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         throwIfStatusNotCorrect(docProcess, DocProcessStatus.CORRECTING);
         setStatusForAllProcessesExceptByDocument(docProcess.getDocument(), CORRECTING, List.of(CORRECTING, NEW));
         docProcessRepository.save(docProcess);
+        emailService.sendDocProcessResultMessageForOwner(docProcess, MessagePattern.CORRECTING);
     }
 
     /**
@@ -266,7 +263,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
      * Делегировать согласование другому пользователю. Статус процесса - DELEGATED
      *
      * @param processUpdateRequest - запрос на обновление процесса
-     * @param recipientId - id получателя, которому делегировано согласование
+     * @param recipientId          - id получателя, которому делегировано согласование
      */
     @Override
     public DocProcess delegateToOtherUser(ProcessUpdateRequest processUpdateRequest, Long recipientId) {

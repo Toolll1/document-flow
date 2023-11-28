@@ -44,7 +44,7 @@
                              referencedColumnNames="value_id"
                              deleteCascade="true"/>
             </column>
-            <column name="final_doc_status" type="varchar(32)" defaultValue="'WAITING_FOR_APPROVE'"/>
+            <column name="final_doc_status" type="varchar(32)" defaultValue="WAITING_FOR_APPROVE"/>
         </createTable>
         <addForeignKeyConstraint baseTableName="attribute_values" baseColumnNames="document_id"
                                  constraintName="fk_attribute_value_document"

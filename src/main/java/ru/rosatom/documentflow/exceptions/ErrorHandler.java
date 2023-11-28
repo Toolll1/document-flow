@@ -1,11 +1,13 @@
 package ru.rosatom.documentflow.exceptions;
 
+import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.rosatom.documentflow.dto.AppError;
@@ -24,11 +26,15 @@ public class ErrorHandler {
         return createAppError(e, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<AppError> handleAuthenticationException(final AuthenticationException e) {
+        return createAppError(e, HttpStatus.UNAUTHORIZED);
+    }
+
     @ExceptionHandler
     public ResponseEntity<AppError> handleWrongSortParameter(PropertyReferenceException e) {
         return createAppError(e, HttpStatus.BAD_REQUEST);
     }
-
 
     @ExceptionHandler
     public ResponseEntity<AppError> handleObjectNotFound(final ObjectNotFoundException e) {
@@ -53,7 +59,7 @@ public class ErrorHandler {
     }
 
 
-    private ResponseEntity<AppError> createAppError(Throwable e, HttpStatus status) {
+    public ResponseEntity<AppError> createAppError(Throwable e, HttpStatus status) {
         return new ResponseEntity<>(
                 AppError.builder()
                         .message(e.getMessage())
