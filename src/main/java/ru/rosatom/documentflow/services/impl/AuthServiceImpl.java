@@ -47,7 +47,7 @@ public class AuthServiceImpl implements AuthService {
         UserWithoutPassportDto userWithoutPassport = new UserWithoutPassportDto();
         mapper.map(user, userWithoutPassport);
 
-        authToken.setUserWithoutPassport(userWithoutPassport);
+        authToken.setUser(userWithoutPassport);
         authToken.setToken(token);
 
         return new ResponseEntity<>(authToken, HttpStatus.ACCEPTED);

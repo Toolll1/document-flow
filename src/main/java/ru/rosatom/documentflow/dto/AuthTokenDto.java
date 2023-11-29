@@ -13,5 +13,5 @@ public class AuthTokenDto {
 
     private String token;
 
-    private UserWithoutPassportDto userWithoutPassport;
+    private UserWithoutPassportDto user;
 }
