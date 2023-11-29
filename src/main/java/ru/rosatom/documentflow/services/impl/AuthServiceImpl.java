@@ -45,7 +45,7 @@ public class AuthServiceImpl implements AuthService {
         mapper.map(user, authToken);
         authToken.setToken(token);
 
-        return new ResponseEntity<>(jwtUtil.generateToken(email), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(authToken, HttpStatus.ACCEPTED);
     }
 
 }
