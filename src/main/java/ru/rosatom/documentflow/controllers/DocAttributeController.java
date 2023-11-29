@@ -50,7 +50,7 @@ public class DocAttributeController {
     @SecurityRequirement(name = "JWT")
     Page<DocAttributeDto> getAllDocTypes(@ParameterObject @PageableDefault(page = 0, size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable, @AuthenticationPrincipal @Parameter(hidden = true) User user) {
         return docAttributeService
-                .getAllDocAttributes(pageable,user)
+                .getAllDocAttributes(pageable, user)
                 .map(o -> modelMapper.map(o, DocAttributeDto.class));
     }
 
@@ -114,9 +114,5 @@ public class DocAttributeController {
             @PathVariable @Parameter(description = "ID атрибута") Long docAttributeId) {
         log.info("Получен запрос на удаление DocAttribute с ID: {}", docAttributeId);
         docAttributeService.deleteDocAttribute(docAttributeId);
-    }
-
-    private DocAttributeDto convertToDto(DocAttribute docAttribute) {
-        return modelMapper.map(docAttribute, DocAttributeDto.class);
     }
 }

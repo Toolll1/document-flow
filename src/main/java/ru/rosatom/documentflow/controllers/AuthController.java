@@ -38,7 +38,7 @@ public class AuthController {
     @Operation(summary = "Получить информацию о пользователе по токену авторизации")
     @GetMapping("/info")
     @SecurityRequirement(name = "JWT")
-    public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal User user) {
+    public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal @Parameter(hidden = true) User user) {
         log.info("Received a request to get info about user with email = {}", user.getEmail());
         return ResponseEntity.ok(userMapper.objectToReplyDto(user));
     }
