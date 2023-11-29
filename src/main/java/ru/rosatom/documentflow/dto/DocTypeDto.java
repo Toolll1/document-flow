@@ -25,4 +25,7 @@ public class DocTypeDto {
                     "Для согласования документа требуется: EVERYONE - все получатели, ANYONE - хотя бы один, QUORUM - не менее 50% получателей.")
     private AgreementType agreementType;
 
+    @Schema(description = "ID органищации")
+    private OrgDto orgDto;
+
 }

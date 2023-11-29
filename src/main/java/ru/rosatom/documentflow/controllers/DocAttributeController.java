@@ -48,7 +48,7 @@ public class DocAttributeController {
             description = "Все атрибуты с пагинацией и сортировкой")
     @GetMapping
     @SecurityRequirement(name = "JWT")
-    Page<DocAttributeDto> getAllDocTypes(@ParameterObject @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable, @AuthenticationPrincipal @Parameter(hidden = true) User user) {
+    Page<DocAttributeDto> getAllDocTypes(@ParameterObject @PageableDefault(page = 0, size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable, @AuthenticationPrincipal @Parameter(hidden = true) User user) {
         return docAttributeService
                 .getAllDocAttributes(pageable,user)
                 .map(o -> modelMapper.map(o, DocAttributeDto.class));

@@ -2,22 +2,17 @@ package ru.rosatom.documentflow.services.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
-import ru.rosatom.documentflow.models.DocAttribute;
-import ru.rosatom.documentflow.models.DocType;
-import ru.rosatom.documentflow.models.DocTypeCreationRequest;
-import ru.rosatom.documentflow.models.DocTypeUpdateRequest;
+import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocAttributeRepository;
 import ru.rosatom.documentflow.repositories.DocTypeRepository;
 import ru.rosatom.documentflow.services.DocTypeService;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -28,18 +23,17 @@ public class DocTypeServiceImpl implements DocTypeService {
     private final DocAttributeRepository docAttributeRepository;
 
     @Override
-    public Page<DocType> getAllDocTypes(Optional<Integer> page, Optional<String> sortBy) {
-        return docTypeRepository.findAll(
-                PageRequest.of(page.orElse(0), 20, Sort.Direction.ASC, sortBy.orElse("id")));
+    public Page<DocType> getAllDocTypes(Pageable pageable, User user) {
+        return user.getRole().getAuthority().equals("USER")
+                ? docTypeRepository.findAllByUserOrganization(user.getOrganization(), pageable)
+                : docTypeRepository.findAll(pageable);
     }
 
     @Override
     public DocType getDocTypeById(Long id) {
-        Optional<DocType> docType = docTypeRepository.findById(id);
-        if (docType.isPresent()) {
-            return docType.get();
-        }
-        throw new ObjectNotFoundException("Тип документа с ID " + id + " не найден.");
+        return docTypeRepository.findById(id)
+                .orElseThrow(() ->
+                        new ObjectNotFoundException("Тип документа с ID " + id + " не найден."));
     }
 
     @Override
@@ -53,25 +47,17 @@ public class DocTypeServiceImpl implements DocTypeService {
 
     @Override
     public DocType updateDocType(Long docTypeId, DocTypeUpdateRequest docTypeUpdateRequest) {
+        DocType docType = getDocTypeById(docTypeId);
+        docType.setName(
+                Objects.requireNonNullElse(docTypeUpdateRequest.getName(), docType.getName()));
 
-        if (docTypeRepository.existsById(docTypeId)) {
-            DocType docType = getDocTypeById(docTypeId);
-            docType.setName(
-                    Objects.requireNonNullElse(docTypeUpdateRequest.getName(), docType.getName()));
-
-            return docTypeRepository.save(docType);
-        } else {
-            throw new ObjectNotFoundException("Тип документа с ID " + docTypeId + " не найден.");
-        }
+        return docTypeRepository.save(docType);
     }
 
     @Override
     public void deleteDocType(Long id) {
-        if (docTypeRepository.existsById(id)) {
-            docTypeRepository.deleteById(id);
-        } else {
-            throw new ObjectNotFoundException("Тип документа с ID " + id + " не найден.");
-        }
+        DocType docType = getDocTypeById(id);
+        docTypeRepository.delete(docType);
     }
 
     @Override

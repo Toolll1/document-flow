@@ -17,5 +17,5 @@ public class DocAttributeDto {
     private String type;
 
     @Schema(description = "Организация атрибута")
-    private UserOrganization userOrganization;
+    private OrgDto orgDto;
 }
