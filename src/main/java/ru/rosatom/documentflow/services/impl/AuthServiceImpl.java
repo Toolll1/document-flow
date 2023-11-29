@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.rosatom.documentflow.configuration.JWT.JWTUtil;
 import ru.rosatom.documentflow.dto.AuthTokenDto;
+import ru.rosatom.documentflow.dto.UserWithoutPassportDto;
 import ru.rosatom.documentflow.repositories.UserRepository;
 import ru.rosatom.documentflow.services.AuthService;
 
@@ -41,8 +42,12 @@ public class AuthServiceImpl implements AuthService {
         String token = jwtUtil.generateToken(email);
 
         var user = userRepository.findByEmail(email).orElseThrow();
+
         AuthTokenDto authToken = new AuthTokenDto();
-        mapper.map(user, authToken);
+        UserWithoutPassportDto userWithoutPassport = new UserWithoutPassportDto();
+        mapper.map(user, userWithoutPassport);
+
+        authToken.setUserWithoutPassport(userWithoutPassport);
         authToken.setToken(token);
 
         return new ResponseEntity<>(authToken, HttpStatus.ACCEPTED);
