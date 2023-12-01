@@ -1,9 +1,6 @@
 package ru.rosatom.documentflow.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -23,4 +20,6 @@ public class UserOrganization {
     private final String inn;
     @Column(name = "name", nullable = false, length = 100)
     private String name;
+    @Column(name = "user_id")
+    private long user;
 }

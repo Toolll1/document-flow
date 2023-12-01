@@ -4,12 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.rosatom.documentflow.exceptions.BadRequestException;
 import ru.rosatom.documentflow.exceptions.ConflictException;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
 import ru.rosatom.documentflow.models.OrgCreationRequest;
 import ru.rosatom.documentflow.models.OrgUpdateRequest;
 import ru.rosatom.documentflow.models.UserOrganization;
 import ru.rosatom.documentflow.repositories.UserOrganizationRepository;
+import ru.rosatom.documentflow.repositories.UserRepository;
 import ru.rosatom.documentflow.services.UserOrganizationService;
 
 import java.util.List;
@@ -22,6 +24,7 @@ import java.util.Optional;
 public class UserOrganizationServiceImpl implements UserOrganizationService {
 
     private final UserOrganizationRepository repository;
+    private final UserRepository userRepository;
 
     @Override
     public UserOrganization getOrganization(Long orgId) {
@@ -54,6 +57,7 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
         UserOrganization organization = UserOrganization.builder()
                 .name(orgCreationRequest.getName())
                 .inn(orgCreationRequest.getInn())
+                .user(orgCreationRequest.getUserId())
                 .build();
         return repository.save(organization);
     }
@@ -70,6 +74,20 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
         throwIfOrganizationExists(orgId, orgUpdateRequest.getName());
         UserOrganization organization = getOrganization(orgId);
         organization.setName(Objects.requireNonNullElse(orgUpdateRequest.getName(), organization.getName()));
+        if (orgUpdateRequest.getUserId() != null) {
+            if (!userRepository.existsById(orgUpdateRequest.getUserId())) {
+                throw new BadRequestException(
+                        String.format("Пользователь с id = %d не найден. Назначение получателем по-умолчанию невозможно.",
+                                orgUpdateRequest.getUserId()));
+            }
+            if (!userRepository.getById(orgUpdateRequest.getUserId()).getOrganization().getId().equals(orgId)) {
+                throw new BadRequestException(
+                        String.format("Пользователь с id = %d не является сотрудником организации. " +
+                                        "Назначение получателем по-умолчанию невозможно.",
+                                orgUpdateRequest.getUserId()));
+            }
+            organization.setUser(orgUpdateRequest.getUserId());
+        }
         return repository.save(organization);
     }
 
