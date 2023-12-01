@@ -19,12 +19,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="inn" type="varchar(10)"/>
-            <column name="user_id" type="bigint">
-                <constraints nullable="false"
-                             foreignKeyName="fk_organization_user"
-                             referencedTableName="users"
-                             referencedColumnNames="user_id"/>
-            </column>
+            <column name="user_id" type="bigint"/>
         </createTable>
     </changeSet>
 </databaseChangeLog>

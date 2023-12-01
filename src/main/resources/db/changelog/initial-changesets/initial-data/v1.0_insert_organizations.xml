@@ -12,10 +12,12 @@
         <insert tableName="organizations">
             <column name="name" value="ООО ЗеленоглазоеТакси"/>
             <column name="inn" value="0000000000"/>
+            <column name="user_id" value="3"/>
         </insert>
         <insert tableName="organizations">
-            <column name="name" value="'ООО Михаил Боярский"/>
+            <column name="name" value="ООО Михаил Боярский"/>
             <column name="inn" value="0002300000"/>
+            <column name="user_id" value="4"/>
         </insert>
     </changeSet>
 </databaseChangeLog>

@@ -10,7 +10,7 @@ public interface DocumentProcessService {
 
     DocProcess createNewProcess(Long documentId, Long recipientId);
 
-    public DocProcess createNewProcessToOtherCompany(Long documentId, Long companyId);
+    DocProcess createNewProcessToOtherCompany(Long documentId, Long companyId);
 
     void sendToApprove(ProcessUpdateRequest processUpdateRequest);
 
