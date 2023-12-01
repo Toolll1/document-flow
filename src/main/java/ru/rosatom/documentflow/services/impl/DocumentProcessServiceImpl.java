@@ -6,10 +6,7 @@ import ru.rosatom.documentflow.exceptions.IllegalProcessStatusException;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
 import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
-import ru.rosatom.documentflow.services.DocumentProcessService;
-import ru.rosatom.documentflow.services.DocumentService;
-import ru.rosatom.documentflow.services.EmailService;
-import ru.rosatom.documentflow.services.UserService;
+import ru.rosatom.documentflow.services.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,6 +31,31 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     private final UserService userService;
     private final DocProcessRepository docProcessRepository;
     private final EmailService emailService;
+    private final UserOrganizationService userOrganizationService;
+
+
+    /**
+     * Создает новый процесс согласования документа для указанной компании.
+     * Статус процесса - NEW.
+     *
+     * @param documentId - id документа
+     * @param companyId  - id компании получателя
+     * @return DocProcess - процесс согласования
+     */
+    @Override
+    public DocProcess createNewProcessToOtherCompany(Long documentId, Long companyId) {
+        Document document = documentService.findDocumentById(documentId);
+        UserOrganization recipientCompany = userOrganizationService.getOrganization(companyId);
+        User sender = userService.getUser(document.getOwnerId());
+        DocProcess docProcess = DocProcess.builder()
+                .document(document)
+                .recipient(null)
+                .sender(sender)
+                .status(DocProcessStatus.NEW)
+                .comment(EMPTY_COMMENT)
+                .build();
+        return docProcessRepository.save(docProcess);
+    }
 
 
     /**
@@ -57,6 +79,8 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
                 .build();
         return docProcessRepository.save(docProcess);
     }
+
+
 
     /**
      * Отправляет процесс согласования на согласование. Статус процесса - WAITING_FOR_APPROVE
