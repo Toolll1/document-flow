@@ -17,4 +17,7 @@
     <include file="classpath:db/changelog/v1.13_insert_document_types.xml" relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/v1.14_insert_documents.xml" relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/v1.15_insert_document_process.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/v1.16_create_table_document_process_comment.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/v1.17_insert_document_process_comment.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/v1.18_update_table_document_process.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

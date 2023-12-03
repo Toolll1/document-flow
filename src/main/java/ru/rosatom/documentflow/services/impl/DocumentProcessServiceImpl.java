@@ -7,16 +7,12 @@ import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
 import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocProcessCommentRepository;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
-import ru.rosatom.documentflow.services.DocProcessCommentService;
 import ru.rosatom.documentflow.services.DocumentProcessService;
 import ru.rosatom.documentflow.services.DocumentService;
 import ru.rosatom.documentflow.services.UserService;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static ru.rosatom.documentflow.models.DocProcessStatus.*;
@@ -27,17 +23,14 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
 
     private final static Map<DocProcessStatus, List<DocProcessStatus>> ALLOWED_STATUS_CHANGES = Map.of(
             DocProcessStatus.NEW, List.of(DocProcessStatus.WAITING_FOR_APPROVE),
-            DocProcessStatus.WAITING_FOR_APPROVE, List.of(DocProcessStatus.APPROVED, DocProcessStatus.REJECTED
-                    , DocProcessStatus.CORRECTING, DocProcessStatus.DELEGATED),
+            DocProcessStatus.WAITING_FOR_APPROVE, List.of(DocProcessStatus.APPROVED, DocProcessStatus.REJECTED, DocProcessStatus.CORRECTING),
             DocProcessStatus.CORRECTING, List.of(DocProcessStatus.WAITING_FOR_APPROVE),
             DocProcessStatus.APPROVED, List.of(),
-            DocProcessStatus.REJECTED, List.of(),
-            DocProcessStatus.DELEGATED, List.of()
+            DocProcessStatus.REJECTED, List.of()
     );
     private final DocumentService documentService;
     private final UserService userService;
     private final DocProcessRepository docProcessRepository;
-    private final DocProcessCommentService docProcessCommentService;
     private final DocProcessCommentRepository docProcessCommentRepository;
 
 
@@ -69,15 +62,11 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
      * @param processUpdateRequest - запрос на обновление процесса
      */
     @Override
-    public void sendToApprove(ProcessUpdateRequest processUpdateRequest, String textComment) { // сюда текст
+    public void sendToApprove(ProcessUpdateRequest processUpdateRequest) {
         DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
         throwIfStatusNotCorrect(docProcess, DocProcessStatus.WAITING_FOR_APPROVE);
         docProcess.setStatus(DocProcessStatus.WAITING_FOR_APPROVE);
-        List<DocProcessComment> comments = docProcess.getComment();
-        DocProcessComment comment = docProcessCommentService.createComment(textComment, docProcess.getSender());
-        comments.add(comment);
-        docProcess.setComment(comments);
-        docProcessCommentRepository.save(comment);
+        setCommentDocProcess(processUpdateRequest, docProcess);
         docProcessRepository.save(docProcess);
     }
 
@@ -116,15 +105,11 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
      * @param processUpdateRequest - запрос на обновление процесса
      */
     @Override
-    public void approve(ProcessUpdateRequest processUpdateRequest, String textComment) {
+    public void approve(ProcessUpdateRequest processUpdateRequest) {
         DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
         throwIfStatusNotCorrect(docProcess, DocProcessStatus.APPROVED);
         docProcess.setStatus(DocProcessStatus.APPROVED);
-        List<DocProcessComment> comments = docProcess.getComment();
-        DocProcessComment comment = docProcessCommentService.createComment(textComment, docProcess.getSender());
-        comments.add(comment);
-        docProcess.setComment(comments);
-        docProcessCommentRepository.save(comment);
+        setCommentDocProcess(processUpdateRequest, docProcess);
         docProcessRepository.save(docProcess);
         finalStatusUpdate(docProcess.getDocument().getId());
     }
@@ -135,15 +120,11 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
      * @param processUpdateRequest - запрос на обновление процесса
      */
     @Override
-    public void reject(ProcessUpdateRequest processUpdateRequest, String textComment) {
+    public void reject(ProcessUpdateRequest processUpdateRequest) {
         DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
         throwIfStatusNotCorrect(docProcess, DocProcessStatus.REJECTED);
         docProcess.setStatus(DocProcessStatus.REJECTED);
-        List<DocProcessComment> comments = docProcess.getComment();
-        DocProcessComment comment = docProcessCommentService.createComment(textComment, docProcess.getSender());
-        comments.add(comment);
-        docProcess.setComment(comments);
-        docProcessCommentRepository.save(comment);
+        setCommentDocProcess(processUpdateRequest, docProcess);
         docProcessRepository.save(docProcess);
         finalStatusUpdate(docProcess.getDocument().getId());
     }
@@ -154,15 +135,11 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
      * @param processUpdateRequest - запрос на обновление процесса
      */
     @Override
-    public void sendToCorrection(ProcessUpdateRequest processUpdateRequest, String textComment) {
+    public void sendToCorrection(ProcessUpdateRequest processUpdateRequest) {
         DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
         throwIfStatusNotCorrect(docProcess, DocProcessStatus.CORRECTING);
         setStatusForAllProcessesExceptByDocument(docProcess.getDocument(), CORRECTING, List.of(CORRECTING, NEW));
-        List<DocProcessComment> comments = docProcess.getComment();
-        DocProcessComment comment = docProcessCommentService.createComment(textComment, docProcess.getSender());
-        comments.add(comment);
-        docProcess.setComment(comments);
-        docProcessCommentRepository.save(comment);
+        setCommentDocProcess(processUpdateRequest, docProcess);
         docProcessRepository.save(docProcess);
     }
 
@@ -191,12 +168,19 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         docProcessRepository.deleteById(processId);
     }
 
+    @Override
+    public DocProcessComment createComment(String text, User user) {
+        return  DocProcessComment.builder()
+                .authorComment(user)
+                .textComment(text)
+                .date(LocalDateTime.now())
+                .build();
+    }
 
-    private DocProcess getProcessAndApplyRequest(ProcessUpdateRequest processUpdateRequest) { // добавить текст коммента
+
+    private DocProcess getProcessAndApplyRequest(ProcessUpdateRequest processUpdateRequest) {
         DocProcess docProcess = findProcessById(processUpdateRequest.getProcessId());
-        List<DocProcessComment> comments = docProcess.getComment();
-        comments.add(docProcessCommentService.createComment(" ", docProcess.getSender())); // сюда новый коммент
-        docProcess.setComment(comments);
+        setCommentDocProcess(processUpdateRequest, docProcess);
         return docProcess;
     }
 
@@ -282,12 +266,15 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         }
     }
 
-    /**
-     * Делегировать согласование другому пользователю. Статус процесса - DELEGATED
-     *
-     * @param processUpdateRequest - запрос на обновление процесса
-     * @param recipientId - id получателя, которому делегировано согласование
-     */
+    public void setCommentDocProcess(ProcessUpdateRequest processUpdateRequest, DocProcess docProcess){
+        List<DocProcessComment> comments = docProcess.getComment();
+        String textComment = processUpdateRequest.getComment();
+        DocProcessComment comment = createComment(textComment, docProcess.getSender());
+        comments.add(comment);
+        docProcess.setComment(comments);
+        docProcessCommentRepository.save(comment);
+    }
+
     @Override
     public DocProcess delegateToOtherUser(ProcessUpdateRequest processUpdateRequest, Long recipientId) {
         DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);

@@ -97,10 +97,9 @@ public class DocProcessController {
     @Parameter(name = "processUpdateRequestDto", hidden = true)
     @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
     @Parameter(name = "comment", description = "Комментарий")
-    public DocProcessDto sendToApprove(@RequestParam @Parameter(description = "Текст комментария") String textComment,
-                                       ProcessUpdateRequestDto processUpdateRequestDto) {
+    public DocProcessDto sendToApprove(ProcessUpdateRequestDto processUpdateRequestDto) {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
-        documentProcessService.sendToApprove(processUpdateRequest, textComment); // сюда комментарий текст
+        documentProcessService.sendToApprove(processUpdateRequest);
         return modelMapper.map(documentProcessService.findProcessById(processUpdateRequest.getProcessId()),
                 DocProcessDto.class);
     }
@@ -114,10 +113,9 @@ public class DocProcessController {
     @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
     @Parameter(name = "comment", description = "Комментарий")
 
-    public DocProcessDto approve(@RequestParam @Parameter(description = "Текст комментария") String textComment,
-                                 ProcessUpdateRequestDto processUpdateRequestDto) {
+    public DocProcessDto approve(ProcessUpdateRequestDto processUpdateRequestDto) {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
-        documentProcessService.approve(processUpdateRequest, textComment);
+        documentProcessService.approve(processUpdateRequest);
         return modelMapper.map(documentProcessService.findProcessById(processUpdateRequest.getProcessId()),
                 DocProcessDto.class);
     }
@@ -129,10 +127,9 @@ public class DocProcessController {
     @Parameter(name = "processUpdateRequestDto", hidden = true)
     @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
     @Parameter(name = "comment", description = "Комментарий")
-    public DocProcessDto reject(@RequestParam @Parameter(description = "Текст комментария") String textComment,
-                                ProcessUpdateRequestDto processUpdateRequestDto) {
+    public DocProcessDto reject(ProcessUpdateRequestDto processUpdateRequestDto) {
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
-        documentProcessService.reject(processUpdateRequest, textComment);
+        documentProcessService.reject(processUpdateRequest);
         return modelMapper.map(documentProcessService.findProcessById(processUpdateRequest.getProcessId()),
                 DocProcessDto.class);
     }
@@ -145,11 +142,10 @@ public class DocProcessController {
     @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
     @Parameter(name = "comment", description = "Комментарий")
 
-    public DocProcessDto sendToCorrection(@RequestParam @Parameter(description = "Текс комментария") String textComment,
-                                          ProcessUpdateRequestDto processUpdateRequestDto) {
+    public DocProcessDto sendToCorrection(ProcessUpdateRequestDto processUpdateRequestDto) {
 
         ProcessUpdateRequest processUpdateRequest = modelMapper.map(processUpdateRequestDto, ProcessUpdateRequest.class);
-        documentProcessService.sendToCorrection(processUpdateRequest, textComment);
+        documentProcessService.sendToCorrection(processUpdateRequest);
         return modelMapper.map(documentProcessService.findProcessById(processUpdateRequest.getProcessId()),
                 DocProcessDto.class);
     }
