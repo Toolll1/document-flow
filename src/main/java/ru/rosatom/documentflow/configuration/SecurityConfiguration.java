@@ -3,6 +3,7 @@ package ru.rosatom.documentflow.configuration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -21,6 +22,9 @@ import ru.rosatom.documentflow.configuration.JWT.JWTUtil;
 import ru.rosatom.documentflow.configuration.JWT.RestAuthEntryPoint;
 import ru.rosatom.documentflow.services.CustomUserDetailsService;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @Configuration
@@ -31,6 +35,12 @@ public class SecurityConfiguration {
     private final JWTUtil jwtUtil;
 
     private final RestAuthEntryPoint restAuthEntryPoint;
+
+
+    private final static List<HttpMethod> allowedMethodsCors = List.of(
+            HttpMethod.GET, HttpMethod.HEAD, HttpMethod.POST,
+            HttpMethod.PUT, HttpMethod.PATCH, HttpMethod.DELETE,
+            HttpMethod.OPTIONS, HttpMethod.TRACE);
 
     @Bean
     public JWTAuthFilter jwtAuthFilter() {
@@ -77,7 +87,14 @@ public class SecurityConfiguration {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+        CorsConfiguration corsConfiguration = new CorsConfiguration().applyPermitDefaultValues();
+        corsConfiguration.setAllowedMethods(
+                                allowedMethodsCors
+                                        .stream()
+                                        .map(String::valueOf)
+                                        .collect(Collectors.toList()));
+        source.registerCorsConfiguration("/**", corsConfiguration);
+
         return source;
     }
 }
