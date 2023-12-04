@@ -29,10 +29,8 @@ public class DocAttributeServiceImpl implements DocAttributeService {
 
     @Override
     public Page<DocAttribute> getAllDocAttributes(Pageable pageable, User user, Optional<Long> orgId) {
-        return user.getRole().getAuthority().equals("ADMIN")
-                ? orgId.map(id -> docAttributeRepository.findAllByUserOrganization(id, pageable))
-                .orElse(docAttributeRepository.findAll(pageable))
-                : docAttributeRepository.findAllByUserOrganization(user.getOrganization().getId(), pageable);
+        return orgId.map(id -> docAttributeRepository.findAllByUserOrganization(id, pageable))
+                .orElse(docAttributeRepository.findAll(pageable));
     }
 
     @Override

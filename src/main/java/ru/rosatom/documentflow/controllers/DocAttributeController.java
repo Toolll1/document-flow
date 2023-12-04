@@ -49,6 +49,7 @@ public class DocAttributeController {
             description = "Все атрибуты с пагинацией и сортировкой")
     @GetMapping
     @SecurityRequirement(name = "JWT")
+    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('USER') && #orgId.isPresent() && #user.organization.id.equals(#orgId.get())")
     Page<DocAttributeDto> getAllDocTypes(@ParameterObject @PageableDefault(page = 0, size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
                                          @AuthenticationPrincipal @Parameter(hidden = true) User user,
                                          @RequestParam(required = false, name = "org_id") @Parameter(description = "ID организации") Optional<Long> orgId) {
