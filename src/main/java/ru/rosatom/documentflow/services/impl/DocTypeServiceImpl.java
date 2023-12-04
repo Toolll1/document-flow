@@ -6,7 +6,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
-import ru.rosatom.documentflow.models.*;
+import ru.rosatom.documentflow.models.DocAttribute;
+import ru.rosatom.documentflow.models.DocType;
+import ru.rosatom.documentflow.models.DocTypeCreationRequest;
+import ru.rosatom.documentflow.models.DocTypeUpdateRequest;
 import ru.rosatom.documentflow.repositories.DocAttributeRepository;
 import ru.rosatom.documentflow.repositories.DocTypeRepository;
 import ru.rosatom.documentflow.services.DocTypeService;
@@ -24,12 +27,9 @@ public class DocTypeServiceImpl implements DocTypeService {
     private final DocAttributeRepository docAttributeRepository;
 
     @Override
-    public Page<DocType> getAllDocTypes(Pageable pageable, User user, Optional<Long> orgId) {
-        return (user.getRole().getAuthority().equals("ADMIN")) ?
-                orgId.map(id -> docTypeRepository.findAllByUserOrganization(id, pageable))
-                        .orElse(docTypeRepository.findAll(pageable))
-                :
-                docTypeRepository.findAllByUserOrganization(user.getOrganization().getId(), pageable);
+    public Page<DocType> getAllDocTypes(Pageable pageable, Optional<Long> orgId) {
+        return orgId.map(id -> docTypeRepository.findAllByUserOrganization(id, pageable))
+                .orElse(docTypeRepository.findAll(pageable));
     }
 
     @Override

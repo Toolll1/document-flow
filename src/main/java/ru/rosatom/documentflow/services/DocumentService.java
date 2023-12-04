@@ -16,7 +16,7 @@ public interface DocumentService {
 
     Document updateDocument(DocumentUpdateDto documentUpdateDto, Long id, Long UserId);
 
-    Page<DocChanges> findDocChangesByDocumentId(Long id, User user, Pageable pageable, Optional<Long> orgId);
+    Page<DocChanges> findDocChangesByDocumentId(Long id, Pageable pageable, Optional<Long> orgId);
 
     Document findDocumentById(Long documentId);
 
@@ -24,8 +24,7 @@ public interface DocumentService {
 
     Set<Document> findDocumentsByProcessStatus(DocProcessStatus status);
 
-    Page<Document> findDocuments(User user,
-                                 DocParams p,
+    Page<Document> findDocuments(DocParams p,
                                  Pageable pageable);
 
     void deleteDocumentById(Long id, Long userId);

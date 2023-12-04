@@ -47,10 +47,11 @@ public class DocTypeController {
     @Operation(summary = "Получить все типы", description = "Все типы с пагинацией и сортировкой")
     @GetMapping
     @SecurityRequirement(name = "JWT")
+    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('USER') && #orgId.isPresent() && #user.organization.id.equals(#orgId.get())")
     Page<DocTypeDto> getAllDocTypes(@ParameterObject @PageableDefault(page = 0, size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
                                     @AuthenticationPrincipal @Parameter(hidden = true) User user,
                                     @RequestParam(required = false, name = "org_id") @Parameter(description = "ID организации") Optional<Long> orgId) {
-        return docTypeService.getAllDocTypes(pageable, user, orgId)
+        return docTypeService.getAllDocTypes(pageable,  orgId)
                 .map(o -> modelMapper.map(o, DocTypeDto.class));
     }
 

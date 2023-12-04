@@ -126,17 +126,14 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public Page<Document> findDocuments(User user,
-                                        DocParams p,
+    public Page<Document> findDocuments(DocParams p,
                                         Pageable pageable) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
-        if (user.getRole().getAuthority().equals("ADMIN")) {
-            if (p.getOrgId() != null) {
-                booleanBuilder.and(QDocument.document.idOrganization.eq(p.getOrgId()));
-            }
-        } else {
-            booleanBuilder.and(QDocument.document.idOrganization.eq(user.getOrganization().getId()));
+
+        if (p.getOrgId() != null) {
+            booleanBuilder.and(QDocument.document.idOrganization.eq(p.getOrgId()));
         }
+
         if (p.getRangeStart() != null && p.getRangeEnd() != null && p.getRangeEnd().isBefore(p.getRangeStart())) {
             throw new BadRequestException("Даты поиска событий не верны");
         }
@@ -196,11 +193,10 @@ public class DocumentServiceImpl implements DocumentService {
 
 
     @Override
-    public Page<DocChanges> findDocChangesByDocumentId(Long id, User user, Pageable pageable, Optional<Long> orgId) {
-        return user.getRole().getAuthority().equals("ADMIN")
-                ? orgId.map(oId -> docChangesRepository.findAllByDocumentIdAndOrgId(id, oId, pageable))
-                .orElse(docChangesRepository.findAllByDocumentId(id, pageable))
-                : docChangesRepository.findAllByDocumentIdAndOrgId(id, user.getOrganization().getId(), pageable);
+    public Page<DocChanges> findDocChangesByDocumentId(Long id, Pageable
+            pageable, Optional<Long> orgId) {
+        return orgId.map(oId -> docChangesRepository.findAllByDocumentIdAndOrgId(id, oId, pageable))
+                .orElse(docChangesRepository.findAllByDocumentId(id, pageable));
     }
 
     @Override
@@ -215,7 +211,8 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public void updateFinalStatus(Document newDocument, DocProcessStatus status, Collection<DocProcess> docProcess) {
+    public void updateFinalStatus(Document newDocument, DocProcessStatus
+            status, Collection<DocProcess> docProcess) {
         newDocument.setFinalDocStatus(status);
 
         if (status.equals(DocProcessStatus.APPROVED)) {

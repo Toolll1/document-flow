@@ -5,13 +5,12 @@ import org.springframework.data.domain.Pageable;
 import ru.rosatom.documentflow.models.DocType;
 import ru.rosatom.documentflow.models.DocTypeCreationRequest;
 import ru.rosatom.documentflow.models.DocTypeUpdateRequest;
-import ru.rosatom.documentflow.models.User;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface DocTypeService {
-    Page<DocType> getAllDocTypes(Pageable pageable, User user, Optional<Long> orgId);
+    Page<DocType> getAllDocTypes(Pageable pageable, Optional<Long> orgId);
 
     DocType getDocTypeById(Long id);
 

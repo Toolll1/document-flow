@@ -54,7 +54,7 @@ public class DocAttributeController {
                                          @AuthenticationPrincipal @Parameter(hidden = true) User user,
                                          @RequestParam(required = false, name = "org_id") @Parameter(description = "ID организации") Optional<Long> orgId) {
         return docAttributeService
-                .getAllDocAttributes(pageable, user, orgId)
+                .getAllDocAttributes(pageable, orgId)
                 .map(o -> modelMapper.map(o, DocAttributeDto.class));
     }
 

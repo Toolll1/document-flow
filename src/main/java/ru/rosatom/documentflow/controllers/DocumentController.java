@@ -106,7 +106,6 @@ public class DocumentController {
         log.trace("Запрос информации о документах своей организации от пользователя {}", user.getId());
         return documentService
                 .findDocuments(
-                        user,
                         new DocParams(
                                 text, rangeStart, rangeEnd, creatorId, typeId, attributeId, attributeValue, orgId),
                         pageable)
@@ -127,7 +126,7 @@ public class DocumentController {
                 "Запрос информации о истории изменений документа {} от пользователя {}",
                 documentId,
                 user.getId());
-        return documentService.findDocChangesByDocumentId(documentId, user, pageable, orgId)
+        return documentService.findDocChangesByDocumentId(documentId, pageable, orgId)
                 .map(o -> modelMapper.map(o, DocumentChangesDto.class));
     }
 
