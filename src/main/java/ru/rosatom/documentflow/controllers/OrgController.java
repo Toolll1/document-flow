@@ -6,6 +6,11 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springdoc.api.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -34,11 +39,9 @@ public class OrgController {
     @Operation(summary = "Получить все организации")
     @GetMapping
     @SecurityRequirement(name = "JWT")
-    public List<OrgDto> getAllOrgs() {
-        List<UserOrganization> organizations = userOrganizationService.getAllOrganizations();
-        return organizations.stream()
-                .map(o -> modelMapper.map(o, OrgDto.class))
-                .collect(Collectors.toList());
+    public Page<OrgDto> getAllOrgs(@ParameterObject @PageableDefault(page = 0, size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+        return userOrganizationService.getAllOrganizations(pageable)
+                .map(o -> modelMapper.map(o, OrgDto.class));
     }
 
     @Operation(summary = "Добавить организацию")
