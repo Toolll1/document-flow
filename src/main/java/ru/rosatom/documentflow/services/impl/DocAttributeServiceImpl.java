@@ -49,7 +49,7 @@ public class DocAttributeServiceImpl implements DocAttributeService {
                 DocAttribute.builder()
                         .name(docAttributeCreationRequest.getName())
                         .type(docAttributeCreationRequest.getType())
-                        .userOrganization(userOrganizationService.getOrganization(docAttributeCreationRequest.getOrgId()))
+                        .userOrganization(userOrganizationService.getOrganization(docAttributeCreationRequest.getOrganizationId()))
                         .build();
         return docAttributeRepository.save(docAttribute);
     }
