@@ -35,6 +35,10 @@ public class DocType {
     @Enumerated(EnumType.STRING)
     private AgreementType agreementType;
 
+    @OneToOne(targetEntity = UserOrganization.class)
+    @JoinColumn(name = "org_id")
+    private UserOrganization userOrganization;
+
     public void addAttributes(DocAttribute docAttribute) {
         attributes.add(docAttribute);
     }

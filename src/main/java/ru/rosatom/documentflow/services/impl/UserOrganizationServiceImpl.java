@@ -2,6 +2,8 @@ package ru.rosatom.documentflow.services.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.rosatom.documentflow.exceptions.ConflictException;
@@ -25,7 +27,6 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
 
     @Override
     public UserOrganization getOrganization(Long orgId) {
-
         return repository
                 .findById(orgId).
                 orElseThrow(() -> new ObjectNotFoundException("There is no organization with this id"));
@@ -38,8 +39,8 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
      * @return List<UserOrganization> список организаций
      */
     @Override
-    public List<UserOrganization> getAllOrganizations() {
-        return repository.findAll();
+    public Page<UserOrganization> getAllOrganizations(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
     /**

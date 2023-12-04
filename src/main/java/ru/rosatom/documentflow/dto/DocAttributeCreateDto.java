@@ -19,4 +19,7 @@ public class DocAttributeCreateDto {
     @Size(min = 1, max = 255)
     private String type;
 
+    @Schema(description = "ID организации атрибута")
+    private Long organizationId;
+
 }
