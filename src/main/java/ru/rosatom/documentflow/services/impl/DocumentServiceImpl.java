@@ -198,9 +198,9 @@ public class DocumentServiceImpl implements DocumentService {
     @Override
     public Page<DocChanges> findDocChangesByDocumentId(Long id, User user, Pageable pageable, Optional<Long> orgId) {
         return user.getRole().getAuthority().equals("ADMIN")
-                ? orgId.map(oId -> docChangesRepository.findAllByDocumentIdAndOrganizationId(id, oId, pageable))
+                ? orgId.map(oId -> docChangesRepository.findAllByDocumentIdAndOrgId(id, oId, pageable))
                 .orElse(docChangesRepository.findAllByDocumentId(id, pageable))
-                : docChangesRepository.findAllByDocumentIdAndOrganizationId(id, user.getOrganization().getId(), pageable);
+                : docChangesRepository.findAllByDocumentIdAndOrgId(id, user.getOrganization().getId(), pageable);
     }
 
     @Override
