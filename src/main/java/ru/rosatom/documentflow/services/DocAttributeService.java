@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DocAttributeService {
-    Page<DocAttribute> getAllDocAttributes(Pageable pageable, User user);
+    Page<DocAttribute> getAllDocAttributes(Pageable pageable, User user, Optional<Long> otgId);
 
     DocAttribute createDocAttribute(DocAttributeCreationRequest docAttributeCreationRequest);
 

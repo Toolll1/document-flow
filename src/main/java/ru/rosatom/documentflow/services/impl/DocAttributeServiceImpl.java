@@ -16,6 +16,7 @@ import ru.rosatom.documentflow.services.UserOrganizationService;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -27,10 +28,11 @@ public class DocAttributeServiceImpl implements DocAttributeService {
     private final UserOrganizationService userOrganizationService;
 
     @Override
-    public Page<DocAttribute> getAllDocAttributes(Pageable pageable, User user) {
-        return user.getRole().getAuthority().equals("USER") ?
-                docAttributeRepository.findAllByUserOrganization(user.getOrganization(), pageable) :
-                docAttributeRepository.findAll(pageable);
+    public Page<DocAttribute> getAllDocAttributes(Pageable pageable, User user, Optional<Long> orgId) {
+        return user.getRole().getAuthority().equals("ADMIN")
+                ? orgId.map(id -> docAttributeRepository.findAllByUserOrganization(id, pageable))
+                .orElse(docAttributeRepository.findAll(pageable))
+                : docAttributeRepository.findAllByUserOrganization(user.getOrganization().getId(), pageable);
     }
 
     @Override

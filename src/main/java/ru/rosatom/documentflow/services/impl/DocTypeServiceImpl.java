@@ -13,6 +13,7 @@ import ru.rosatom.documentflow.services.DocTypeService;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -23,10 +24,12 @@ public class DocTypeServiceImpl implements DocTypeService {
     private final DocAttributeRepository docAttributeRepository;
 
     @Override
-    public Page<DocType> getAllDocTypes(Pageable pageable, User user) {
-        return user.getRole().getAuthority().equals("USER")
-                ? docTypeRepository.findAllByUserOrganization(user.getOrganization(), pageable)
-                : docTypeRepository.findAll(pageable);
+    public Page<DocType> getAllDocTypes(Pageable pageable, User user, Optional<Long> orgId) {
+        return (user.getRole().getAuthority().equals("ADMIN")) ?
+                orgId.map(id -> docTypeRepository.findAllByUserOrganization(id, pageable))
+                        .orElse(docTypeRepository.findAll(pageable))
+                :
+                docTypeRepository.findAllByUserOrganization(user.getOrganization().getId(), pageable);
     }
 
     @Override

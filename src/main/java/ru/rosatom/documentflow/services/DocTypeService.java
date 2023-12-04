@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DocTypeService {
-    Page<DocType> getAllDocTypes(Pageable pageable, User user);
+    Page<DocType> getAllDocTypes(Pageable pageable, User user, Optional<Long> orgId);
 
     DocType getDocTypeById(Long id);
 

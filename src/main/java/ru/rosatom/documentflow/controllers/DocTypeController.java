@@ -28,6 +28,7 @@ import ru.rosatom.documentflow.services.DocTypeService;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -47,8 +48,9 @@ public class DocTypeController {
     @GetMapping
     @SecurityRequirement(name = "JWT")
     Page<DocTypeDto> getAllDocTypes(@ParameterObject @PageableDefault(page = 0, size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
-                                    @AuthenticationPrincipal @Parameter(hidden = true) User user) {
-        return docTypeService.getAllDocTypes(pageable, user)
+                                    @AuthenticationPrincipal @Parameter(hidden = true) User user,
+                                    @RequestParam(required = false, name = "org_id") @Parameter(description = "ID организации") Optional<Long> orgId) {
+        return docTypeService.getAllDocTypes(pageable, user, orgId)
                 .map(o -> modelMapper.map(o, DocTypeDto.class));
     }
 

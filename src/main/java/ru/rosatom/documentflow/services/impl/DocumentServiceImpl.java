@@ -5,6 +5,7 @@ import com.querydsl.jpa.JPAExpressions;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -110,7 +111,7 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public List<Document> getAllDocuments() {
-        return new ArrayList<>(documentRepository.findAll());
+        return documentRepository.findAll();
     }
 
     /**
@@ -125,11 +126,17 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public List<Document> findDocuments(Long userId,
+    public Page<Document> findDocuments(User user,
                                         DocParams p,
                                         Pageable pageable) {
-        User user = userService.getUser(userId);
-        BooleanBuilder booleanBuilder = new BooleanBuilder(QDocument.document.idOrganization.eq(user.getOrganization().getId()));
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        if (user.getRole().getAuthority().equals("ADMIN")) {
+            if (p.getOrgId() != null) {
+                booleanBuilder.and(QDocument.document.idOrganization.eq(p.getOrgId()));
+            }
+        } else {
+            booleanBuilder.and(QDocument.document.idOrganization.eq(user.getOrganization().getId()));
+        }
         if (p.getRangeStart() != null && p.getRangeEnd() != null && p.getRangeEnd().isBefore(p.getRangeStart())) {
             throw new BadRequestException("Даты поиска событий не верны");
         }
@@ -158,7 +165,8 @@ public class DocumentServiceImpl implements DocumentService {
                             .where(qAttributeValue.value.lower().likeIgnoreCase("%" + p.getAttributeValue().toLowerCase() + "%"))
             ));
         }
-        return new ArrayList<>(documentRepository.findAll(booleanBuilder, pageable).getContent());
+
+        return documentRepository.findAll(booleanBuilder, pageable);
     }
 
     @Override
@@ -188,12 +196,15 @@ public class DocumentServiceImpl implements DocumentService {
 
 
     @Override
-    public List<DocChanges> findDocChangesByDocumentId(Long id, Long userId) {
-        return docChangesRepository.findAllByDocumentId(id);
+    public Page<DocChanges> findDocChangesByDocumentId(Long id, User user, Pageable pageable, Optional<Long> orgId) {
+        return user.getRole().getAuthority().equals("ADMIN")
+                ? orgId.map(oId -> docChangesRepository.findAllByDocumentIdAndOrgId(id, oId, pageable))
+                .orElse(docChangesRepository.findAllByDocumentId(id, pageable))
+                : docChangesRepository.findAllByDocumentIdAndOrgId(id, user.getOrganization().getId(), pageable);
     }
 
     @Override
-    public DocChanges findDocChangesById(Long id, Long userId) {
+    public DocChanges findDocChangesById(Long id) {
         return docChangesRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Не найден лист изменений с id " + id));
     }

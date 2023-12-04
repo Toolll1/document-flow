@@ -9,12 +9,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springdoc.api.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.rosatom.documentflow.adapters.CustomPageRequest;
 import ru.rosatom.documentflow.dto.*;
 import ru.rosatom.documentflow.mappers.DocumentChangesMapper;
 import ru.rosatom.documentflow.mappers.DocumentMapper;
@@ -24,13 +28,12 @@ import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.services.DocumentService;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static ru.rosatom.documentflow.adapters.CommonUtils.*;
+import static ru.rosatom.documentflow.adapters.CommonUtils.DATE_TIME_PATTERN;
 
 @Slf4j
 @Validated
@@ -77,8 +80,9 @@ public class DocumentController {
     @Operation(summary = "Получить документы по своей организации")
     @GetMapping
     @SecurityRequirement(name = "JWT")
-    public List<DocumentDto> findDocuments(
-            @RequestParam(required = false) @Parameter(description = "Имя документа") String text,
+    public Page<DocumentDto> findDocuments(
+            @RequestParam(required = false) @Parameter(description = "Имя документа")
+            String text,
             @RequestParam(required = false)
             @DateTimeFormat(pattern = DATE_TIME_PATTERN)
             @Parameter(description = "Начало интервала")
@@ -89,46 +93,42 @@ public class DocumentController {
             LocalDateTime rangeEnd,
             @RequestParam(required = false) @Parameter(description = "ID создателя документа")
             Long creatorId,
-            @RequestParam(defaultValue = PAGINATION_DEFAULT_FROM)
-            @PositiveOrZero
-            @Parameter(description = "Номер страницы")
-            Integer from,
-            @RequestParam(defaultValue = PAGINATION_DEFAULT_SIZE)
-            @Positive
-            @Parameter(description = "Количество элементов на странице")
-            Integer size,
-            @RequestParam(required = false) @Parameter(description = "ID типа документа") Long typeId,
+            @ParameterObject @PageableDefault(page = 0, size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
+            @RequestParam(required = false) @Parameter(description = "ID типа документа")
+            Long typeId,
             @RequestParam(required = false) @Parameter(description = "ID атрибута документа")
             Long attributeId,
             @RequestParam(required = false) @Parameter(description = "Значение атрибута")
             String attributeValue,
+            @RequestParam(required = false, name = "org_id") @Parameter(description = "ID организации")
+            Long orgId,
             @AuthenticationPrincipal @Parameter(name = "user", hidden = true) User user) {
         log.trace("Запрос информации о документах своей организации от пользователя {}", user.getId());
         return documentService
                 .findDocuments(
-                        user.getId(),
+                        user,
                         new DocParams(
-                                text, rangeStart, rangeEnd, creatorId, typeId, attributeId, attributeValue),
-                        new CustomPageRequest(from, size))
-                .stream()
-                .map(o -> modelMapper.map(o, DocumentDto.class))
-                .collect(Collectors.toList());
+                                text, rangeStart, rangeEnd, creatorId, typeId, attributeId, attributeValue, orgId),
+                        pageable)
+                .map(o -> modelMapper.map(o, DocumentDto.class));
     }
 
     // поиск истории изменений по id документа
     @Operation(summary = "Получить историю изменений по ID")
     @GetMapping("/{documentId}/changes")
     @SecurityRequirement(name = "JWT")
-    public List<DocumentChangesDto> findDocChangesByDocumentId(
+    public Page<DocumentChangesDto> findDocChangesByDocumentId(
             @PathVariable @Parameter(description = "ID документа") Long documentId,
-            @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
+            @ParameterObject @PageableDefault(page = 0, size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
+            @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user,
+            @RequestParam(required = false, name = "org_id") @Parameter(description = "ID организации") Optional<Long> orgId
+    ) {
         log.trace(
                 "Запрос информации о истории изменений документа {} от пользователя {}",
                 documentId,
                 user.getId());
-        return documentService.findDocChangesByDocumentId(documentId, user.getId()).stream()
-                .map(o -> modelMapper.map(o, DocumentChangesDto.class))
-                .collect(Collectors.toList());
+        return documentService.findDocChangesByDocumentId(documentId, user, pageable, orgId)
+                .map(o -> modelMapper.map(o, DocumentChangesDto.class));
     }
 
     // обновление документа
@@ -168,7 +168,7 @@ public class DocumentController {
             @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
         log.trace(
                 "Запрос информации о изменений {} от пользователя {}", documentChangesId, user.getId());
-        DocChanges document = documentService.findDocChangesById(documentChangesId, user.getId());
+        DocChanges document = documentService.findDocChangesById(documentChangesId);
         return modelMapper.map(document, DocumentChangesDto.class);
     }
 
