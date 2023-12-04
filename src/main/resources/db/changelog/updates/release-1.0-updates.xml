@@ -1,0 +1,31 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="release-1.0-updates" author="nikita_glushko">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+            <sqlCheck expectedResult="document-flow">SELECT current_database()</sqlCheck>
+            <tableExists tableName="attributes"/>
+            <and>
+                <tableExists tableName="document_types"/>
+            </and>
+
+        </preConditions>
+        <addColumn tableName="attributes">
+            <column name="org_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="attributes" baseColumnNames="org_id"
+                                 constraintName="fk_attribute_organization"
+                                 referencedTableName="organizations"
+                                 referencedColumnNames="org_id"/>
+        <addColumn tableName="document_types">
+            <column name="org_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="document_types" baseColumnNames="org_id"
+                                 constraintName="fk_document_type_organization"
+                                 referencedTableName="organizations"
+                                 referencedColumnNames="org_id"/>
+    </changeSet>
+</databaseChangeLog>
