@@ -7,12 +7,15 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import ru.rosatom.documentflow.models.*;
+import ru.rosatom.documentflow.repositories.DocProcessCommentRepository;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
 import ru.rosatom.documentflow.services.DocumentProcessService;
 import ru.rosatom.documentflow.services.DocumentService;
 import ru.rosatom.documentflow.services.EmailService;
 import ru.rosatom.documentflow.services.UserService;
 
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -28,11 +31,15 @@ class DocumentProcessServiceImplTest {
     private final DocProcessRepository docProcessRepository = Mockito.mock(DocProcessRepository.class);
     private final EmailService emailService = Mockito.mock(EmailService.class);
 
+    private final DocProcessCommentRepository docProcessCommentRepository = Mockito.mock(DocProcessCommentRepository.class);
+
+
     private final DocumentProcessService documentProcessService = new DocumentProcessServiceImpl(
             documentService,
             userService,
             docProcessRepository,
-            emailService);
+            emailService,
+            docProcessCommentRepository);
 
 
     @Nested
@@ -50,7 +57,7 @@ class DocumentProcessServiceImplTest {
                     Mockito.mock(User.class),
                     Mockito.mock(User.class),
                     DocProcessStatus.WAITING_FOR_APPROVE,
-                    "");
+                    Mockito.mock(ArrayList.class));
             processUpdateRequest.setProcessId(updatableDocProcess.getId());
             Mockito.doReturn(Optional.of(updatableDocProcess))
                     .when(docProcessRepository).findById(updatableDocProcess.getId());
@@ -100,6 +107,6 @@ class DocumentProcessServiceImplTest {
                 Mockito.mock(User.class),
                 Mockito.mock(User.class),
                 status,
-                "");
+                Mockito.mock(ArrayList.class));
     }
 }
