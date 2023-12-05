@@ -18,7 +18,7 @@ public class DocParams {
     String text;
     LocalDateTime rangeStart;
     LocalDateTime rangeEnd;
-    @Schema(description = "ID оздателя")
+    @Schema(description = "ID создателя")
     Long creatorId;
     @Schema(description = "ID типа")
     Long typeId;
@@ -26,4 +26,6 @@ public class DocParams {
     Long attributeId;
     @Schema(description = "Значение атрибута")
     String attributeValue;
+    @Schema(description = "ID организации")
+    Long orgId;
 }

@@ -37,6 +37,10 @@
              relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/initial-changesets/initial-data/v1.6_insert_message_templates.xml"
              relativeToChangelogFile="false"/>
+  <include file="classpath:db/changelog/updates/release-1.0-updates.xml"
+             relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/updates/release-1.1-updates.xml"
+             relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.11_create_table_document_process_comment.xml"
              relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.12_update_table_document_process.xml"

@@ -1,6 +1,5 @@
 package ru.rosatom.documentflow.exceptions;
 
-import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.mapping.PropertyReferenceException;
