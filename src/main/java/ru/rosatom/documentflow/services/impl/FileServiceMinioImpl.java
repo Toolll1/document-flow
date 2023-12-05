@@ -173,7 +173,7 @@ public class FileServiceMinioImpl implements FileService {
             deleteLocalFile(file);
         }
 
-        document.setDocumentPath("http://127.0.0.1:9090/browser/" + bucketName);
+        document.setDocumentPath("https://minio.docflow.fokidoki.su/browser/" + bucketName);
         document.setName(name);
 
         return document;
@@ -193,7 +193,7 @@ public class FileServiceMinioImpl implements FileService {
     public Document editFileInMinio(Document newDocument, Document oldDocument, String basketVersionControl, Collection<DocProcess> docProcess) {
 
         String fileName = oldDocument.getName();
-        String bucketName = oldDocument.getDocumentPath().replace("http://127.0.0.1:9090/browser/", "");
+        String bucketName = oldDocument.getDocumentPath().replace("https://minio.docflow.fokidoki.su/browser/", "");
 
         try {
             copyFileFromMinio(fileName, bucketName, basketVersionControl);
