@@ -1,0 +1,19 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet id="v1.12_update_table_document_process" author="sveta_klimova">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+            <sqlCheck expectedResult="document-flow">SELECT current_database()</sqlCheck>
+            <not>
+                <tableExists tableName="document_process"/>
+            </not>
+        </preConditions>
+        <addForeignKeyConstraint baseColumnNames="comment"
+                                 baseTableName="document_process"
+                                 constraintName="fk_document_process_comment"
+                                 referencedColumnNames="comment_id"
+                                 referencedTableName="document_process_comment"/>
+    </changeSet>
+</databaseChangeLog>

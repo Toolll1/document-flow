@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @Schema(description = "Процесс изменения документа")
@@ -24,6 +26,6 @@ public class DocProcessDto {
     @Schema(description = "Статус")
     private String status;
 
-    @Schema(description = "Комментарий")
-    private String comment;
+    @Schema(description = "Комментарии")
+    private List<DocProcessCommentDto> comment;
 }

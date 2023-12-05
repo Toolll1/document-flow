@@ -3,6 +3,7 @@ package ru.rosatom.documentflow.models;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -31,6 +32,8 @@ public class DocProcess {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private DocProcessStatus status;
-    @Column(name = "comment", nullable = false, length = 1000)
-    private String comment;
+    @Column(name = "comment")
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "comment_id")
+    private List<DocProcessComment> comment;
 }
