@@ -40,4 +40,16 @@ public abstract class AbstractEmailService implements EmailService {
         StringSubstitutor substitutor = new StringSubstitutor(messageParams);
         sendDocProcessMessage(docProcess.getSender().getEmail(), substitutor.replace(messageTemplate.getBody()), messageTemplate.getSubject());
     }
+
+    @Override
+    public void sendMessageWithNewComment(DocProcess docProcess){
+        MessageTemplate messageTemplate = messageTemplateService.getMessageTemplateByPattern(MessagePattern.NEW_COMMENT);
+        Map<String, String> messageParams = Map.of(
+                "firstName", docProcess.getSender().getFirstName(),
+                "documentName", docProcess.getDocument().getName(),
+                "mail", docProcess.getSender().getEmail(),
+                "fullName", docProcess.getSender().getLastName() + ' ' + docProcess.getSender().getFirstName() + ' ' + docProcess.getSender().getPatronymic());
+        StringSubstitutor substitutor = new StringSubstitutor(messageParams);
+        sendDocProcessMessage(docProcess.getRecipient().getEmail(), substitutor.replace(messageTemplate.getBody()), messageTemplate.getSubject());
+    }
 }

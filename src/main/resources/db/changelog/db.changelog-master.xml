@@ -43,4 +43,6 @@
              relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/initial-changesets/initial-data/v1.7_insert_document_process_comment.xml"
              relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-data/v1.8_insert_message_templates.xml"
+             relativeToChangelogFile="false"/>
 </databaseChangeLog>

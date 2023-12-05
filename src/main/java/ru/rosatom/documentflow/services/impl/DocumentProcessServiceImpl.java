@@ -11,7 +11,6 @@ import ru.rosatom.documentflow.services.DocumentProcessService;
 import ru.rosatom.documentflow.services.DocumentService;
 import ru.rosatom.documentflow.services.EmailService;
 import ru.rosatom.documentflow.services.UserService;
-
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -287,6 +286,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         comments.add(comment);
         docProcess.setComment(comments);
         docProcessCommentRepository.save(comment);
+        emailService.sendMessageWithNewComment(docProcess);
     }
 
     @Override
