@@ -16,8 +16,10 @@ import ru.rosatom.documentflow.configuration.JWT.JWTUtil;
 import ru.rosatom.documentflow.dto.AppError;
 import ru.rosatom.documentflow.dto.AuthTokenDto;
 import ru.rosatom.documentflow.dto.UserWithoutPassportDto;
+import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.repositories.UserRepository;
 import ru.rosatom.documentflow.services.AuthService;
+import ru.rosatom.documentflow.services.UserService;
 
 
 @Slf4j
@@ -34,6 +36,8 @@ public class AuthServiceImpl implements AuthService {
 
     private final ModelMapper mapper;
 
+    private final UserService userService;
+
 
     @Override
     public ResponseEntity<?> loginUser(String email, String password) {
@@ -45,16 +49,13 @@ public class AuthServiceImpl implements AuthService {
             log.error("Authentication failed: ", authenticationException);
             return new ResponseEntity<>(new AppError("Bad credentials"), HttpStatus.UNAUTHORIZED);
         }
-        String token = jwtUtil.generateToken(email);
 
-        var user = userRepository.findByEmail(email).orElseThrow();
+        User user = userService.getUserByEmail(email);
 
-        AuthTokenDto authToken = new AuthTokenDto();
-        UserWithoutPassportDto userWithoutPassport = new UserWithoutPassportDto();
-        mapper.map(user, userWithoutPassport);
-
-        authToken.setUser(userWithoutPassport);
-        authToken.setToken(token);
+        AuthTokenDto authToken = AuthTokenDto.builder()
+                .token(jwtUtil.generateToken(email))
+                .user(mapper.map(user, UserWithoutPassportDto.class))
+                .build();
 
         return new ResponseEntity<>(authToken, HttpStatus.ACCEPTED);
     }
