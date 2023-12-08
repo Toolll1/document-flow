@@ -10,12 +10,12 @@
             <tableExists tableName="organizations"/>
         </preConditions>
         <insert tableName="organizations">
-            <column name="name" value="ООО ЗеленоглазоеТакси"/>
-            <column name="inn" value="0000000000"/>
+            <column name="name" value="Howe-Huels"/>
+            <column name="inn" value="9938710050"/>
         </insert>
         <insert tableName="organizations">
-            <column name="name" value="'ООО Михаил Боярский"/>
-            <column name="inn" value="0002300000"/>
+            <column name="name" value="'Funk, Little and Littel"/>
+            <column name="inn" value="5998081370"/>
         </insert>
     </changeSet>
 </databaseChangeLog>

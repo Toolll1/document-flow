@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+    <include file="classpath:db/changelog/initial-changesets/initial-data/v1.0_insert_organizations.xml"
+             relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-data/v1.1_insert_passports.xml"
+             relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-data/v1.2_insert_users.xml"
+             relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-data/v1.3_insert_document_types.xml"
+             relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-data/v1.4_insert_documents.xml"
+             relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-data/v1.5_insert_document_process.xml"
+             relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-data/v1.6_insert_message_templates.xml"
+             relativeToChangelogFile="false"/>
+</databaseChangeLog>
