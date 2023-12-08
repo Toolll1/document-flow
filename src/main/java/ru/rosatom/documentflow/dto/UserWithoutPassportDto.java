@@ -12,6 +12,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserWithoutPassportDto {
 
+
+    @Schema(description = "ID пользователя")
+    private Long id;
+
     @Schema(description = "Фамилия", minLength = 2, maxLength = 100)
     private String lastName;
 
