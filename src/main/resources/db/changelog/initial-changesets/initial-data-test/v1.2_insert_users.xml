@@ -30,7 +30,7 @@
             <column name="date_of_birth" value="1969-02-09 00:00:00.000000"/>
             <column name="email" value="fedotov.la@greenatom.ru"/>
             <column name="phone" value="79879879879"/>
-            <column name="user_password" value="$2a$10$nbAN.jbTRC.85WerSiYODeJa3bLy5QmncpmxRigIXaewuFboCq29m"/>
+            <column name="user_password" value="$2a$10$cQFePvGZSKi/XA4J0.BoQeki1cjpniwMJTCP5ByUGQJhyAAkHeMlG"/>
             <column name="post" value="Менеджер"/>
             <column name="role" value="USER"/>
             <column name="passport_id" value="1"/>
