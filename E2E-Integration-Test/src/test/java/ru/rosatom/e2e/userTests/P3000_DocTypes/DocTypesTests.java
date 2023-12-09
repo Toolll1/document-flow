@@ -1,4 +1,4 @@
-package ru.rosatom.e2e.userTests.B_DocTypes;
+package ru.rosatom.e2e.userTests.P3000_DocTypes;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -15,12 +15,12 @@ import java.util.List;
 import java.util.StringJoiner;
 
 @DisplayName("Documet types tests")
+@Order(2000)
 public class DocTypesTests extends BasicHttpTest {
 
     UserAuthorizationResponse fedotovAuth = getContextValue(Environment.USER_FEDOTOV_AUTHORIZATION);
 
     @Test
-    @Order(2000)
     @DisplayName("Get all attributes with default params")
     public void simpleGetAllAttributes() {
         testGetAllAttributesSuccess(new AttributeSearchRequest(0, 10, List.of("id", "ASC"), 1));

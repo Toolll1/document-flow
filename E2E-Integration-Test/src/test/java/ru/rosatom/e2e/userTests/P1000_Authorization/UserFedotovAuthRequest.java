@@ -1,4 +1,4 @@
-package ru.rosatom.e2e.userTests.A_Authorization;
+package ru.rosatom.e2e.userTests.P1000_Authorization;
 
 import ru.rosatom.e2e.user.UserAuthorizationRequest;
 
