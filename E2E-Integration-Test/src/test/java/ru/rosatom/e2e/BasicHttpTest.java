@@ -16,11 +16,13 @@ public abstract class BasicHttpTest {
 
     protected Faker faker = Faker.instance();
 
+    private final AppConfiguration appConfiguration = AppConfiguration.getInstance();
+
     private static final HashMap<String, Object> context = new HashMap<>();
 
     public BasicHttpTest() {
         notAuthClient = WebTestClient.bindToServer()
-                .baseUrl("http://127.0.0.1:8080")
+                .baseUrl(appConfiguration.getBaseUrl())
                 .defaultHeader("Content-Type", "application/json").build();
     }
 
