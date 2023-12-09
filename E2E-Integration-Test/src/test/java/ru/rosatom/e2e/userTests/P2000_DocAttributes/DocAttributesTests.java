@@ -2,7 +2,6 @@ package ru.rosatom.e2e.userTests.P2000_DocAttributes;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import ru.rosatom.e2e.BasicHttpTest;
@@ -15,7 +14,6 @@ import java.util.List;
 import java.util.StringJoiner;
 
 @DisplayName("Document attributes tests")
-@Order(2000)
 public class DocAttributesTests extends BasicHttpTest {
 
     UserAuthorizationResponse fedotovAuth = getContextValue(Environment.USER_FEDOTOV_AUTHORIZATION);

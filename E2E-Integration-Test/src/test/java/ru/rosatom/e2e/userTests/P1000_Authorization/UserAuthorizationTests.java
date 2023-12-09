@@ -2,7 +2,6 @@ package ru.rosatom.e2e.userTests.P1000_Authorization;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -19,7 +18,6 @@ import java.util.stream.Stream;
 
 
 @DisplayName("User authorization tests")
-@Order(1000)
 public class UserAuthorizationTests extends BasicHttpTest {
 
 
