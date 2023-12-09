@@ -17,6 +17,7 @@ import ru.rosatom.e2e.user.UserEndpoints;
 
 import java.util.stream.Stream;
 
+
 @DisplayName("User authorization tests")
 @Order(1000)
 public class UserAuthorizationTests extends BasicHttpTest {

@@ -1,4 +1,4 @@
-package ru.rosatom.e2e.userTests.P3000_DocTypes;
+package ru.rosatom.e2e.userTests.P2000_DocAttributes;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -14,9 +14,9 @@ import ru.rosatom.e2e.user.UserAuthorizationResponse;
 import java.util.List;
 import java.util.StringJoiner;
 
-@DisplayName("Documet types tests")
+@DisplayName("Document attributes tests")
 @Order(2000)
-public class DocTypesTests extends BasicHttpTest {
+public class DocAttributesTests extends BasicHttpTest {
 
     UserAuthorizationResponse fedotovAuth = getContextValue(Environment.USER_FEDOTOV_AUTHORIZATION);
 
@@ -41,7 +41,7 @@ public class DocTypesTests extends BasicHttpTest {
                 .exchange();
     }
 
-    public void testGetAllAttributesSuccess(AttributeSearchRequest attributeSearchRequest){
+    private void testGetAllAttributesSuccess(AttributeSearchRequest attributeSearchRequest){
         getAllAttributes(attributeSearchRequest)
                 .expectStatus().isOk()
                 .expectBody(AttributeSearchResponse.class)

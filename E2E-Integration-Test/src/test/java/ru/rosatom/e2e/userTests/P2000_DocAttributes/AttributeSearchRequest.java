@@ -1,4 +1,4 @@
-package ru.rosatom.e2e.userTests.P3000_DocTypes;
+package ru.rosatom.e2e.userTests.P2000_DocAttributes;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
