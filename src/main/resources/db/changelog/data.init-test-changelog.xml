@@ -9,4 +9,6 @@
              relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/initial-changesets/initial-data-test/v1.2_insert_users.xml"
              relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-data-test/v1.3_insert_attributes.xml"
+             relativeToChangelogFile="false"/>
 </databaseChangeLog>

@@ -2,6 +2,7 @@ package ru.rosatom.e2e.userTests.A_Authorization;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -23,6 +24,7 @@ public class UserAuthorizationTests extends BasicHttpTest {
     @DisplayName("Incorrect authorization: wrong password")
     @ParameterizedTest
     @ValueSource(strings = {"", " ", "\"'@!:',m)(*&^"})
+    @Order(1000)
     public void testAuthWithWrongPassword(String password) {
         testAuthWithIncorrectParams(faker.internet().emailAddress(), password);
     }
@@ -30,6 +32,7 @@ public class UserAuthorizationTests extends BasicHttpTest {
     @DisplayName("Incorrect authorization: wrong email")
     @ParameterizedTest
     @ValueSource(strings = {"", " ", "hello", "@", "\"'@!:',m)(*&^"})
+    @Order(1010)
     public void testAuthWithWrongEmail(String email) {
         testAuthWithIncorrectParams(email, faker.internet().password());
     }
@@ -37,6 +40,7 @@ public class UserAuthorizationTests extends BasicHttpTest {
 
     @Test
     @DisplayName("Success authorization")
+    @Order(1020)
     public void testSuccessLogin(){
         UserAuthorizationResponse userAuthorizationResponse = testSuccessAuth(new UserFedotovAuthRequest());
         setContextValue(Environment.USER_FEDOTOV_AUTHORIZATION, userAuthorizationResponse);

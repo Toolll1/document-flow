@@ -13,6 +13,6 @@ import java.util.List;
 public interface DocAttributeRepository extends JpaRepository<DocAttribute, Long> {
     List<DocAttribute> findByNameContains(String name);
 
-    @Query("select d from DocAttribute d where d.userOrganization.id = ?1")
+    @Query("select d from DocAttribute d where d.organization.id = ?1")
     Page<DocAttribute> findAllByUserOrganization(Long orgId, Pageable pageable);
 }

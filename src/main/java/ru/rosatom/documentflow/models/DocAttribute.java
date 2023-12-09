@@ -36,5 +36,5 @@ public class DocAttribute {
 
     @OneToOne(targetEntity = UserOrganization.class)
     @JoinColumn(name = "org_id")
-    private UserOrganization userOrganization;
+    private UserOrganization organization;
 }

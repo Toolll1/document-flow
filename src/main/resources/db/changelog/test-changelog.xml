@@ -7,7 +7,7 @@
 
 
     <include file="classpath:db/changelog/db.init-changelog.xml"/>
-    <include file="classpath:db/changelog/data.init-test-changelog.xml"/>
     <include file="classpath:db/changelog/db.update-changelog.xml"/>
+    <include file="classpath:db/changelog/data.init-test-changelog.xml"/>
 
 </databaseChangeLog>

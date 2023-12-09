@@ -7,16 +7,19 @@
         <insert tableName="attributes">
             <column name="name" value="Цена"/>
             <column name="type" value="Финансовый"/>
+            <column name="org_id" value="1"/>
         </insert>
 
         <insert tableName="attributes">
             <column name="name" value="Вес"/>
             <column name="type" value="Физический"/>
+            <column name="org_id" value="1"/>
         </insert>
 
         <insert tableName="attributes">
             <column name="name" value="Объем"/>
             <column name="type" value="Физический"/>
+            <column name="org_id" value="1"/>
         </insert>
     </changeSet>
 
