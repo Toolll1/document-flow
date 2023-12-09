@@ -2,7 +2,9 @@ package ru.rosatom.documentflow.services.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,7 +25,6 @@ import ru.rosatom.documentflow.services.UserService;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -80,16 +81,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getUsers(List<Long> ids, String sort, Integer from, Integer size) {
-
-        PageRequest pageable = pageableCreator(from, size, sort);
+    public Page<User> getUsers(List<Long> ids, Pageable pageable) {
 
         if (ids == null || ids.isEmpty()) {
-            return userRepository.findAll(pageable)
-                    .stream()
-                    .collect(Collectors.toList());
+            return userRepository.findAll(pageable);
         } else {
-            System.out.println(userRepository.findAllByIdIn(ids, pageable));
             return userRepository.findAllByIdIn(ids, pageable);
         }
     }
@@ -143,9 +139,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getAllUsers() {
+    public Page<User> getAllUsers(Pageable pageable) {
 
-        return userRepository.findAll();
+        return userRepository.findAll(pageable);
     }
 
     private void checkUnique(User user) {

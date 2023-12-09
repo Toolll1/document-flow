@@ -11,7 +11,9 @@ import ru.rosatom.documentflow.dto.UserReplyDto;
 import ru.rosatom.documentflow.exceptions.BadRequestException;
 import ru.rosatom.documentflow.exceptions.ConflictException;
 import ru.rosatom.documentflow.mappers.UserMapper;
-import ru.rosatom.documentflow.models.*;
+import ru.rosatom.documentflow.models.DocProcess;
+import ru.rosatom.documentflow.models.Document;
+import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.services.FileService;
 import ru.rosatom.documentflow.services.UserService;
 

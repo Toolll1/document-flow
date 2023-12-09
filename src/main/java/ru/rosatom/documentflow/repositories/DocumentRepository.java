@@ -1,5 +1,7 @@
 package ru.rosatom.documentflow.repositories;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
@@ -16,4 +18,6 @@ public interface DocumentRepository extends JpaRepository<Document, Long>, Query
             "left join DocProcess dp on dp.document.id=d.id " +
             "where dp.status = :status")
     Set<Document> findDocumentsByProcessStatus(@Param("status") DocProcessStatus status);
+
+    Page<Document> findAllByIdOrganization(Long idOrganization, Pageable pageable);
 }

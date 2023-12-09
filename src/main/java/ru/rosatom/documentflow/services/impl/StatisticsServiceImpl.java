@@ -7,6 +7,7 @@ import ru.rosatom.documentflow.dto.StatisticUsersAndOrgDto;
 import ru.rosatom.documentflow.dto.UserRatingDto;
 import ru.rosatom.documentflow.models.DocProcessStatus;
 import ru.rosatom.documentflow.models.UserOrganization;
+import ru.rosatom.documentflow.repositories.UserOrganizationRepository;
 import ru.rosatom.documentflow.repositories.UserRepository;
 import ru.rosatom.documentflow.services.DocumentService;
 import ru.rosatom.documentflow.services.StatisticsService;
@@ -22,6 +23,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     private DocumentService documentService;
     private UserService userService;
     private UserOrganizationService userOrganizationService;
+    private UserOrganizationRepository userOrganizationRepository;
     private UserRepository userRepository;
 
     @Override
@@ -43,8 +45,8 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     public StatisticUsersAndOrgDto statisticsUserAndOrganization() {
-        int countUser = userService.getAllUsers().size();
-        int countOrganization = userOrganizationService.getAllOrganizations().size();
+        int countUser = userRepository.findAll().size();
+        int countOrganization = userOrganizationRepository.findAll().size();
         return new StatisticUsersAndOrgDto(countUser, countOrganization);
     }
 

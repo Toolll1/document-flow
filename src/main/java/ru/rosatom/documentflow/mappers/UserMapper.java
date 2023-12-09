@@ -30,7 +30,7 @@ public class UserMapper {
                 .post(user.getPost())
                 .role(user.getRole().toString())
                 .userPassportDto(modelMapper.map(user.getPassport(), UserPassportDto.class))
-                .orgDto(modelMapper.map(user.getOrganization(), OrgDto.class))
+                .userOrganization(modelMapper.map(user.getOrganization(), OrgDto.class))
                 .build();
     }
 

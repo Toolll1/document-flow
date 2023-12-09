@@ -7,8 +7,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springdoc.api.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.rosatom.documentflow.dto.DocAttributeCreateDto;
@@ -17,6 +23,7 @@ import ru.rosatom.documentflow.dto.DocAttributeUpdateRequestDto;
 import ru.rosatom.documentflow.models.DocAttribute;
 import ru.rosatom.documentflow.models.DocAttributeCreationRequest;
 import ru.rosatom.documentflow.models.DocAttributeUpdateRequest;
+import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.services.DocAttributeService;
 
 import javax.validation.Valid;
@@ -42,12 +49,13 @@ public class DocAttributeController {
             description = "Все атрибуты с пагинацией и сортировкой")
     @GetMapping
     @SecurityRequirement(name = "JWT")
-    List<DocAttributeDto> getAllDocTypes(
-            @RequestParam @Parameter(description = "Номер страницы") Optional<Integer> page,
-            @RequestParam @Parameter(description = "Сортировка") Optional<String> sortBy) {
-        return docAttributeService.getAllDocAttributes(page, sortBy).stream()
-                .map(o -> modelMapper.map(o, DocAttributeDto.class))
-                .collect(Collectors.toList());
+    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('USER') && #orgId.isPresent() && #user.organization.id.equals(#orgId.get())")
+    Page<DocAttributeDto> getAllDocTypes(@ParameterObject @PageableDefault(page = 0, size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
+                                         @AuthenticationPrincipal @Parameter(hidden = true) User user,
+                                         @RequestParam(required = false, name = "org_id") @Parameter(description = "ID организации") Optional<Long> orgId) {
+        return docAttributeService
+                .getAllDocAttributes(pageable, orgId)
+                .map(o -> modelMapper.map(o, DocAttributeDto.class));
     }
 
     @Operation(summary = "Получить атрибут по ID")
@@ -110,9 +118,5 @@ public class DocAttributeController {
             @PathVariable @Parameter(description = "ID атрибута") Long docAttributeId) {
         log.info("Получен запрос на удаление DocAttribute с ID: {}", docAttributeId);
         docAttributeService.deleteDocAttribute(docAttributeId);
-    }
-
-    private DocAttributeDto convertToDto(DocAttribute docAttribute) {
-        return modelMapper.map(docAttribute, DocAttributeDto.class);
     }
 }
