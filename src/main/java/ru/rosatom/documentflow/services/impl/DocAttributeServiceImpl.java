@@ -8,7 +8,6 @@ import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
 import ru.rosatom.documentflow.models.DocAttribute;
 import ru.rosatom.documentflow.models.DocAttributeCreationRequest;
 import ru.rosatom.documentflow.models.DocAttributeUpdateRequest;
-import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.repositories.DocAttributeRepository;
 import ru.rosatom.documentflow.services.DocAttributeService;
 import ru.rosatom.documentflow.services.UserOrganizationService;
@@ -47,7 +46,7 @@ public class DocAttributeServiceImpl implements DocAttributeService {
                 DocAttribute.builder()
                         .name(docAttributeCreationRequest.getName())
                         .type(docAttributeCreationRequest.getType())
-                        .userOrganization(userOrganizationService.getOrganization(docAttributeCreationRequest.getOrganizationId()))
+                        .organization(userOrganizationService.getOrganization(docAttributeCreationRequest.getOrganizationId()))
                         .build();
         return docAttributeRepository.save(docAttribute);
     }
