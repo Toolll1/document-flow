@@ -1,10 +1,12 @@
 package ru.rosatom.e2e.user;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode
 public class User{
     private Integer id;
     private String lastName;

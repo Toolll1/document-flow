@@ -1,0 +1,23 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+    <changeSet id="insertTestData" author="ваше_имя_автора">
+        <insert tableName="attributes">
+            <column name="name" value="Цена"/>
+            <column name="type" value="Финансовый"/>
+        </insert>
+
+        <insert tableName="attributes">
+            <column name="name" value="Вес"/>
+            <column name="type" value="Физический"/>
+        </insert>
+
+        <insert tableName="attributes">
+            <column name="name" value="Объем"/>
+            <column name="type" value="Физический"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

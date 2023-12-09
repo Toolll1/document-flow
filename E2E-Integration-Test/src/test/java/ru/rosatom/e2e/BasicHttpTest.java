@@ -1,26 +1,44 @@
 package ru.rosatom.e2e;
 
 import com.github.javafaker.Faker;
-import org.junit.jupiter.api.BeforeEach;
+import lombok.Getter;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import ru.rosatom.e2e.user.UserAuthorizationResponse;
 
 import java.util.HashMap;
 
 @SpringJUnitConfig
 public abstract class BasicHttpTest {
 
-    protected WebTestClient client;
+    @Getter
+    private final WebTestClient notAuthClient;
+
     protected Faker faker = Faker.instance();
 
     private static final HashMap<String, Object> context = new HashMap<>();
 
-    @BeforeEach
-    void setUpClient() {
-        client = WebTestClient.bindToServer()
+    public BasicHttpTest() {
+        notAuthClient = WebTestClient.bindToServer()
                 .baseUrl("http://127.0.0.1:8080")
                 .defaultHeader("Content-Type", "application/json").build();
     }
+
+    protected WebTestClient withAuthClient(String clientName) {
+        UserAuthorizationResponse userAuthorization = getContextValue(clientName);
+        if (userAuthorization != null) {
+            return notAuthClient.mutate()
+                    .defaultHeader("Authorization", String.format("Bearer %s", userAuthorization.getToken()))
+                    .build();
+        }
+        throw new NoClientWithCredentials(clientName);
+    }
+
+    protected WebTestClient withNotAuthClient() {
+        return notAuthClient;
+    }
+
+
 
     protected static <T> T getContextValue(String key) {
         return (T) context.get(key);

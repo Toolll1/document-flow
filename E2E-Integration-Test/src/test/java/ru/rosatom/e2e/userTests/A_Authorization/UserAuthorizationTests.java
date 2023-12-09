@@ -76,7 +76,7 @@ public class UserAuthorizationTests extends BasicHttpTest {
 
 
     private WebTestClient.ResponseSpec sendAuthRequest(UserAuthorizationRequest userAuthorizationRequest) {
-        return client.post().uri(UserEndpoints.AUTHORIZATION.getUrl())
+        return withNotAuthClient().post().uri(UserEndpoints.AUTHORIZATION.getUrl())
                 .bodyValue(userAuthorizationRequest)
                 .exchange();
 
