@@ -14,23 +14,33 @@ public class DocProcess {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "process_id")
+    @Column(name = "process_id", nullable = false)
     private final Long id;
+
     @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "document_id")
     private final Document document;
+
     @ToString.Exclude
     @OneToOne
     @JoinColumn(name = "sender_id")
     private User sender;  //отправитель
+
     @ToString.Exclude
     @OneToOne
     @JoinColumn(name = "recipient_id")
     private User recipient;  //получатель
+
+    @ToString.Exclude
+    @OneToOne
+    @JoinColumn(name = "org_id")
+    private UserOrganization userOrganization;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private DocProcessStatus status;
+
     @Column(name = "comment", nullable = false, length = 1000)
     private String comment;
 }
