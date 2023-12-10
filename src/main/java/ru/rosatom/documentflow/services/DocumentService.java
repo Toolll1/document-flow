@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface DocumentService {
-    Document createDocument(Document document, Long userId);
+    Document createDocument(Document document, User user);
 
     Document updateDocument(DocumentUpdateDto documentUpdateDto, Long id, Long UserId);
 

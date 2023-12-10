@@ -26,14 +26,10 @@ public abstract class BasicHttpTest {
                 .defaultHeader("Content-Type", "application/json").build();
     }
 
-    protected WebTestClient withAuthClient(String clientName) {
-        UserAuthorizationResponse userAuthorization = getContextValue(clientName);
-        if (userAuthorization != null) {
-            return notAuthClient.mutate()
+    protected WebTestClient withAuthClient(UserAuthorizationResponse userAuthorization) {
+        return notAuthClient.mutate()
                     .defaultHeader("Authorization", String.format("Bearer %s", userAuthorization.getToken()))
                     .build();
-        }
-        throw new NoClientWithCredentials(clientName);
     }
 
     protected WebTestClient withNotAuthClient() {

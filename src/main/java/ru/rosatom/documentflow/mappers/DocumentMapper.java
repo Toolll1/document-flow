@@ -35,7 +35,6 @@ public class DocumentMapper {
             attributeValues.add(values);
         }
         return Document.builder()
-                .idOrganization(dto.getIdOrganization())
                 .docType(docTypeService.getDocTypeById(dto.getDocTypId()))
                 .attributeValues(attributeValues)
                 .build();
