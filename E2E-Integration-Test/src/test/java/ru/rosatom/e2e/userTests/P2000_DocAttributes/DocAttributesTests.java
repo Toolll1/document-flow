@@ -27,7 +27,7 @@ public class DocAttributesTests extends BasicHttpTest {
     private WebTestClient.ResponseSpec getAllAttributes(AttributeSearchRequest attributeSearchRequest) {
         StringJoiner sortjoiner = new StringJoiner(",");
         attributeSearchRequest.getSort().forEach(sortjoiner::add);
-        return withAuthClient(Environment.USER_FEDOTOV_AUTHORIZATION)
+        return withAuthClient(fedotovAuth)
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path(AttributesEndpoints.ATTRIBUTE_SEARCH)
