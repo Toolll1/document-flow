@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id=" v1.0_add_organization_to_document_process" author="Vasily-Chumachenko">
+    <changeSet id="add_organization_column_to_document_process" author="Vasily-Chumachenko">
 
         <preConditions>
             <tableExists tableName="document_process"/>
@@ -12,7 +12,7 @@
         <comment>Add column org_id to document_process</comment>
 
         <addColumn tableName="document_process">
-            <column name="org_id" type="bigint">
+            <column name="org_id" type="bigint" defaultValueNumeric="1">
                 <constraints nullable="false"
                              foreignKeyName="fk_document_process_organization"
                              referencedTableName="organizations"
