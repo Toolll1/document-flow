@@ -12,7 +12,7 @@
         <insert tableName="message_templates">
             <column name="message_pattern" value="NEW_COMMENT"/>
             <column name="body"
-                    value="&lt;p&gt;Здравствуйте ${firstName}, добавлен новый комментарий по документу ${documentName} от пользователя &lt;a href='mailto:${mail}'&gt; ${fullName} &lt;/a&gt; &lt;/p&gt; &lt;br&gt; &lt;p&gt; Подробности доступны по &lt;a href='localhost:3000/'&gt;ссылке&lt;/a&gt; &lt;/p&gt;"/>
+                    value="&lt;p&gt;Здравствуйте ${firstName}, добавлен новый комментарий по документу ${documentName} от пользователя &lt;a href='mailto:${mail}'&gt; ${fullName} &lt;/a&gt; &lt;/p&gt; &lt;br&gt; &lt;p&gt; Подробности доступны по &lt;a href=${application.baseUrl}&gt;ссылке&lt;/a&gt; &lt;/p&gt;"/>
             <column name="subject" value="Добавлен новый комментарий"/>
         </insert>
 
