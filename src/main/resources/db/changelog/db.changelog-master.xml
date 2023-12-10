@@ -37,4 +37,6 @@
              relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/initial-changesets/initial-data/v1.6_insert_message_templates.xml"
              relativeToChangelogFile="false"/>
+    <include file="db/changelog/initial-changesets/changes/v1.0_add_organization_to_document_process.xml"
+             relativeToChangelogFile="false"/>
 </databaseChangeLog>
