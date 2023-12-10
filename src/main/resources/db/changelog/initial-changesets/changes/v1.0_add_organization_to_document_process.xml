@@ -19,11 +19,6 @@
                              referencedColumnNames="org_id"/>
             </column>
         </addColumn>
-
-        <update tableName="document_process">
-            <column name="org_id" value="1"/>
-        </update>
-
         <rollback>
             <dropColumn tableName="document_process" columnName="org_id"/>
         </rollback>
