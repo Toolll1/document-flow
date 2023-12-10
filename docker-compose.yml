@@ -14,11 +14,11 @@ services:
       - DB_NAME=document-flow
       - USER=root
       - PASSWORD=root
-      - DB_HOST=db
+      - DB_HOST=document-flow-db
       - DB_PORT=5432
       - JAVA_TOOL_OPTIONS= "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
     networks:
-      - minio_net
+      - docflow_1.0
 
   document-flow-db:
     image: postgres:16-alpine
@@ -27,7 +27,8 @@ services:
       - POSTGRES_DB=docflow
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
-
+    networks:
+      - docflow_1.0
   minio:
     image: quay.io/minio/minio
     command: server /data --console-address ":9090"
@@ -41,8 +42,8 @@ services:
       - MINIO_ROOT_USER=admin
       - MINIO_ROOT_PASSWORD=Secure123$
     networks:
-      - minio_net
+      - docflow_1.0
 
 networks:
-  minio_net:
+  docflow_1.0:
     driver: bridge
