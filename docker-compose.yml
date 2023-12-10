@@ -11,7 +11,7 @@ services:
       - document-flow-db
       - minio
     environment:
-      - DB_NAME=document-flow
+      - DB_NAME=docflow
       - USER=root
       - PASSWORD=root
       - DB_HOST=document-flow-db
