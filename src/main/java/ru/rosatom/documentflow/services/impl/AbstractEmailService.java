@@ -48,7 +48,7 @@ public abstract class AbstractEmailService implements EmailService {
                 "firstName", docProcess.getSender().getFirstName(),
                 "documentName", docProcess.getDocument().getName(),
                 "mail", docProcess.getSender().getEmail(),
-                "fullName", docProcess.getSender().getLastName() + ' ' + docProcess.getSender().getFirstName() + ' ' + docProcess.getSender().getPatronymic());
+                "fullName", docProcess.getSender().getFullName());
         StringSubstitutor substitutor = new StringSubstitutor(messageParams);
         sendDocProcessMessage(docProcess.getRecipient().getEmail(), substitutor.replace(messageTemplate.getBody()), messageTemplate.getSubject());
     }

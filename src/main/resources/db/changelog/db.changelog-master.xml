@@ -19,7 +19,7 @@
              relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.8_create_table_document_changes.xml"
              relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.9_create_table_document_process.xml"
+    <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.15_create_table_document_process.xml"
              relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.10_create_table_message_templates.xml"
              relativeToChangelogFile="false"/>
@@ -33,7 +33,7 @@
              relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/initial-changesets/initial-data/v1.4_insert_documents.xml"
              relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/initial-changesets/initial-data/v1.5_insert_document_process.xml"
+    <include file="classpath:db/changelog/initial-changesets/initial-data/v1.9_insert_document_process.xml"
              relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/initial-changesets/initial-data/v1.6_insert_message_templates.xml"
              relativeToChangelogFile="false"/>

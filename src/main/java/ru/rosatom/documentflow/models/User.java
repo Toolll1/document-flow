@@ -83,4 +83,18 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public String getFullName(){
+        StringBuilder fullName = new StringBuilder();
+
+        fullName.append(getFirstName());
+
+        if (getPatronymic() != null) {
+            fullName.append(" ").append(getPatronymic());
+        }
+
+        fullName.append(" ").append(getLastName());
+
+        return fullName.toString();
+    }
 }

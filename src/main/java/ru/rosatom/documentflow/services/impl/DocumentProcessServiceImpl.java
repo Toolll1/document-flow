@@ -69,7 +69,6 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
         throwIfStatusNotCorrect(docProcess, DocProcessStatus.WAITING_FOR_APPROVE);
         docProcess.setStatus(DocProcessStatus.WAITING_FOR_APPROVE);
-        setCommentDocProcess(processUpdateRequest, docProcess);
         emailService.sendDocProcessAgreementMessageForRecipient(docProcess);
         docProcessRepository.save(docProcess);
     }
@@ -113,7 +112,6 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
         throwIfStatusNotCorrect(docProcess, DocProcessStatus.APPROVED);
         docProcess.setStatus(DocProcessStatus.APPROVED);
-        setCommentDocProcess(processUpdateRequest, docProcess);
         docProcessRepository.save(docProcess);
         emailService.sendDocProcessResultMessageForOwner(docProcess, MessagePattern.APPROVE);
         finalStatusUpdate(docProcess.getDocument().getId());
@@ -129,7 +127,6 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
         throwIfStatusNotCorrect(docProcess, DocProcessStatus.REJECTED);
         docProcess.setStatus(DocProcessStatus.REJECTED);
-        setCommentDocProcess(processUpdateRequest, docProcess);
         docProcessRepository.save(docProcess);
         emailService.sendDocProcessResultMessageForOwner(docProcess, MessagePattern.REJECT);
         finalStatusUpdate(docProcess.getDocument().getId());
@@ -145,7 +142,6 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
         throwIfStatusNotCorrect(docProcess, DocProcessStatus.CORRECTING);
         setStatusForAllProcessesExceptByDocument(docProcess.getDocument(), CORRECTING, List.of(CORRECTING, NEW));
-        setCommentDocProcess(processUpdateRequest, docProcess);
         docProcessRepository.save(docProcess);
         emailService.sendDocProcessResultMessageForOwner(docProcess, MessagePattern.CORRECTING);
     }
@@ -274,16 +270,15 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     public DocProcess delegateToOtherUser(ProcessUpdateRequest processUpdateRequest, Long recipientId) {
         DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
         docProcess.setStatus(DELEGATED);
-        setCommentDocProcess(processUpdateRequest, docProcess);
         docProcessRepository.save(docProcess);
         return createNewProcess(docProcess.getDocument().getId(), recipientId);
     }
+
 
     public void setCommentDocProcess(ProcessUpdateRequest processUpdateRequest, DocProcess docProcess){
         List<DocProcessComment> comments = docProcess.getComment();
         String textComment = processUpdateRequest.getComment();
         DocProcessComment comment = createComment(textComment, docProcess.getSender());
-        comments.add(comment);
         docProcess.setComment(comments);
         docProcessCommentRepository.save(comment);
         emailService.sendMessageWithNewComment(docProcess);
