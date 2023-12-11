@@ -5,6 +5,7 @@ COPY pom.xml $HOME
 RUN --mount=type=cache,target=/root/.m2 mvn -f $HOME/pom.xml clean package
 
 FROM amazoncorretto:11-alpine-jdk
+RUN apk --no-cache add curl
 COPY --from=build /home/app/target/*.jar document-flow.jar
 EXPOSE 8080
 ENTRYPOINT ["java","-jar","/document-flow.jar"]
