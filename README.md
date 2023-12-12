@@ -32,7 +32,11 @@ echo \
 sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin  docker-compose
 ```
+3. Утсановить [Buildx](https://docs.docker.com/build/architecture/#install-buildx)
+4. Включить [BuildKit](https://docs.docker.com/build/buildkit/#getting-started)
 
+
+```bash
 Для запуска проекта необходимо выполнить команду:
 ```bash
 docker-compose up
