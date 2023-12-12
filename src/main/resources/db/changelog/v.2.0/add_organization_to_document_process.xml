@@ -10,15 +10,28 @@
         </preConditions>
 
         <comment>Add column org_id to document_process</comment>
-
         <addColumn tableName="document_process">
-            <column name="org_id" type="bigint" defaultValueNumeric="1">
-                <constraints nullable="false"
-                             foreignKeyName="fk_document_process_organization"
-                             referencedTableName="organizations"
-                             referencedColumnNames="org_id"/>
-            </column>
+            <column name="org_id" type="bigint"/>
         </addColumn>
+
+        <comment>Update existing records with org_id</comment>
+        <update tableName="document_process">
+            <column name="org_id" value="2"/>
+            <where>process_id = 1</where>
+        </update>
+        <update tableName="document_process">
+            <column name="org_id" value="1"/>
+            <where>process_id = 2</where>
+        </update>
+
+        <comment>Add not null constraint</comment>
+        <addNotNullConstraint tableName="document_process" columnName="org_id"/>
+
+        <comment>Add foreign key constraint to user_id</comment>
+        <addForeignKeyConstraint baseTableName="document_process" baseColumnNames="org_id"
+                                 constraintName="organization_process" referencedTableName="organizations"
+                                 referencedColumnNames="org_id"/>
+
         <rollback>
             <dropColumn tableName="document_process" columnName="org_id"/>
         </rollback>

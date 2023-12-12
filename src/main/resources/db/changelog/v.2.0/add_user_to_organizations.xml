@@ -19,15 +19,10 @@
             <column name="user_id" value="3"/>
             <where>org_id = 1</where>
         </update>
-
-
         <update tableName="organizations">
             <column name="user_id" value="4"/>
             <where>org_id = 2</where>
         </update>
-
-        <comment>Change user_id to NOT NULL</comment>
-        <modifyDataType tableName="organizations" columnName="user_id" newDataType="bigint"/>
 
         <comment>Add not null constraint</comment>
         <addNotNullConstraint tableName="organizations" columnName="user_id"/>
