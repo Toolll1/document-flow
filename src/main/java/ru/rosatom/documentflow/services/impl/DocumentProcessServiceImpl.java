@@ -7,10 +7,7 @@ import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
 import ru.rosatom.documentflow.kafka.Producer;
 import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
-import ru.rosatom.documentflow.services.DocumentProcessService;
-import ru.rosatom.documentflow.services.DocumentService;
-import ru.rosatom.documentflow.services.EmailService;
-import ru.rosatom.documentflow.services.UserService;
+import ru.rosatom.documentflow.services.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
