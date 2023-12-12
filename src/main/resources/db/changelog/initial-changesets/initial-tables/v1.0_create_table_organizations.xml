@@ -19,7 +19,6 @@
                 <constraints nullable="false"/>
             </column>
             <column name="inn" type="varchar(10)"/>
-            <column name="user_id" type="bigint"/>
         </createTable>
     </changeSet>
 </databaseChangeLog>
