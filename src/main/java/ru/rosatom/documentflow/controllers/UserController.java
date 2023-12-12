@@ -6,6 +6,11 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.api.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,10 +29,8 @@ import ru.rosatom.documentflow.services.UserOrganizationService;
 import ru.rosatom.documentflow.services.UserService;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Validated
@@ -106,41 +109,33 @@ public class UserController {
     @Operation(summary = "Получить всех пользователей")
     @GetMapping
     @SecurityRequirement(name = "JWT")
-    public List<UserReplyDto> getAllUsers() {
+    public Page<UserReplyDto> getAllUsers(@ParameterObject
+                                          @PageableDefault(page = 0, size = 20, sort = "id", direction = Sort.Direction.ASC)
+                                          @Parameter(description = "ID организации") Pageable pageable) {
 
         log.info("A search request was received for all users");
 
-        return userService.getAllUsers().stream()
-                .map(userMapper::objectToReplyDto)
-                .collect(Collectors.toList());
+        return userService.getAllUsers(pageable)
+                .map(userMapper::objectToReplyDto);
     }
 
     @Operation(summary = "Получить всех пользователей с сортировкой и пагинацией")
     @GetMapping("/ids")
     @SecurityRequirement(name = "JWT")
-    public List<UserReplyDto> getUsers(
+    public Page<UserReplyDto> getUsers(
             @RequestParam(required = false) List<Long> ids,
-            @RequestParam(value = "sort", defaultValue = "") @Parameter(description = "Сортировка")
-            String sort, // например, сортировка по id или по фамилии (ID, LAST_NAME)
-            @RequestParam(value = "from", defaultValue = "0")
-            @Min(0)
-            @Parameter(description = "Номер страницы")
-            Integer from,
-            @RequestParam(value = "size", defaultValue = "10")
-            @Min(1)
-            @Parameter(description = "Количество элементов на странице")
-            Integer size) {
+            @ParameterObject
+            @PageableDefault(page = 0, size = 20, sort = "id", direction = Sort.Direction.ASC)
+            @Parameter(description = "ID организации") Pageable pageable) {
 
         log.info(
                 "Received a request to search for all users for params: ids {}, sort {}, from {}, size {}",
                 ids,
-                sort,
-                from,
-                size);
-
-        return userService.getUsers(ids, sort, from, size).stream()
-                .map(userMapper::objectToReplyDto)
-                .collect(Collectors.toList());
+                pageable.getSort().get(),
+                pageable.getPageNumber(),
+                pageable.getPageSize());
+        return userService.getUsers(ids, pageable)
+                .map(userMapper::objectToReplyDto);
     }
 
     @Operation(summary = "Получить пользователя по номеру телефона")

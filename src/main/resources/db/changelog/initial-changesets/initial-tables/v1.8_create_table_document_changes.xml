@@ -6,7 +6,7 @@
     <changeSet id="v1.8_create_table_document_changes" author="nikita_glushko">
         <preConditions onFail="MARK_RAN">
             <dbms type="postgresql"/>
-            <sqlCheck expectedResult="document-flow">SELECT current_database()</sqlCheck>
+            <sqlCheck expectedResult="${database.name}">SELECT current_database()</sqlCheck>
             <not>
                 <tableExists tableName="document_changes"/>
             </not>

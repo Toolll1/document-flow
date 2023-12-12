@@ -14,4 +14,7 @@ public class DocAttributeDto {
 
     @Schema(description = "Тип атрибута")
     private String type;
+
+    @Schema(description = "Организация атрибута")
+    private OrgDto organization;
 }

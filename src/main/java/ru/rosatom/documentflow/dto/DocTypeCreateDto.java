@@ -15,5 +15,6 @@ public class DocTypeCreateDto {
     @Size(min = 1, max = 255)
     private String name;
     private String agreementType;
+    private Long organizationId;
 
 }

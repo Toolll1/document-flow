@@ -4,9 +4,13 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.rosatom.documentflow.exceptions.IllegalProcessStatusException;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
+import ru.rosatom.documentflow.kafka.Producer;
 import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
-import ru.rosatom.documentflow.services.*;
+import ru.rosatom.documentflow.services.DocumentProcessService;
+import ru.rosatom.documentflow.services.DocumentService;
+import ru.rosatom.documentflow.services.EmailService;
+import ru.rosatom.documentflow.services.UserService;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,6 +35,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     private final UserService userService;
     private final DocProcessRepository docProcessRepository;
     private final EmailService emailService;
+    private final Producer producer;
     private final UserOrganizationService userOrganizationService;
 
 
@@ -81,8 +86,6 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
                 .build();
         return docProcessRepository.save(docProcess);
     }
-
-
 
     /**
      * Отправляет процесс согласования на согласование. Статус процесса - WAITING_FOR_APPROVE
@@ -282,6 +285,9 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
                         documentService.updateFinalStatus(document, finalStatus, null);
                     }
                 }
+        }
+        if (document.getFinalDocStatus().equals(APPROVED)){
+            producer.sendMessage("Документ с id- [" + documentId + "] переведен в статус: " + APPROVED);
         }
     }
 

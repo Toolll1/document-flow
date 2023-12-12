@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class DocAttributeUpdateRequest {
     private String name;
     private String type;
+    private Long orgId;
 }
