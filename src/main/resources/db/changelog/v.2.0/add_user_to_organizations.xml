@@ -4,21 +4,40 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="add_user_id_to_organizations" author="Nikita_Erko">
+    <changeSet id="add_user_id_to_organizations" author="Vasily_Chumachenko">
         <preConditions>
             <tableExists tableName="organizations"/>
         </preConditions>
 
         <comment>Add column user_id to organizations</comment>
-
         <addColumn tableName="organizations">
-            <column name="user_id" type="bigint">
-                <constraints nullable="false"
-                             foreignKeyName="user_organization"
-                             referencedTableName="users"
-                             referencedColumnNames="user_id"/>
-            </column>
+            <column name="user_id" type="bigint"/>
         </addColumn>
+
+        <comment>Update existing records with user_id</comment>
+        <update tableName="organizations">
+            <column name="user_id" value="3"/>
+            <where>org_id = 1</where>
+        </update>
+
+
+        <update tableName="organizations">
+            <column name="user_id" value="4"/>
+            <where>org_id = 2</where>
+        </update>
+
+        <comment>Change user_id to NOT NULL</comment>
+        <modifyDataType tableName="organizations" columnName="user_id" newDataType="bigint"/>
+
+        <comment>Add not null constraint</comment>
+        <addNotNullConstraint tableName="organizations" columnName="user_id"/>
+
+        <comment>Add foreign key constraint to user_id</comment>
+        <addForeignKeyConstraint baseTableName="organizations" baseColumnNames="user_id"
+                                 constraintName="user_organization" referencedTableName="users"
+                                 referencedColumnNames="user_id"/>
+
+
         <rollback>
             <dropColumn tableName="organizations" columnName="user_id"/>
         </rollback>
