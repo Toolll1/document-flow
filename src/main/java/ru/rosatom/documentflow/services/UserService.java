@@ -29,4 +29,6 @@ public interface UserService {
     boolean setPasswordToUser(String password, Long id);
 
     Page<User> getAllUsers(Pageable pageable);
+
+    List<User> findAllByOrganizationId(Long id);
 }

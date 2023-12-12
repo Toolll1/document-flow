@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/v1/org")
 @AllArgsConstructor
-@PreAuthorize("hasAuthority('ADMIN')")
 @Tag(name = "Организации")
 public class OrgController {
 
@@ -39,6 +38,7 @@ public class OrgController {
     @Operation(summary = "Получить все организации")
     @GetMapping
     @SecurityRequirement(name = "JWT")
+    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('USER') || hasAuthority('ADMINCOMPANY')")
     public Page<OrgDto> getAllOrgs(@ParameterObject @PageableDefault(page = 0, size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         return userOrganizationService.getAllOrganizations(pageable)
                 .map(o -> modelMapper.map(o, OrgDto.class));
@@ -48,6 +48,7 @@ public class OrgController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @SecurityRequirement(name = "JWT")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public OrgDto createOrg(@Valid @RequestBody OrgCreateRequestDto orgCreateRequestDto) {
         OrgCreationRequest orgCreationRequest =
                 modelMapper.map(orgCreateRequestDto, OrgCreationRequest.class);
@@ -59,6 +60,7 @@ public class OrgController {
     @Operation(summary = "Получить организацию по Id")
     @GetMapping("/{orgId}")
     @SecurityRequirement(name = "JWT")
+    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('USER') || hasAuthority('ADMINCOMPANY')")
     public OrgDto getOrg(@PathVariable @Parameter(description = "ID организации") Long orgId) {
         UserOrganization organization = userOrganizationService.getOrganization(orgId);
         return modelMapper.map(organization, OrgDto.class);
@@ -67,6 +69,7 @@ public class OrgController {
     @Operation(summary = "Поиск организации по подстроке в имени")
     @GetMapping("/name/{name}")
     @SecurityRequirement(name = "JWT")
+    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('USER') || hasAuthority('ADMINCOMPANY')")
     public List<OrgDto> getOrgsByNameLike(
             @PathVariable @Parameter(description = "Подстрока в имени") String name) {
         List<UserOrganization> organizations = userOrganizationService.getOrganizationsByNameLike(name);
@@ -78,6 +81,7 @@ public class OrgController {
     @Operation(summary = "Изменить организацию")
     @RequestMapping(value = "/{orgId}", method = RequestMethod.PATCH)
     @SecurityRequirement(name = "JWT")
+    @PreAuthorize("(orgId == authentication.principal.organization.id && hasAuthority('ADMINCOMPANY')) || hasAuthority('ADMIN')")
     public OrgDto updateOrg(
             @PathVariable @Parameter(description = "ID организации") Long orgId,
             @Valid @RequestBody OrgUpdateRequestDto orgUpdateRequestDto) {
@@ -91,6 +95,7 @@ public class OrgController {
     @Operation(summary = "Удалить организацию")
     @DeleteMapping("/{orgId}")
     @SecurityRequirement(name = "JWT")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public OrgDto deleteOrg(@PathVariable @Parameter(description = "ID организации") Long orgId) {
         UserOrganization organization = userOrganizationService.deleteOrganization(orgId);
         return modelMapper.map(organization, OrgDto.class);

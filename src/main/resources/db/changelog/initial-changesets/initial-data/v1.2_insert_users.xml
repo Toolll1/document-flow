@@ -58,7 +58,7 @@
             <column name="phone" value="89999999993"/>
             <column name="user_password" value="$2a$12$rVw4uFi3bdAgINhwLhbcKOuUiR44lwrNWx5.5Ysg0agGrreIxTFGK"/>
             <column name="post" value="none"/>
-            <column name="role" value="USER"/>
+            <column name="role" value="ADMINCOMPANY"/>
             <column name="passport_id" value="1"/>
             <column name="org_id" value="2"/>
         </insert>

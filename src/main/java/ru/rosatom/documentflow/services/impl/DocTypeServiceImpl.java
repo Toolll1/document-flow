@@ -6,10 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
-import ru.rosatom.documentflow.models.DocAttribute;
-import ru.rosatom.documentflow.models.DocType;
-import ru.rosatom.documentflow.models.DocTypeCreationRequest;
-import ru.rosatom.documentflow.models.DocTypeUpdateRequest;
+import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocAttributeRepository;
 import ru.rosatom.documentflow.repositories.DocTypeRepository;
 import ru.rosatom.documentflow.services.DocTypeService;
@@ -64,8 +61,14 @@ public class DocTypeServiceImpl implements DocTypeService {
     }
 
     @Override
-    public List<DocType> getDocTypesByName(String name) {
-        return docTypeRepository.findByNameContains(name);
+    public List<DocType> getDocTypesByName(String name, User user) {
+        List<DocType> docTypes;
+        if (user.getRole().equals(UserRole.ADMIN)) {
+            docTypes = docTypeRepository.findByNameContains(name);
+        } else {
+            docTypes = docTypeRepository.findByUserOrganizationIdAndNameContains(user.getOrganization().getId(), name);
+        }
+        return docTypes;
     }
 
     @Override
@@ -76,5 +79,16 @@ public class DocTypeServiceImpl implements DocTypeService {
         docType.addAttributes(docAttribute);
 
         return docTypeRepository.save(docType);
+    }
+
+    public boolean isAllowedType(Long id, User user) {
+        boolean alllowed = Objects.equals(getDocTypeById(id).getUserOrganization().getId(), user.getOrganization().getId());
+        return alllowed;
+    }
+
+    public boolean isAllowedTypeAttribute(Long docTypeId, Long docAttributeId, User user) {
+        boolean alllowed = Objects.equals(getDocTypeById(docTypeId).getUserOrganization().getId(), user.getOrganization().getId()) &&
+                Objects.equals(docAttributeRepository.findById(docAttributeId).get().getOrganization().getId(), user.getOrganization().getId());
+        return alllowed;
     }
 }

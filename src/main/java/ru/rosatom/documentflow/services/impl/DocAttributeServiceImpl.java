@@ -5,9 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
-import ru.rosatom.documentflow.models.DocAttribute;
-import ru.rosatom.documentflow.models.DocAttributeCreationRequest;
-import ru.rosatom.documentflow.models.DocAttributeUpdateRequest;
+import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocAttributeRepository;
 import ru.rosatom.documentflow.services.DocAttributeService;
 import ru.rosatom.documentflow.services.UserOrganizationService;
@@ -68,9 +66,18 @@ public class DocAttributeServiceImpl implements DocAttributeService {
     }
 
     @Override
-    public List<DocAttribute> getDocAttributesByName(String name) {
-        return docAttributeRepository.findByNameContains(name);
+    public List<DocAttribute> getDocAttributesByName(String name, User user) {
+        List<DocAttribute> docAttributes;
+        if (user.getRole().equals(UserRole.ADMIN)) {
+            docAttributes = docAttributeRepository.findByNameContains(name);
+        } else {
+            docAttributes = docAttributeRepository.findByOrganizationIdAndNameContains(user.getOrganization().getId(), name);
+        }
+        return docAttributes;
     }
 
-
+     public boolean isAllowedAttribute(Long id, User user) {
+        boolean alllowed = Objects.equals(getDocAttributeById(id).getOrganization().getId(), user.getOrganization().getId());
+        return alllowed;
+    }
 }

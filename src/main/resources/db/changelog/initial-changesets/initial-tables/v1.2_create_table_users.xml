@@ -37,7 +37,7 @@
             <column name="post" type="varchar(320)">
                 <constraints nullable="false"/>
             </column>
-            <column name="role" type="varchar(5)">
+            <column name="role" type="varchar(16)">
                 <constraints nullable="false"/>
             </column>
             <column name="passport_id" type="bigint">
