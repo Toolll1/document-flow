@@ -46,7 +46,7 @@ services:
       - ~/minio/data:/data
     environment:
       - MINIO_ROOT_USER=admin
-      - MINIO_ROOT_PASSWORD=Secure123$
+      - MINIO_ROOT_PASSWORD=Secure123$$
     networks:
       - minio
     profiles:
@@ -82,8 +82,11 @@ services:
     build: ./
     image: document-flow
     container_name: document-flow-test
-    ports:
-      - "8081:8080"
+    healthcheck:
+      test:  curl --fail http://127.0.0.1:8080/swagger-ui/index.html || exit 1
+      interval: 3s
+      timeout: 2s
+      retries: 60
     depends_on:
       - document-flow-db-test
       - minio-test
@@ -122,7 +125,7 @@ services:
       - ~/minio/data:/data
     environment:
       - MINIO_ROOT_USER=admin
-      - MINIO_ROOT_PASSWORD=Secure123$
+      - MINIO_ROOT_PASSWORD=Secure123$$
     networks:
       - test
     profiles:
@@ -149,6 +152,20 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     depends_on:
       - zookeeper-test
+    networks:
+      - test
+    profiles:
+      - "test"
+
+  document-flow-e2e-test:
+    build: ./E2E-Integration-Test
+    image: document-flow-e2e-test
+    container_name: document-flow-e2e-test
+    environment:
+      - TARGET_URL=http://document-flow-test:8080
+    depends_on:
+        document-flow-test:
+            condition: service_healthy
     networks:
       - test
     profiles:
