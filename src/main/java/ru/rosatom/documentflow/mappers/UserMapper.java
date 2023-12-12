@@ -23,11 +23,11 @@ public class UserMapper {
 
         return UserReplyDto.builder()
                 .id(user.getId())
-                .fullName(createFullName(user))
+                .fullName(null)
                 .dateOfBirth(DateTimeAdapter.dateToString(user.getDateOfBirth()))
                 .phone(user.getPhone())
                 .email(user.getEmail())
-                .post(user.getPost())
+                .post(null)
                 .role(user.getRole().toString())
                 .userPassportDto(modelMapper.map(user.getPassport(), UserPassportDto.class))
                 .userOrganization(modelMapper.map(user.getOrganization(), OrgDto.class))
