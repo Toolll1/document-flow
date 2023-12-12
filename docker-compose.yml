@@ -86,7 +86,7 @@ services:
       test:  curl --fail http://127.0.0.1:8080/swagger-ui/index.html || exit 1
       interval: 3s
       timeout: 2s
-      retries: 20
+      retries: 60
     depends_on:
       - document-flow-db-test
       - minio-test
