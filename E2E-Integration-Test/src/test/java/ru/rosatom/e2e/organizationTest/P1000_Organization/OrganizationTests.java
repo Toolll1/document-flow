@@ -8,9 +8,12 @@ import ru.rosatom.e2e.BasicHttpTest;
 import ru.rosatom.e2e.Environment;
 import ru.rosatom.e2e.organization.OrganizationSearchResponse;
 import ru.rosatom.e2e.organization.OrganizationsEndpoint;
+import ru.rosatom.e2e.user.UserAuthorizationResponse;
 
 @DisplayName("Organization tests")
 public class OrganizationTests extends BasicHttpTest {
+
+    UserAuthorizationResponse adminAuth = getContextValue(Environment.ADMIN_AUTHORIZATION);
 
     @Test
     @DisplayName("Get all organizations")
