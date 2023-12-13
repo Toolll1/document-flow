@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.rosatom.documentflow.dto.AppError;
 
+import java.time.format.DateTimeParseException;
+
 @Slf4j
 @RestControllerAdvice
 public class ErrorHandler {
@@ -33,6 +35,10 @@ public class ErrorHandler {
 
     @ExceptionHandler
     public ResponseEntity<AppError> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+       return createAppError(e, HttpStatus.BAD_REQUEST);
+    }
+  
+    public ResponseEntity<AppError> handleDateTimeParseException(final DateTimeParseException e) {
         return createAppError(e, HttpStatus.BAD_REQUEST);
     }
 

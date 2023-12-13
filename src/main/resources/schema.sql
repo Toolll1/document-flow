@@ -1,14 +1,3 @@
-drop table if exists organizations cascade;
-drop table if exists passports cascade;
-drop table if exists users cascade;
-
-drop table if exists document_types cascade;
-drop table if exists attributes cascade;
-drop table if exists type_attributes cascade;
-drop table if exists document_changes cascade;
-drop table if exists attribute_values cascade;
-drop table if exists document_process cascade;
-drop table if exists documents cascade;
 
 
 create table if not exists organizations
