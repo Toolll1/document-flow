@@ -25,6 +25,4 @@
              relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.10_create_table_message_templates.xml"
              relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/v.2.0/changelog.xml"
-             relativeToChangelogFile="false"/>
 </databaseChangeLog>
