@@ -8,10 +8,13 @@
         <preConditions>
             <tableExists tableName="organizations"/>
         </preConditions>
-
-        <comment>Add column user_id to organizations</comment>
         <addColumn tableName="organizations">
-            <column name="user_id" type="bigint"/>
+            <column name="user_id" type="bigint" defaultValueNumeric="1">
+                <constraints nullable="false"
+                             foreignKeyName="user_organization"
+                             referencedTableName="users"
+                             referencedColumnNames="user_id"/>
+            </column>
         </addColumn>
 
         <comment>Update existing records with user_id</comment>
@@ -23,15 +26,6 @@
             <column name="user_id" value="4"/>
             <where>org_id = 2</where>
         </update>
-
-        <comment>Add not null constraint</comment>
-        <addNotNullConstraint tableName="organizations" columnName="user_id"/>
-
-        <comment>Add foreign key constraint to user_id</comment>
-        <addForeignKeyConstraint baseTableName="organizations" baseColumnNames="user_id"
-                                 constraintName="user_organization" referencedTableName="users"
-                                 referencedColumnNames="user_id"/>
-
 
         <rollback>
             <dropColumn tableName="organizations" columnName="user_id"/>
