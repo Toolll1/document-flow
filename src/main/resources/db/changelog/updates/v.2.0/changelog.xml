@@ -6,4 +6,8 @@
              relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/updates/v.2.0/add_user_to_organizations.xml"
              relativeToChangelogFile="false"/>
+    <include file="db/changelog/updates/v.2.0/add_organization_to_attributes.xml"
+             relativeToChangelogFile="false"/>
+    <include file="db/changelog/updates/v.2.0/add_organization_to_document_types.xml"
+             relativeToChangelogFile="false"/>
 </databaseChangeLog>

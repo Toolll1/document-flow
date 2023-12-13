@@ -19,11 +19,11 @@
 
         <comment>Update existing records with user_id</comment>
         <update tableName="organizations">
-            <column name="user_id" value="3"/>
+            <column name="user_id" value="1"/>
             <where>org_id = 1</where>
         </update>
         <update tableName="organizations">
-            <column name="user_id" value="4"/>
+            <column name="user_id" value="2"/>
             <where>org_id = 2</where>
         </update>
 
