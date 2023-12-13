@@ -43,6 +43,13 @@ public class UserAuthorizationTests extends BasicHttpTest {
         setContextValue(Environment.USER_FEDOTOV_AUTHORIZATION, userAuthorizationResponse);
     }
 
+    @Test
+    @DisplayName("Success authorization admin")
+    public void testSuccessLoginAdmin(){
+        UserAuthorizationResponse userAuthorizationResponse = testSuccessAuth(new AdminAuthRequest());
+        setContextValue(Environment.ADMIN_AUTHORIZATION, userAuthorizationResponse);
+    }
+
 
 
 
