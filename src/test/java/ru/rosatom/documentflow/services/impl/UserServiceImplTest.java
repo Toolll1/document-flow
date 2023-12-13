@@ -57,7 +57,7 @@ class UserServiceImplTest {
 
     @Test
     void updateUser(){
-        UserUpdateDto dto = new UserUpdateDto(111L,"Kirill", "Kirillov" , "Kirillovich" ,
+        UserUpdateDto dto = new UserUpdateDto("Kirill", "Kirillov" , "Kirillovich" ,
                 "02.02.2000",  " qqq@mail.ru",  "79262555333" ,  "1212",
                 "333444" , "3333", "02.02.2022", "104", 1L,
                 "USER", "post");
