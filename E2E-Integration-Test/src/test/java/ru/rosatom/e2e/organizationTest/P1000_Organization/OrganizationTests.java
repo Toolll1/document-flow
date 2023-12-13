@@ -44,14 +44,14 @@ public class OrganizationTests extends BasicHttpTest {
     }
 
     private WebTestClient.ResponseSpec getAllOrganization() {
-        return withAuthClient(Environment.ADMIN_AUTHORIZATION)
+        return withAuthClient(adminAuth)
                 .get()
                 .uri(OrganizationsEndpoint.ORGANIZATION_SEARCH)
                 .exchange();
     }
 
     private WebTestClient.ResponseSpec getAllOrganizationWithAllParam(OrganizationSearchRequest organizationSearchRequest) {
-        return withAuthClient(Environment.ADMIN_AUTHORIZATION)
+        return withAuthClient(adminAuth)
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path(OrganizationsEndpoint.ORGANIZATION_SEARCH)
@@ -92,7 +92,7 @@ public class OrganizationTests extends BasicHttpTest {
 
 
     private WebTestClient.ResponseSpec getAllOrganizationWithId(OrganizationSearchRequestId organizationSearchRequestId) {
-        return withAuthClient(Environment.ADMIN_AUTHORIZATION)
+        return withAuthClient(adminAuth)
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path(OrganizationsEndpoint.ORGANIZATION_SEARCH)
@@ -118,7 +118,7 @@ public class OrganizationTests extends BasicHttpTest {
     }
 
     private WebTestClient.ResponseSpec getAllOrganizationWithInn(OrganizationSearchRequestInn organizationSearchRequestInn) {
-        return withAuthClient(Environment.ADMIN_AUTHORIZATION)
+        return withAuthClient(adminAuth)
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path(OrganizationsEndpoint.ORGANIZATION_SEARCH)
@@ -144,7 +144,7 @@ public class OrganizationTests extends BasicHttpTest {
     }
 
     private WebTestClient.ResponseSpec getAllOrganizationWithName(OrganizationSearchRequestName organizationSearchRequestName) {
-        return withAuthClient(Environment.ADMIN_AUTHORIZATION)
+        return withAuthClient(adminAuth)
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path(OrganizationsEndpoint.ORGANIZATION_SEARCH)
