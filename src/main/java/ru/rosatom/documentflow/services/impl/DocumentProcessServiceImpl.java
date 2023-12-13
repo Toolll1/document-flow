@@ -278,16 +278,18 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     public void setCommentDocProcess(ProcessUpdateRequest processUpdateRequest, DocProcess docProcess){
         List<DocProcessComment> comments = docProcess.getComment();
         String textComment = processUpdateRequest.getComment();
-        DocProcessComment comment = createComment(textComment, docProcess.getSender());
+        Document document = docProcess.getDocument();
+        DocProcessComment comment = createComment(textComment, docProcess.getSender(), document);
         docProcess.setComment(comments);
         docProcessCommentRepository.save(comment);
         emailService.sendMessageWithNewComment(docProcess);
     }
 
     @Override
-    public DocProcessComment createComment(String text, User user) {
+    public DocProcessComment createComment(String text, User user, Document document) {
         return  DocProcessComment.builder()
                 .authorComment(user)
+                .document(document)
                 .textComment(text)
                 .date(LocalDateTime.now())
                 .build();

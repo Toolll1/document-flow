@@ -1,9 +1,6 @@
 package ru.rosatom.documentflow.services;
 
-import ru.rosatom.documentflow.models.DocProcess;
-import ru.rosatom.documentflow.models.DocProcessComment;
-import ru.rosatom.documentflow.models.ProcessUpdateRequest;
-import ru.rosatom.documentflow.models.User;
+import ru.rosatom.documentflow.models.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -32,5 +29,5 @@ public interface DocumentProcessService {
 
     DocProcess delegateToOtherUser(ProcessUpdateRequest processUpdateRequest, Long recipientId);
 
-    DocProcessComment createComment(String text, User user);
+    DocProcessComment createComment(String text, User user, Document document);
 }
