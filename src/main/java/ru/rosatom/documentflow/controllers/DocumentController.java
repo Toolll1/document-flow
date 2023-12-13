@@ -60,7 +60,7 @@ public class DocumentController {
             @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
         log.trace("Создание документа пользователем {} : {}", user.getId(), documentDto);
         Document documentFromDto = dm.documentFromCreateDto(documentDto);
-        Document docCreate = documentService.createDocument(documentFromDto, user.getId());
+        Document docCreate = documentService.createDocument(documentFromDto, user);
         return modelMapper.map(docCreate, DocumentDto.class);
     }
 
