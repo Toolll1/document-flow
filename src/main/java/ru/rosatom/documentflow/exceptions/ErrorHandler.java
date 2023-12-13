@@ -6,6 +6,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -39,6 +40,10 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
+    public ResponseEntity<AppError> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+       return createAppError(e, HttpStatus.BAD_REQUEST);
+    }
+  
     public ResponseEntity<AppError> handleDateTimeParseException(final DateTimeParseException e) {
         return createAppError(e, HttpStatus.BAD_REQUEST);
     }
