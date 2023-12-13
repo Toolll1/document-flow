@@ -6,6 +6,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -33,6 +34,10 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
+    public ResponseEntity<AppError> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+       return createAppError(e, HttpStatus.BAD_REQUEST);
+    }
+  
     public ResponseEntity<AppError> handleDateTimeParseException(final DateTimeParseException e) {
         return createAppError(e, HttpStatus.BAD_REQUEST);
     }
@@ -57,7 +62,7 @@ public class ErrorHandler {
     public ResponseEntity<AppError> handleAccessDenied(final AccessDeniedException e) {
         return createAppError(e, HttpStatus.FORBIDDEN);
     }
-    
+
 
     @ExceptionHandler
     public ResponseEntity<AppError> handleRemainingErrors(final Exception e) {
@@ -65,8 +70,6 @@ public class ErrorHandler {
         return createAppError(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-
-    
 
     private ResponseEntity<AppError> createAppError(Throwable e, HttpStatus status) {
         return new ResponseEntity<>(
@@ -76,6 +79,5 @@ public class ErrorHandler {
                 status
         );
     }
-
 
 }
