@@ -2,7 +2,8 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
-    <include file="classpath:db/changelog/v.2.0/add_organization_to_document_process.xml"
+    <include file="classpath:db/changelog/updates/v.2.0/add_organization_to_document_process.xml"
              relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/v.2.0/add_user_to_organizations.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/updates/v.2.0/add_user_to_organizations.xml"
+             relativeToChangelogFile="false"/>
 </databaseChangeLog>
