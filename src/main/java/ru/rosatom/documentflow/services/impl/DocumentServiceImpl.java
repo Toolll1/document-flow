@@ -44,10 +44,11 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     @Transactional
-    public Document createDocument(Document document, Long userId) {
+    public Document createDocument(Document document, User user) {
 
-        userOrganizationService.getOrganization(document.getIdOrganization());
-        document.setOwnerId(userId);
+        userOrganizationService.getOrganization(user.getOrganization().getId());
+        document.setOwnerId(user.getId());
+        document.setIdOrganization(user.getOrganization().getId());
         document.setDate(LocalDateTime.now());
         docAttributeValuesRepository.saveAll(document.getAttributeValues());
 

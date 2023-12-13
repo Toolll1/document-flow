@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.rosatom.documentflow.exceptions.IllegalProcessStatusException;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
+import ru.rosatom.documentflow.kafka.Producer;
 import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocProcessCommentRepository;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
@@ -34,6 +35,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     private final UserService userService;
     private final DocProcessRepository docProcessRepository;
     private final EmailService emailService;
+    private final Producer producer;
     private final DocProcessCommentRepository docProcessCommentRepository;
 
 
@@ -257,6 +259,9 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
                         documentService.updateFinalStatus(document, finalStatus, null);
                     }
                 }
+        }
+        if (document.getFinalDocStatus().equals(APPROVED)){
+            producer.sendMessage("Документ с id- [" + documentId + "] переведен в статус: " + APPROVED);
         }
     }
 
