@@ -32,7 +32,6 @@ class DocumentProcessServiceImplTest {
     private final DocProcessRepository docProcessRepository = Mockito.mock(DocProcessRepository.class);
     private final EmailService emailService = Mockito.mock(EmailService.class);
     private final Producer producer = Mockito.mock(Producer.class);
-
     private final DocProcessCommentRepository docProcessCommentRepository = Mockito.mock(DocProcessCommentRepository.class);
 
 
@@ -41,6 +40,7 @@ class DocumentProcessServiceImplTest {
             userService,
             docProcessRepository,
             emailService,
+            producer,
             docProcessCommentRepository);
 
 
