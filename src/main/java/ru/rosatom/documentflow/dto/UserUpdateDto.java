@@ -16,8 +16,7 @@ import javax.validation.constraints.Size;
 @Schema(description = "Данные для обновления пользователя")
 public class UserUpdateDto {
 
-  @Schema(description = "ID пользователя")
-  private final Long id;
+
 
   @Schema(description = "Фамилия", minLength = 2, maxLength = 100)
   @Nullable
