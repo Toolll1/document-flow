@@ -21,8 +21,8 @@ public class DocProcessDto {
     @Schema(description = "Получатель")
     private Long recipient;
 
-    @Schema(description = "Организация")
-    private Long organization;
+    @Schema(description = "Организация получатель")
+    private Long recipientOrganization ;
 
     @Schema(description = "Статус")
     private String status;
