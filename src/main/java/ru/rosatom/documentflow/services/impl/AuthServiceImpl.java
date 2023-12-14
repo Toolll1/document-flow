@@ -47,7 +47,7 @@ public class AuthServiceImpl implements AuthService {
                 .user(mapper.map(user, UserWithoutPassportDto.class))
                 .build();
 
-        return new ResponseEntity<>(authToken, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(authToken, HttpStatus.OK);
     }
 
 }
