@@ -10,5 +10,4 @@ import java.util.List;
 @Repository
 public interface DocProcessCommentRepository extends JpaRepository<DocProcessComment, Long> {
 
-    List<DocProcessComment> findAllByDocumentId(Long documentId);
 }

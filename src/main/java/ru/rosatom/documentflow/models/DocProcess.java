@@ -32,8 +32,4 @@ public class DocProcess {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private DocProcessStatus status;
-    @Column(name = "comment")
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "comment_id")
-    private List<DocProcessComment> comment;
 }

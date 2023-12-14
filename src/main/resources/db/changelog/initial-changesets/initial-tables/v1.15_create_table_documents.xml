@@ -1,0 +1,57 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="v1.6_create_table_documents" author="nikita_glushko">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+            <sqlCheck expectedResult="${database.name}">SELECT current_database()</sqlCheck>
+            <not>
+                <tableExists tableName="documents"/>
+            </not>
+        </preConditions>
+        <createTable tableName="documents">
+            <column name="document_id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(256)"/>
+            <column name="document_path" type="varchar(1000)"/>
+            <column name="created_at" type="timestamp">
+                <constraints nullable="false" uniqueConstraintName="correct_document_date"
+                             checkConstraint="CHECK( created_at &lt;= NOW() )"/>
+            </column>
+            <column name="organization_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_document_organization"
+                             referencedTableName="organizations"
+                             referencedColumnNames="org_id"/>
+            </column>
+            <column name="owner_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_document_user"
+                             referencedTableName="users"
+                             referencedColumnNames="user_id"/>
+            </column>
+            <column name="type_id" type="bigint">
+                <constraints foreignKeyName="fk_document_type"
+                             referencedTableName="document_types"
+                             referencedColumnNames="type_id"/>
+            </column>
+            <column name="value_id" type="bigint">
+                <constraints foreignKeyName="fk_document_attribute_value"
+                             referencedTableName="attribute_values"
+                             referencedColumnNames="value_id"
+                             deleteCascade="true"/>
+            </column>
+            <column name="comment" type="varchar(1000)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="final_doc_status" type="varchar(32)" defaultValue="WAITING_FOR_APPROVE"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="attribute_values" baseColumnNames="document_id"
+                                 constraintName="fk_attribute_value_document"
+                                 referencedTableName="documents"
+                                 referencedColumnNames="document_id"/>
+    </changeSet>
+</databaseChangeLog>

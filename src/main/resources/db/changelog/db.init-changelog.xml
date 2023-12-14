@@ -15,7 +15,9 @@
              relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.5_create_table_document_types.xml"
              relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.6_create_table_documents.xml"
+<!--    <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.6_create_table_documents.xml"-->
+<!--             relativeToChangelogFile="false"/>-->
+    <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.15_create_table_documents.xml"
              relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.7_create_table_type_attributes.xml"
              relativeToChangelogFile="false"/>
@@ -24,10 +26,16 @@
 
     <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.10_create_table_message_templates.xml"
              relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.11_create_table_document_process_comment.xml"
+        <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.14_create_table_document_process.xml"
+                 relativeToChangelogFile="false"/>
+<!--    <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.11_create_table_document_process_comment.xml"-->
+<!--             relativeToChangelogFile="false"/>-->
+    <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.16_create_table_document_process_comment.xml"
              relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.12_create_table_document_process.xml"
-             relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.13_update_table_document_process.xml"
-             relativeToChangelogFile="false"/>
+<!--    <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.12_create_table_document_process.xml"-->
+<!--             relativeToChangelogFile="false"/>-->
+<!--    <include file="classpath:db/changelog/initial-changesets/initial-tables/v1.13_update_table_document_process.xml"-->
+<!--             relativeToChangelogFile="false"/>-->
+
+
 </databaseChangeLog>

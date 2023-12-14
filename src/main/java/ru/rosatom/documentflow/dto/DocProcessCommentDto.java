@@ -14,6 +14,7 @@ public class DocProcessCommentDto {
     private UserReplyDto authorComment;
     @Schema(description = "Дата создания комментария")
     private LocalDateTime date;
-    @Schema(description = "Документ")
-    private DocumentDto document;
+    @Schema(description = "Процесс по документу")
+    private DocProcessDto docProcess;
+
 }

@@ -30,7 +30,7 @@ public class DocProcessComment {
     @Column (name = "date_comment")
     private LocalDateTime date;
 
-    @JoinColumn(name = "document_id")
+    @JoinColumn(name = "document_process_id")
     @ManyToOne
-    private Document document;
+    private DocProcess docProcess;
 }

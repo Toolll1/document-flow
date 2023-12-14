@@ -58,8 +58,7 @@ class DocumentProcessServiceImplTest {
                     updatableDocProcessDocument,
                     Mockito.mock(User.class),
                     Mockito.mock(User.class),
-                    DocProcessStatus.WAITING_FOR_APPROVE,
-                    Mockito.mock(ArrayList.class));
+                    DocProcessStatus.WAITING_FOR_APPROVE);
             processUpdateRequest.setProcessId(updatableDocProcess.getId());
             Mockito.doReturn(Optional.of(updatableDocProcess))
                     .when(docProcessRepository).findById(updatableDocProcess.getId());
@@ -108,7 +107,6 @@ class DocumentProcessServiceImplTest {
                 document,
                 Mockito.mock(User.class),
                 Mockito.mock(User.class),
-                status,
-                Mockito.mock(ArrayList.class));
+                status);
     }
 }

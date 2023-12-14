@@ -8,6 +8,7 @@ import ru.rosatom.documentflow.kafka.Producer;
 import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocProcessCommentRepository;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
+import ru.rosatom.documentflow.repositories.DocumentRepository;
 import ru.rosatom.documentflow.services.DocumentProcessService;
 import ru.rosatom.documentflow.services.DocumentService;
 import ru.rosatom.documentflow.services.EmailService;
@@ -56,7 +57,6 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
                 .recipient(recipient)
                 .sender(sender)
                 .status(DocProcessStatus.NEW)
-                .comment(docProcessCommentRepository.findAllByDocumentId(documentId))
                 .build();
         return docProcessRepository.save(docProcess);
     }
@@ -281,20 +281,20 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
 
 
     public void setCommentDocProcess(ProcessUpdateRequest processUpdateRequest, DocProcess docProcess){
-        List<DocProcessComment> comments = docProcess.getComment();
-        String textComment = processUpdateRequest.getComment();
         Document document = docProcess.getDocument();
-        DocProcessComment comment = createComment(textComment, docProcess.getSender(), document);
-        docProcess.setComment(comments);
+        List<DocProcessComment> comments = document.getComment();
+        String textComment = processUpdateRequest.getComment();
+        DocProcessComment comment = createComment(textComment, docProcess.getSender(), docProcess);
+        document.setComment(comments);
         docProcessCommentRepository.save(comment);
         emailService.sendMessageWithNewComment(docProcess);
     }
 
     @Override
-    public DocProcessComment createComment(String text, User user, Document document) {
+    public DocProcessComment createComment(String text, User user, DocProcess docProcess) {
         return  DocProcessComment.builder()
                 .authorComment(user)
-                .document(document)
+                .docProcess(docProcess)
                 .textComment(text)
                 .date(LocalDateTime.now())
                 .build();

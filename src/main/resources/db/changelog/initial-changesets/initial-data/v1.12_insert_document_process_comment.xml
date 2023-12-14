@@ -1,0 +1,26 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="v1.12_insert_document_process_comment" author="sveta_klimova">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+            <sqlCheck expectedResult="document-flow">SELECT current_database()</sqlCheck>
+            <tableExists tableName="document_process_comment"/>
+        </preConditions>
+        <insert tableName="document_process_comment">
+            <column name="document_process_id" value="1"/>
+<!--            <column name="document_id" value="1"/>-->
+            <column name="user_id" value="2"/>
+            <column name="text_comment" value="Text comment"/>
+            <column name="date_comment" value="NOW()"/>
+        </insert>
+        <insert tableName="document_process_comment">
+            <column name="document_process_id" value="2"/>
+            <column name="user_id" value="2"/>
+            <column name="text_comment" value="Text comment 2"/>
+            <column name="date_comment" value="NOW()"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

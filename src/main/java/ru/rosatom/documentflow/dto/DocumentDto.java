@@ -54,5 +54,8 @@ public class DocumentDto {
 
     @Schema(description = "Статус")
     String finalDocStatus;
+
+    @Schema(description = "Комментарии")
+    private List<DocProcessCommentDto> comment;
 }
 
