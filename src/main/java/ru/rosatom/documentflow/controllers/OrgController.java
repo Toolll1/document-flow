@@ -29,13 +29,14 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/v1/org")
 @AllArgsConstructor
-@PreAuthorize("hasAuthority('ADMIN')")
+//@PreAuthorize("hasAuthority('ADMIN')")
 @Tag(name = "Организации")
 public class OrgController {
 
     UserOrganizationService userOrganizationService;
     ModelMapper modelMapper;
 
+    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('USER') || hasAuthority('ADMINCOMPANY')")
     @Operation(summary = "Получить все организации")
     @GetMapping
     @SecurityRequirement(name = "JWT")
@@ -44,6 +45,7 @@ public class OrgController {
                 .map(o -> modelMapper.map(o, OrgDto.class));
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "Добавить организацию")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -56,6 +58,7 @@ public class OrgController {
     }
 
 
+    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('USER') || hasAuthority('ADMINCOMPANY')")
     @Operation(summary = "Получить организацию по Id")
     @GetMapping("/{orgId}")
     @SecurityRequirement(name = "JWT")
@@ -64,6 +67,7 @@ public class OrgController {
         return modelMapper.map(organization, OrgDto.class);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('USER') || hasAuthority('ADMINCOMPANY')")
     @Operation(summary = "Поиск организации по подстроке в имени")
     @GetMapping("/name/{name}")
     @SecurityRequirement(name = "JWT")
@@ -75,6 +79,7 @@ public class OrgController {
                 .collect(Collectors.toList());
     }
 
+    @PreAuthorize("(orgId == authentication.principal.organization.id && hasAuthority('ADMINCOMPANY')) || hasAuthority('ADMIN')")
     @Operation(summary = "Изменить организацию")
     @RequestMapping(value = "/{orgId}", method = RequestMethod.PATCH)
     @SecurityRequirement(name = "JWT")
@@ -88,6 +93,7 @@ public class OrgController {
         return modelMapper.map(organization, OrgDto.class);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "Удалить организацию")
     @DeleteMapping("/{orgId}")
     @SecurityRequirement(name = "JWT")

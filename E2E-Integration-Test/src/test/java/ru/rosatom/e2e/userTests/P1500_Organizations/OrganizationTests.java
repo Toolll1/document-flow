@@ -13,7 +13,6 @@ import ru.rosatom.e2e.user.UserAuthorizationResponse;
 @DisplayName("Organization tests")
 public class OrganizationTests extends BasicHttpTest {
 
-    //UserAuthorizationResponse adminAuth = getContextValue(Environment.ADMIN_AUTHORIZATION);
     UserAuthorizationResponse fedotovAuth = getContextValue(Environment.USER_FEDOTOV_AUTHORIZATION);
 
     @Test
@@ -123,8 +122,6 @@ public class OrganizationTests extends BasicHttpTest {
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path(OrganizationsEndpoint.ORGANIZATION_SEARCH)
-                       // .queryParam("id", organizationSearchRequestId.getId())
-                        //.queryParam("name", organizationSearchRequest.getName())
                         .queryParam("inn", organizationSearchRequestInn.getInn())
                         .build())
                 .exchange();

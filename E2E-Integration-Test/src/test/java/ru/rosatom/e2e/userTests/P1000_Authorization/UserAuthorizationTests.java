@@ -47,13 +47,6 @@ public class UserAuthorizationTests extends BasicHttpTest {
         fedotovAuth = userAuthorizationResponse;
     }
 
-    @Test
-    @DisplayName("Success authorization admin")
-    public void testSuccessLoginAdmin(){
-        UserAuthorizationResponse userAuthorizationResponse = testSuccessAuth(new AdminAuthRequest());
-        setContextValue(Environment.ADMIN_AUTHORIZATION, userAuthorizationResponse);
-    }
-
 
     @DisplayName("Success get profile info")
     @Test
