@@ -1,4 +1,4 @@
-package ru.rosatom.e2e.organizationTest.P1000_Organization;
+package ru.rosatom.e2e.userTests.P1500_Organizations;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -13,7 +13,8 @@ import ru.rosatom.e2e.user.UserAuthorizationResponse;
 @DisplayName("Organization tests")
 public class OrganizationTests extends BasicHttpTest {
 
-    UserAuthorizationResponse adminAuth = getContextValue(Environment.ADMIN_AUTHORIZATION);
+    //UserAuthorizationResponse adminAuth = getContextValue(Environment.ADMIN_AUTHORIZATION);
+    UserAuthorizationResponse fedotovAuth = getContextValue(Environment.USER_FEDOTOV_AUTHORIZATION);
 
     @Test
     @DisplayName("Get all organizations")
@@ -24,7 +25,7 @@ public class OrganizationTests extends BasicHttpTest {
     @Test
     @DisplayName("Get all organizations with all param")
     public void simpleGetAllOrganizationsWithAllParam() {
-        getOrganizationWithParam(new OrganizationSearchRequest(1, "Name ", "121212"));
+        getOrganizationWithParam(new OrganizationSearchRequest(1, "Howe-Huels ", "9938710050"));
     }
 
     @Test
@@ -35,23 +36,23 @@ public class OrganizationTests extends BasicHttpTest {
     @Test
     @DisplayName("Get organizations with inn")
     public void simpleGetAllOrganizationsWithInn() {
-        getOrganizationWithInn(new OrganizationSearchRequestInn("1232456"));
+        getOrganizationWithInn(new OrganizationSearchRequestInn("5998081370"));
     }
     @Test
     @DisplayName("Get organizations with name")
     public void simpleGetAllOrganizationsWithName() {
-        getOrganizationWithName(new OrganizationSearchRequestName("Росатом"));
+        getOrganizationWithName(new OrganizationSearchRequestName("Howe-Huels"));
     }
 
     private WebTestClient.ResponseSpec getAllOrganization() {
-        return withAuthClient(adminAuth)
+        return withAuthClient(fedotovAuth)
                 .get()
                 .uri(OrganizationsEndpoint.ORGANIZATION_SEARCH)
                 .exchange();
     }
 
     private WebTestClient.ResponseSpec getAllOrganizationWithAllParam(OrganizationSearchRequest organizationSearchRequest) {
-        return withAuthClient(adminAuth)
+        return withAuthClient(fedotovAuth)
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path(OrganizationsEndpoint.ORGANIZATION_SEARCH)
@@ -92,7 +93,7 @@ public class OrganizationTests extends BasicHttpTest {
 
 
     private WebTestClient.ResponseSpec getAllOrganizationWithId(OrganizationSearchRequestId organizationSearchRequestId) {
-        return withAuthClient(adminAuth)
+        return withAuthClient(fedotovAuth)
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path(OrganizationsEndpoint.ORGANIZATION_SEARCH)
@@ -118,7 +119,7 @@ public class OrganizationTests extends BasicHttpTest {
     }
 
     private WebTestClient.ResponseSpec getAllOrganizationWithInn(OrganizationSearchRequestInn organizationSearchRequestInn) {
-        return withAuthClient(adminAuth)
+        return withAuthClient(fedotovAuth)
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path(OrganizationsEndpoint.ORGANIZATION_SEARCH)
@@ -144,7 +145,7 @@ public class OrganizationTests extends BasicHttpTest {
     }
 
     private WebTestClient.ResponseSpec getAllOrganizationWithName(OrganizationSearchRequestName organizationSearchRequestName) {
-        return withAuthClient(adminAuth)
+        return withAuthClient(fedotovAuth)
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path(OrganizationsEndpoint.ORGANIZATION_SEARCH)

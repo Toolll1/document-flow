@@ -1,4 +1,4 @@
-package ru.rosatom.e2e.organizationTest.P1000_Organization;
+package ru.rosatom.e2e.userTests.P1500_Organizations;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @AllArgsConstructor
-public class OrganizationSearchRequestInn {
+public class OrganizationSearchRequest {
+    private Integer id;
+
+    private String name;
 
     private String inn;
+
 }
