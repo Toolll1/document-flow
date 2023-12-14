@@ -87,8 +87,7 @@ public class DocTypeController {
                 modelMapper.map(docTypeUpdateRequestDto, DocTypeUpdateRequest.class);
         DocType docType = docTypeService.updateDocType(docTypeId, docTypeUpdateRequest);
 
-        log.info(
-                "Получен запрос на обновление DocType с ID: {}. Обновлен DocType: {}", docTypeId, docType);
+        log.info("Получен запрос на обновление DocType с ID: {}. Обновлен DocType: {}", docTypeId, docType);
         return modelMapper.map(docType, DocTypeDto.class);
     }
 
@@ -122,9 +121,5 @@ public class DocTypeController {
     public void deleteDocType(@PathVariable @Parameter(description = "ID типа") Long docTypeId) {
         log.info("Получен запрос на удаление DocType с ID: {}", docTypeId);
         docTypeService.deleteDocType(docTypeId);
-    }
-
-    private DocTypeDto convertToDto(DocType docType) {
-        return modelMapper.map(docType, DocTypeDto.class);
     }
 }

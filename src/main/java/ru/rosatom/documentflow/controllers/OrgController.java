@@ -90,9 +90,9 @@ public class OrgController {
 
     @Operation(summary = "Удалить организацию")
     @DeleteMapping("/{orgId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @SecurityRequirement(name = "JWT")
-    public OrgDto deleteOrg(@PathVariable @Parameter(description = "ID организации") Long orgId) {
-        UserOrganization organization = userOrganizationService.deleteOrganization(orgId);
-        return modelMapper.map(organization, OrgDto.class);
+    public void deleteOrg(@PathVariable @Parameter(description = "ID организации") Long orgId) {
+        userOrganizationService.deleteOrganization(orgId);
     }
 }
