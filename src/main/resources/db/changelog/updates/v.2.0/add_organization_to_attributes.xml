@@ -12,14 +12,21 @@
             <and>
                 <tableExists tableName="document_types"/>
             </and>
-
         </preConditions>
+
+        <comment>Add column org_id to attributes</comment>
         <addColumn tableName="attributes">
             <column name="org_id" type="bigint"/>
         </addColumn>
+
+        <comment>Add foreign key constraint to org_id</comment>
         <addForeignKeyConstraint baseTableName="attributes" baseColumnNames="org_id"
                                  constraintName="fk_attribute_organization"
                                  referencedTableName="organizations"
                                  referencedColumnNames="org_id"/>
+
+        <rollback>
+            <dropColumn tableName="attributes" columnName="org_id"/>
+        </rollback>
     </changeSet>
 </databaseChangeLog>

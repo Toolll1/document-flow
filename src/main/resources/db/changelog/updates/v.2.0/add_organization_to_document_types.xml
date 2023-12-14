@@ -11,18 +11,25 @@
             <tableExists tableName="document_types"/>
         </preConditions>
 
+        <comment>Add column org_id to document_types</comment>
         <addColumn tableName="document_types">
             <column name="org_id" type="bigint"/>
         </addColumn>
 
+        <comment>Add foreign key constraint to org_id</comment>
         <addForeignKeyConstraint baseTableName="document_types" baseColumnNames="org_id"
                                  constraintName="fk_document_type_organization"
                                  referencedTableName="organizations"
                                  referencedColumnNames="org_id"/>
 
+        <comment>Update existing records with org_id</comment>
         <update tableName="document_types">
             <column name="org_id" value="1"/>
         </update>
+
+        <rollback>
+            <dropColumn tableName="document_types" columnName="org_id"/>
+        </rollback>
 
     </changeSet>
 </databaseChangeLog>
