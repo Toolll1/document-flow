@@ -36,7 +36,7 @@ import java.util.List;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/admin/users")
+@RequestMapping(path = "/users")
 @PreAuthorize("hasAuthority('ADMIN')")
 @Tag(name = "Пользователи")
 public class UserController {

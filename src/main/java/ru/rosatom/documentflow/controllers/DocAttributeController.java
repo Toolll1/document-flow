@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/v1/docattributes")
+@RequestMapping(path = "/docattributes")
 @PreAuthorize("hasAuthority('ADMIN')")
 @Tag(name = "Атрибуты документа")
 public class DocAttributeController {

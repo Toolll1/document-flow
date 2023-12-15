@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/v1/doctypes")
+@RequestMapping(path = "/doctypes")
 @PreAuthorize("hasAuthority('ADMIN')")
 @Tag(name = "Тип документа")
 public class DocTypeController {
