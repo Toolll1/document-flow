@@ -12,16 +12,12 @@
              relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/initial-changesets/initial-data/v1.4_insert_documents.xml"
              relativeToChangelogFile="false"/>
-<!--    <include file="classpath:db/changelog/initial-changesets/initial-data/v1.5_insert_document_process.xml"-->
-<!--             relativeToChangelogFile="false"/>-->
-    <include file="classpath:db/changelog/initial-changesets/initial-data/v1.6_insert_message_templates.xml"
-             relativeToChangelogFile="false"/>
-<!--    <include file="classpath:db/changelog/initial-changesets/initial-data/v1.7_insert_document_process_comment.xml"-->
-<!--             relativeToChangelogFile="false"/>-->
-    <include file="classpath:db/changelog/initial-changesets/initial-data/v1.8_insert_message_templates.xml"
-             relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/initial-changesets/initial-data/v1.10_insert_document_process.xml"
              relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-data/v1.6_insert_message_templates.xml"
+             relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/initial-changesets/initial-data/v1.12_insert_document_process_comment.xml"
+             relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-data/v1.8_insert_message_templates.xml"
              relativeToChangelogFile="false"/>
 </databaseChangeLog>
