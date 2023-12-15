@@ -35,7 +35,6 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     private final DocProcessRepository docProcessRepository;
     private final EmailService emailService;
 
-
     /**
      * Создает новый процесс согласования документа. Статус процесса - NEW
      *
@@ -169,7 +168,6 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     public void deleteProcess(Long processId) {
         docProcessRepository.deleteById(processId);
     }
-
 
     private DocProcess getProcessAndApplyRequest(ProcessUpdateRequest processUpdateRequest) {
         DocProcess docProcess = findProcessById(processUpdateRequest.getProcessId());
