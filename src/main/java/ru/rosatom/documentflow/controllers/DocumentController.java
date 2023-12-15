@@ -20,7 +20,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.rosatom.documentflow.dto.*;
-import ru.rosatom.documentflow.mappers.DocumentChangesMapper;
 import ru.rosatom.documentflow.mappers.DocumentMapper;
 import ru.rosatom.documentflow.models.DocChanges;
 import ru.rosatom.documentflow.models.Document;
@@ -46,7 +45,6 @@ public class DocumentController {
 
     final DocumentService documentService;
     final DocumentMapper dm;
-    final DocumentChangesMapper cm;
     private final ModelMapper modelMapper;
 
 
