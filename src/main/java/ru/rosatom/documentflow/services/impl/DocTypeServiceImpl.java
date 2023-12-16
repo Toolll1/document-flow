@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.rosatom.documentflow.adapters.CommonUtils;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
 import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocAttributeRepository;
@@ -22,6 +23,8 @@ public class DocTypeServiceImpl implements DocTypeService {
 
     private final DocTypeRepository docTypeRepository;
     private final DocAttributeRepository docAttributeRepository;
+    private final CommonUtils commonUtils;
+
 
     @Override
     public Page<DocType> getAllDocTypes(Pageable pageable, Optional<Long> orgId) {
@@ -60,10 +63,18 @@ public class DocTypeServiceImpl implements DocTypeService {
         docTypeRepository.delete(docType);
     }
 
+    /**
+     * Поиск типа по подстроке в имени, при запросе от ADMIN поиск будет проходить по всей базе,
+     * для остальных ролей поиск типов внутри своей компании.
+     *
+     * @param name - имя типа
+     * @param user - пользователь отправивший запрос
+     * @return DocType - список типов
+     */
     @Override
     public List<DocType> getDocTypesByName(String name, User user) {
         List<DocType> docTypes;
-        if (user.getRole().equals(UserRole.ADMIN)) {
+        if (commonUtils.isAdmin(user)) {
             docTypes = docTypeRepository.findByNameContains(name);
         } else {
             docTypes = docTypeRepository.findByUserOrganizationIdAndNameContains(user.getOrganization().getId(), name);
@@ -82,13 +93,11 @@ public class DocTypeServiceImpl implements DocTypeService {
     }
 
     public boolean isAllowedType(Long id, User user) {
-        boolean alllowed = Objects.equals(getDocTypeById(id).getUserOrganization().getId(), user.getOrganization().getId());
-        return alllowed;
+        return Objects.equals(getDocTypeById(id).getUserOrganization().getId(), user.getOrganization().getId());
     }
 
     public boolean isAllowedTypeAttribute(Long docTypeId, Long docAttributeId, User user) {
-        boolean alllowed = Objects.equals(getDocTypeById(docTypeId).getUserOrganization().getId(), user.getOrganization().getId()) &&
+        return Objects.equals(getDocTypeById(docTypeId).getUserOrganization().getId(), user.getOrganization().getId()) &&
                 Objects.equals(docAttributeRepository.findById(docAttributeId).get().getOrganization().getId(), user.getOrganization().getId());
-        return alllowed;
     }
 }

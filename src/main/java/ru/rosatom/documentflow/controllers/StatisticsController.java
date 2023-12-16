@@ -29,28 +29,31 @@ public class StatisticsController {
     private final ModelMapper modelMapper;
 
 
-    @Operation(summary = "Получить общее кол-во документов")
+    @Operation(summary = "Получить общее кол-во документов, при запросе от ADMIN поиск будет проходить по всей базе," +
+            " для остальных ролей поиск внутри своей компании")
     @GetMapping("/documents/getCount")
     @SecurityRequirement(name = "JWT")
-    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('ADMINCOMPANY')")
+    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('COMPANY_ADMIN')")
     public DocStatisticDTO getCount(@AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
         return statisticsService.getCount(user);
     }
 
-    @Operation(summary = "Получить кол-во документов со статусом")
+    @Operation(summary = "Получить кол-во документов со статусом, при запросе от ADMIN поиск будет проходить по всей базе," +
+            " для остальных ролей поиск внутри своей компании")
     @GetMapping("/documents/getCountByStatus/{status}")
     @SecurityRequirement(name = "JWT")
-    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('ADMINCOMPANY')")
+    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('COMPANY_ADMIN')")
     public DocStatisticDTO getCountByStatus(
             @PathVariable @Parameter(description = "Наименование статуса") String status,
             @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
         return statisticsService.getCountByStatus(status, user);
     }
 
-    @Operation(summary = "Получить кол-во пользователей")
+    @Operation(summary = "Получить кол-во пользователей, при запросе от ADMIN поиск будет проходить по всей базе," +
+            " для остальных ролей поиск внутри своей компании")
     @GetMapping("/users/count")
     @SecurityRequirement(name = "JWT")
-    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('ADMINCOMPANY')")
+    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('COMPANY_ADMIN')")
     public CountUsersDto countUsers(@AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
         return modelMapper.map(statisticsService.statisticsUserAndOrganization(user), CountUsersDto.class);
     }
@@ -63,10 +66,11 @@ public class StatisticsController {
         return modelMapper.map(statisticsService.statisticsUserAndOrganization(user), CountOrgDto.class);
     }
 
-    @Operation(summary = "Получить рейтинг активных пользователей по организации")
+    @Operation(summary = "Получить рейтинг активных пользователей по организации, при запросе от ADMIN по указанной компании," +
+            " для остальных ролей поиск внутри своей компании")
     @GetMapping("/userRating/{orgId}")
     @SecurityRequirement(name = "JWT")
-    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('ADMINCOMPANY')")
+    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('COMPANY_ADMIN')")
     public List<UserRatingDto> getRating(
             @PathVariable @Parameter(description = "ID организации") Long orgId,
             @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {

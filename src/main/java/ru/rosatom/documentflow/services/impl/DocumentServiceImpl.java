@@ -40,7 +40,7 @@ public class DocumentServiceImpl implements DocumentService {
     final DocTypeService docTypeService;
     final DocAttributeValuesRepository docAttributeValuesRepository;
     final DocAttributeService docAttributeService;
-    private final FileService fileService;
+    final FileService fileService;
 
     @Override
     @Transactional

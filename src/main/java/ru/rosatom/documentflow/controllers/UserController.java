@@ -50,9 +50,9 @@ public class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @SecurityRequirement(name = "JWT")
-    @PreAuthorize("hasAuthority('ADMIN') || #dto.organizationId==#user1.organization.id && hasAuthority('ADMINCOMPANY')")
+    @PreAuthorize("hasAuthority('ADMIN') || #dto.organizationId==#user1.organization.id && hasAuthority('COMPANY_ADMIN')")
     public UserReplyDto createUser(@Valid @RequestBody UserCreateDto dto,
-                                   @AuthenticationPrincipal User user1) {
+                                   @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user1) {
 
         log.info("Received a request to create a user " + dto);
 
@@ -66,11 +66,11 @@ public class UserController {
     @Operation(summary = "Изменить пользователя")
     @PatchMapping("/{userId}")
     @SecurityRequirement(name = "JWT")
-    @PreAuthorize("hasAuthority('ADMIN') || (@userServiceImpl.isAllowed(#dto.id, #user) || hasAuthority('ADMINCOMPANY'))")
+    @PreAuthorize("hasAuthority('ADMIN') || (@userServiceImpl.isAllowed(#dto.id, #user) || hasAuthority('COMPANY_ADMIN'))")
     public UserReplyDto updateUser(
             @Valid @RequestBody UserUpdateDto dto,
             @PathVariable @Parameter(description = "ID пользователя") Long userId,
-            @AuthenticationPrincipal User user) {
+            @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
 
         log.info("Received a request to update a user {}. userId = {}", dto, userId);
 
@@ -79,7 +79,7 @@ public class UserController {
 
     @Operation(summary = "Установить пароль для пользователя")
     @PreAuthorize("(#userId==#user.id && hasAuthority('USER')) || hasAuthority('ADMIN') || " +
-            "(@userServiceImpl.isAllowed(#userId, #user) && hasAuthority('ADMINCOMPANY'))")
+            "(@userServiceImpl.isAllowed(#userId, #user) && hasAuthority('COMPANY_ADMIN'))")
     @PatchMapping("/password/{userId}")
     @SecurityRequirement(name = "JWT")
     public ResponseEntity<?> setUserPassword(
@@ -89,7 +89,7 @@ public class UserController {
             @Parameter(description = "Пароль пользователя")
             String password,
             @PathVariable @Parameter(description = "ID пользователя") Long userId,
-            @AuthenticationPrincipal User user) {
+            @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
         log.info("Received a request to set password to user with userId = {}", userId);
         if (userService.setPasswordToUser(password, userId)) {
             return new ResponseEntity<>(HttpStatus.OK);
@@ -100,12 +100,12 @@ public class UserController {
 
     @Operation(summary = "Получить пользователя по ID")
     @PreAuthorize("(#userId==#user.id && hasAuthority('USER')) || hasAuthority('ADMIN') || " +
-            "(@userServiceImpl.isAllowed(#userId, #user) && hasAuthority('ADMINCOMPANY'))")
+            "(@userServiceImpl.isAllowed(#userId, #user) && hasAuthority('COMPANY_ADMIN'))")
     @GetMapping("/{userId}")
     @SecurityRequirement(name = "JWT")
     public UserReplyDto getUser(
             @PathVariable @Parameter(description = "ID пользователя") Long userId,
-            @AuthenticationPrincipal User user) {
+            @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
 
         log.info("A request was received to search for a user with an id {}", userId);
 
@@ -149,7 +149,7 @@ public class UserController {
     @Operation(summary = "Получить пользователя по номеру телефона")
     @GetMapping("/phone/{phone}")
     @SecurityRequirement(name = "JWT")
-    @PostAuthorize("((returnObject.userOrganization.id == authentication.principal.organization.id && hasAuthority('ADMINCOMPANY')) " +
+    @PostAuthorize("((returnObject.userOrganization.id == authentication.principal.organization.id && hasAuthority('COMPANY_ADMIN')) " +
             "|| hasAuthority('ADMIN'))")
     public UserReplyDto getUserByPhone(
             @PathVariable @Parameter(description = "Телефон пользователя") String phone) {
@@ -162,7 +162,7 @@ public class UserController {
     @Operation(summary = "Получить пользователя по eMail")
     @GetMapping("/email/{email}")
     @SecurityRequirement(name = "JWT")
-    @PostAuthorize("((returnObject.userOrganization.id == authentication.principal.organization.id && hasAuthority('ADMINCOMPANY'))" +
+    @PostAuthorize("((returnObject.userOrganization.id == authentication.principal.organization.id && hasAuthority('COMPANY_ADMIN'))" +
             " || hasAuthority('ADMIN'))")
     public UserReplyDto getUserByEmail(
             @PathVariable @Parameter(description = "eMail пользователя") String email) {
@@ -175,7 +175,7 @@ public class UserController {
     @Operation(summary = "Получить пользователя по паспорту")
     @GetMapping("/passport/{passport}")
     @SecurityRequirement(name = "JWT")
-    @PostAuthorize("((returnObject.userOrganization.id == authentication.principal.organization.id && hasAuthority('ADMINCOMPANY')) " +
+    @PostAuthorize("((returnObject.userOrganization.id == authentication.principal.organization.id && hasAuthority('COMPANY_ADMIN')) " +
             "|| hasAuthority('ADMIN'))")
     public UserReplyDto getUserByPassport(
             @PathVariable @Parameter(description = "Паспорт пользователя") String passport) {
@@ -189,9 +189,9 @@ public class UserController {
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @SecurityRequirement(name = "JWT")
-    @PreAuthorize("hasAuthority('ADMIN') || (@userServiceImpl.isAllowed(#userId, #user) && hasAuthority('ADMINCOMPANY'))")
+    @PreAuthorize("hasAuthority('ADMIN') || (@userServiceImpl.isAllowed(#userId, #user) && hasAuthority('COMPANY_ADMIN'))")
     public void deleteUser(@PathVariable @Parameter(description = "ID пользователя") Long userId,
-                           @AuthenticationPrincipal User user) {
+                           @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
 
         log.info("Received a request to delete a user with an id " + userId);
 

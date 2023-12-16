@@ -50,9 +50,9 @@ public class DocAttributeController {
     @GetMapping
     @SecurityRequirement(name = "JWT")
     @PreAuthorize("hasAuthority('ADMIN') || " +
-            "((hasAuthority('USER') || hasAuthority('ADMINCOMPANY')) && #orgId.isPresent() && #user.organization.id.equals(#orgId.get()))")
+            "((hasAuthority('USER') || hasAuthority('COMPANY_ADMIN')) && #orgId.isPresent() && #user.organization.id.equals(#orgId.get()))")
     Page<DocAttributeDto> getAllDocTypes(@ParameterObject @PageableDefault(page = 0, size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
-                                         @AuthenticationPrincipal @Parameter(hidden = true) User user,
+                                         @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user,
                                          @RequestParam(required = false, name = "org_id") @Parameter(description = "ID организации") Optional<Long> orgId) {
         return docAttributeService
                 .getAllDocAttributes(pageable, orgId)
@@ -62,7 +62,7 @@ public class DocAttributeController {
     @Operation(summary = "Получить атрибут по ID")
     @GetMapping("/{docAttributeId}")
     @SecurityRequirement(name = "JWT")
-    @PostAuthorize("((returnObject.organization.id == authentication.principal.organization.id && (hasAuthority('ADMINCOMPANY') || hasAuthority('USER'))) " +
+    @PostAuthorize("((returnObject.organization.id == authentication.principal.organization.id && (hasAuthority('COMPANY_ADMIN') || hasAuthority('USER'))) " +
             "|| hasAuthority('ADMIN'))")
     public DocAttributeDto getAttribute(
             @PathVariable @Parameter(description = "ID атрибута") Long docAttributeId) {
@@ -75,7 +75,7 @@ public class DocAttributeController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @SecurityRequirement(name = "JWT")
-    @PreAuthorize("hasAuthority('ADMIN') || (#docAttributeCreateDto.organizationId==#authentication.principal.organization.id && hasAuthority('ADMINCOMPANY'))")
+    @PreAuthorize("hasAuthority('ADMIN') || (#docAttributeCreateDto.organizationId==#authentication.principal.organization.id && hasAuthority('COMPANY_ADMIN'))")
     public DocAttributeDto createAttribute(
             @Valid @RequestBody @Parameter(description = "DTO создания атрибута") DocAttributeCreateDto docAttributeCreateDto) {
         DocAttributeCreationRequest docAttributeCreationRequest =
@@ -88,11 +88,11 @@ public class DocAttributeController {
     @Operation(summary = "Изменить атрибут")
     @RequestMapping(value = "/{docAttributeId}", method = RequestMethod.PATCH)
     @SecurityRequirement(name = "JWT")
-    @PreAuthorize("hasRole('ADMIN') || (@docAttributeServiceImpl.isAllowedAttribute(#docAttributeId, #user) && hasAuthority('ADMINCOMPANY'))")
+    @PreAuthorize("hasRole('ADMIN') || (@docAttributeServiceImpl.isAllowedAttribute(#docAttributeId, #user) && hasAuthority('COMPANY_ADMIN'))")
     public DocAttributeDto updateAttribute(
             @PathVariable @Parameter(description = "ID атрибута") Long docAttributeId,
             @Valid @RequestBody @Parameter(description = "DTO изменения типа") DocAttributeUpdateRequestDto docAttributeUpdateRequestDto,
-            @AuthenticationPrincipal User user) {
+            @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
         DocAttributeUpdateRequest docAttributeUpdateRequest =
                 modelMapper.map(docAttributeUpdateRequestDto, DocAttributeUpdateRequest.class);
         DocAttribute docAttribute =
@@ -105,13 +105,14 @@ public class DocAttributeController {
         return modelMapper.map(docAttribute, DocAttributeDto.class);
     }
 
-    @Operation(summary = "Поиск атрибута по подстроке в имени")
+    @Operation(summary = "Поиск атрибута по подстроке в имени, при запросе от ADMIN поиск будет проходить по всей базе, " +
+            "для остальных ролей поиск атрибутов внутри своей компании")
     @GetMapping("/name/{name}")
     @SecurityRequirement(name = "JWT")
-    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('USER') || hasAuthority('ADMINCOMPANY')")
+    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('USER') || hasAuthority('COMPANY_ADMIN')")
     public List<DocAttributeDto> getDocAttributesByNameLike(
             @PathVariable @Parameter(description = "Подстрока имени") String name,
-            @AuthenticationPrincipal User user) {
+            @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
         List<DocAttribute> docAttributes = docAttributeService.getDocAttributesByName(name, user);
         return docAttributes.stream()
                 .map(o -> modelMapper.map(o, DocAttributeDto.class))
@@ -121,11 +122,11 @@ public class DocAttributeController {
     @Operation(summary = "Удалить атрибут")
     @DeleteMapping("/{docAttributeId}")
     @SecurityRequirement(name = "JWT")
-    @PreAuthorize("hasRole('ADMIN') || (@docAttributeServiceImpl.isAllowedAttribute(#docAttributeId, #user) && hasAuthority('ADMINCOMPANY'))")
+    @PreAuthorize("hasRole('ADMIN') || (@docAttributeServiceImpl.isAllowedAttribute(#docAttributeId, #user) && hasAuthority('COMPANY_ADMIN'))")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteAttribute(
             @PathVariable @Parameter(description = "ID атрибута") Long docAttributeId,
-            @AuthenticationPrincipal User user) {
+            @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
         log.info("Получен запрос на удаление DocAttribute с ID: {}", docAttributeId);
         docAttributeService.deleteDocAttribute(docAttributeId);
     }

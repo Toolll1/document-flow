@@ -10,10 +10,7 @@
 
             <tableExists tableName="users"/>
 
-
         </preConditions>
-        <update tableName="users">
-            <column name="role" type="varchar(16)" />
-        </update>
+        <modifyDataType tableName="users" columnName="role" newDataType="varchar(16)"/>
     </changeSet>
 </databaseChangeLog>

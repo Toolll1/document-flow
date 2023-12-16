@@ -33,7 +33,7 @@ public class DocProcessController {
     @PostMapping("/{documentId}/recipient/{recipientId}/new-process")
     @PreAuthorize(
             "(@documentProcessSecurityService.isCanManageProcess(#documentId, authentication.principal.id) && hasAuthority('USER')) " +
-                    "|| (@documentProcessSecurityService.isMyCompany(#documentId, authentication.principal.id) && hasAuthority('ADMINCOMPANY'))")
+                    "|| (@documentProcessSecurityService.isMyCompany(#documentId, authentication.principal.id) && hasAuthority('COMPANY_ADMIN'))")
     @SecurityRequirement(name = "JWT")
     public DocProcessDto createNewProcess(
             @PathVariable @Parameter(description = "ID документа") Long documentId,
@@ -45,7 +45,7 @@ public class DocProcessController {
     @Operation(summary = "Посмотреть все процессы по документу")
     @GetMapping("{documentId}/processes")
     @PreAuthorize("(@documentProcessSecurityService.isHasAccessToProcess(#documentId, authentication.principal.id) && hasAuthority('USER'))" +
-            "|| (@documentProcessSecurityService.isMyCompany(#documentId, authentication.principal.id) && hasAuthority('ADMINCOMPANY'))")
+            "|| (@documentProcessSecurityService.isMyCompany(#documentId, authentication.principal.id) && hasAuthority('COMPANY_ADMIN'))")
     @SecurityRequirement(name = "JWT")
     public List<DocProcessDto> findProcessByDocumentId(@PathVariable @Parameter(description = "ID документа") Long documentId) {
         return documentProcessService.findProcessesByDocumentId(documentId)
@@ -57,7 +57,7 @@ public class DocProcessController {
     @Operation(summary = "Получить процесс по ID")
     @GetMapping("/processes/{processId}")
     @PreAuthorize("(@documentProcessSecurityService.isHasAccessToProcess(#processId, authentication.principal.id))" +
-            "|| (@documentProcessSecurityService.isMyCompanyProcess(#processId, authentication.principal.id) && hasAuthority('ADMINCOMPANY'))")
+            "|| (@documentProcessSecurityService.isMyCompanyProcess(#processId, authentication.principal.id) && hasAuthority('COMPANY_ADMIN'))")
     @SecurityRequirement(name = "JWT")
     public DocProcessDto findProcessById(@PathVariable @Parameter(description = "ID документа") Long processId) {
         return modelMapper.map(documentProcessService.findProcessById(processId), DocProcessDto.class);
@@ -85,7 +85,7 @@ public class DocProcessController {
     @DeleteMapping("/processes/{processId}")
     @PreAuthorize("(@documentProcessSecurityService.isCanManageProcess(#processId, authentication.principal.id) " +
             "&& !@documentProcessSecurityService.isProcessDone(#processId) && hasAuthority('USER')) " +
-            "|| (@documentProcessSecurityService.isMyCompanyProcess(#processId, authentication.principal.id) && hasAuthority('ADMINCOMPANY'))")
+            "|| (@documentProcessSecurityService.isMyCompanyProcess(#processId, authentication.principal.id) && hasAuthority('COMPANY_ADMIN'))")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @SecurityRequirement(name = "JWT")
     public void deleteProcess(@PathVariable @Parameter(description = "ID процесса") Long processId) {
@@ -95,7 +95,7 @@ public class DocProcessController {
     @Operation(summary = "Отправить документ на согласование")
     @PatchMapping("/processes/{processId}/send-to-approve")
     @PreAuthorize("(@documentProcessSecurityService.isHasAccessToProcess(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('USER')) " +
-            "|| (@documentProcessSecurityService.isMyCompanyProcess(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('ADMINCOMPANY'))")
+            "|| (@documentProcessSecurityService.isMyCompanyProcess(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('COMPANY_ADMIN'))")
     @SecurityRequirement(name = "JWT")
     @Parameter(name = "processUpdateRequestDto", hidden = true)
     @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
@@ -111,7 +111,7 @@ public class DocProcessController {
     @Operation(summary = "Согласовать документ")
     @PatchMapping("/processes/{processId}/approve")
     @PreAuthorize("(@documentProcessSecurityService.isRecipient(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('USER'))" +
-            "|| (@documentProcessSecurityService.isMyCompanyProcess(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('ADMINCOMPANY'))")
+            "|| (@documentProcessSecurityService.isMyCompanyProcess(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('COMPANY_ADMIN'))")
     @SecurityRequirement(name = "JWT")
     @Parameter(name = "processUpdateRequestDto", hidden = true)
     @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
@@ -126,7 +126,7 @@ public class DocProcessController {
     @Operation(summary = "Отклонить документ")
     @PatchMapping("/processes/{processId}/reject")
     @PreAuthorize("(@documentProcessSecurityService.isRecipient(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('USER'))" +
-            "|| (@documentProcessSecurityService.isMyCompanyProcess(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('ADMINCOMPANY'))")
+            "|| (@documentProcessSecurityService.isMyCompanyProcess(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('COMPANY_ADMIN'))")
     @SecurityRequirement(name = "JWT")
     @Parameter(name = "processUpdateRequestDto", hidden = true)
     @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
@@ -141,7 +141,7 @@ public class DocProcessController {
     @Operation(summary = "Отправить документ на доработку")
     @PatchMapping("/processes/{processId}/send-to-correction")
     @PreAuthorize("(@documentProcessSecurityService.isRecipient(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('USER'))" +
-            "|| (@documentProcessSecurityService.isMyCompanyProcess(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('ADMINCOMPANY'))")
+            "|| (@documentProcessSecurityService.isMyCompanyProcess(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('COMPANY_ADMIN'))")
     @SecurityRequirement(name = "JWT")
     @Parameter(name = "processUpdateRequestDto", hidden = true)
     @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")
@@ -156,7 +156,7 @@ public class DocProcessController {
     @Operation(summary = "Делегировать согласование документа")
     @PatchMapping("/processes/{processId}/delegate-to-other-user/{recipientId}")
     @PreAuthorize("(@documentProcessSecurityService.isRecipient(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('USER'))" +
-            "|| (@documentProcessSecurityService.isMyCompanyProcess(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('ADMINCOMPANY'))")
+            "|| (@documentProcessSecurityService.isMyCompanyProcess(#processUpdateRequestDto.processId, authentication.principal.id) && hasAuthority('COMPANY_ADMIN'))")
     @SecurityRequirement(name = "JWT")
     @Parameter(name = "processUpdateRequestDto", hidden = true)
     @Parameter(name = "processId", in = ParameterIn.PATH, required = true, description = "ID процесса")

@@ -1,5 +1,10 @@
 package ru.rosatom.documentflow.adapters;
 
+import org.springframework.stereotype.Component;
+import ru.rosatom.documentflow.models.User;
+import ru.rosatom.documentflow.models.UserRole;
+
+@Component
 public class CommonUtils {
     public static final String PAGINATION_DEFAULT_FROM = "0";
     public static final String PAGINATION_DEFAULT_SIZE = "10";
@@ -14,4 +19,8 @@ public class CommonUtils {
     public static final String CHANGE_DOCUMENT_ATTRIBUTES =
             "Изменены значения атрибутов пользователем id-%d. Старая версия: '%s'. Новая версия: '%s'. ";
     public static final String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+
+    public boolean isAdmin(User user) {
+        return user.getRole() == UserRole.ADMIN;
+    }
 }
