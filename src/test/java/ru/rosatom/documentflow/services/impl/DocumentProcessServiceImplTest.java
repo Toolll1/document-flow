@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import ru.rosatom.documentflow.exceptions.IllegalProcessStatusException;
+import ru.rosatom.documentflow.kafka.Producer;
 import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
 import ru.rosatom.documentflow.services.DocumentProcessService;
@@ -30,12 +31,13 @@ class DocumentProcessServiceImplTest {
     private final UserService userService = Mockito.mock(UserService.class);
     private final DocProcessRepository docProcessRepository = Mockito.mock(DocProcessRepository.class);
     private final EmailService emailService = Mockito.mock(EmailService.class);
+    private final Producer producer = Mockito.mock(Producer.class);
     private final DocumentProcessService documentProcessService = new DocumentProcessServiceImpl(
             documentService,
             userService,
             docProcessRepository,
-            emailService);
-
+            emailService,
+            producer);
 
     @Nested
     class ApprovalTests {
