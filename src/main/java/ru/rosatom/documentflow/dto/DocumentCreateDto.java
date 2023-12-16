@@ -15,10 +15,6 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DocumentCreateDto {
 
-    @Schema(description = "ID организации")
-    @NotNull
-    Long idOrganization;
-
     @Schema(description = "Тип документа")
     @NotNull
     Long docTypId;

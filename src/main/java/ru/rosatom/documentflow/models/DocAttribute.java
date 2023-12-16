@@ -33,4 +33,8 @@ public class DocAttribute {
     @JsonIgnore
     @ManyToMany(mappedBy = "attributes")
     private List<DocType> docTypes = new ArrayList<>();
+
+    @OneToOne(targetEntity = UserOrganization.class)
+    @JoinColumn(name = "org_id")
+    private UserOrganization organization;
 }

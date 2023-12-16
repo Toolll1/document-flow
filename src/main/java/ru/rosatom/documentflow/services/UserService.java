@@ -1,5 +1,7 @@
 package ru.rosatom.documentflow.services;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import ru.rosatom.documentflow.dto.UserUpdateDto;
 import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.models.UserOrganization;
@@ -14,7 +16,7 @@ public interface UserService {
 
     User getUser(Long userId);
 
-    List<User> getUsers(List<Long> ids, String sort, Integer from, Integer size);
+    Page<User> getUsers(List<Long> ids, Pageable pageable);
 
     User getUserByPhone(String phone);
 
@@ -26,5 +28,5 @@ public interface UserService {
 
     boolean setPasswordToUser(String password, Long id);
 
-    List<User> getAllUsers();
+    Page<User> getAllUsers(Pageable pageable);
 }

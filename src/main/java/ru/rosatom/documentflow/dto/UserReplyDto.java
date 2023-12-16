@@ -38,6 +38,6 @@ public class UserReplyDto {
     private final UserPassportDto userPassportDto;
 
     @Schema(description = "Организация")
-    private final OrgDto orgDto;
+    private final OrgDto userOrganization;
 
 }
