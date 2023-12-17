@@ -130,16 +130,8 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
     }
 
     private void validateAndUpdateUserInOrganization(Long userId, Long orgId, UserOrganization organization) {
-        validateUserExistence(userId);
         validateUserBelongsToOrganization(userId, orgId);
         organization.setUser(userId);
-    }
-
-    private void validateUserExistence(Long userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new BadRequestException(
-                    String.format("Пользователь с id = %d не найден. Назначение получателем по-умолчанию невозможно.", userId));
-        }
     }
 
     private void validateUserBelongsToOrganization(Long userId, Long orgId) {
@@ -150,9 +142,7 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
         if (!user.getOrganization().getId().equals(orgId)) {
             throw new BadRequestException(
                     String.format("Пользователь с id = %d не является сотрудником организации. " +
-                            "Назначение получателем по-умолчанию невозможно.", userId));
+                            "Назначение получателем по умолчанию невозможно.", userId));
         }
     }
-
-
 }
