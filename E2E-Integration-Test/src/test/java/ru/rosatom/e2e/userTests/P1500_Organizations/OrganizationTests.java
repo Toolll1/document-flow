@@ -97,7 +97,7 @@ public class OrganizationTests extends BasicHttpTest {
         return withAuthClient(fedotovAuth)
                 .get()
                 .uri(uriBuilder -> uriBuilder
-                        .path(OrganizationsEndpoint.ORGANIZATION_SEARCH_NAME + "/" + organizationSearchRequestName.getName())
+                        .path(OrganizationsEndpoint.ORGANIZATION_SEARCH_NAME+ organizationSearchRequestName.getName())
                         .build())
                 .exchange();
     }
@@ -118,4 +118,5 @@ public class OrganizationTests extends BasicHttpTest {
         getResponseSpecAllOrganizationsWithName(organizationSearchRequestName)
                 .expectStatus().is5xxServerError();
     }
+
 }

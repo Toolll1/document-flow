@@ -9,9 +9,6 @@ import java.util.List;
 @Data
 public class OrganizationSearchResponseId {
 
-//    @JsonProperty("id")
-//    private Organization organization;
-
     private Integer id;
 
     private String name;
