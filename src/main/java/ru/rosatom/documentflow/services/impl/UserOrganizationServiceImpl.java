@@ -74,7 +74,7 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
      */
     @Override
     public UserOrganization updateOrganization(Long orgId, OrgUpdateRequest orgUpdateRequest, User user) {
-        if (!commonUtils.isAdmin(user)){
+        if (!user.isAdmin()){
             orgId = user.getOrganization().getId();
         }
         throwIfOrganizationExists(orgId, orgUpdateRequest.getName());

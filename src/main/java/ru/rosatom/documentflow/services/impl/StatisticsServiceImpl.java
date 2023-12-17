@@ -40,7 +40,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Override
     public DocStatisticDTO getCount(User user) {
         DocStatisticDTO statisticDTO;
-        if (commonUtils.isAdmin(user)) {
+        if (user.isAdmin()) {
             statisticDTO = new DocStatisticDTO(documentService.getAllDocuments().size());
         } else {
             statisticDTO = new DocStatisticDTO(documentService.findDocuments(
@@ -65,7 +65,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     public DocStatisticDTO getCountByStatus(String stringStatus, User user) {
         DocProcessStatus status = DocProcessStatus.valueOf(stringStatus);
         DocStatisticDTO statisticDTO;
-        if (commonUtils.isAdmin(user)) {
+        if (user.isAdmin()) {
             statisticDTO = new DocStatisticDTO(documentService.findDocumentsByProcessStatus(status).size());
         } else {
             statisticDTO = new DocStatisticDTO(documentService.findDocumentsByProcessStatusAndIdOrganization(status, user.getOrganization().getId()).size());
@@ -84,7 +84,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     public StatisticUsersAndOrgDto statisticsUserAndOrganization(User user) {
         int countUser;
         int countOrganization;
-        if (commonUtils.isAdmin(user)) {
+        if (user.isAdmin()) {
             countUser = userService.getAllUsers(PageRequest.of(0, Integer.MAX_VALUE)).stream().collect(Collectors.toSet()).size();
             countOrganization = userOrganizationService.getAllOrganizations(PageRequest.of(0, Integer.MAX_VALUE))
                     .stream()
@@ -108,7 +108,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Override
     public List<UserRatingDto> getRatingAllUsersByOrgId(Long orgId, User user) {
         List<UserRatingDto> rating;
-        if (commonUtils.isAdmin(user)) {
+        if (user.isAdmin()) {
             rating = userRepository.findRatingForAllUsersByOrganizationId(orgId);
         } else {
             rating = userRepository.findRatingForAllUsersByOrganizationId(user.getOrganization().getId());

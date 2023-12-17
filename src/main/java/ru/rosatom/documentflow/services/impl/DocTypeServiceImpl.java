@@ -74,7 +74,7 @@ public class DocTypeServiceImpl implements DocTypeService {
     @Override
     public List<DocType> getDocTypesByName(String name, User user) {
         List<DocType> docTypes;
-        if (commonUtils.isAdmin(user)) {
+        if (user.isAdmin()) {
             docTypes = docTypeRepository.findByNameContains(name);
         } else {
             docTypes = docTypeRepository.findByUserOrganizationIdAndNameContains(user.getOrganization().getId(), name);

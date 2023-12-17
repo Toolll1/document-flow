@@ -81,7 +81,7 @@ public class DocAttributeServiceImpl implements DocAttributeService {
     @Override
     public List<DocAttribute> getDocAttributesByName(String name, User user) {
         List<DocAttribute> docAttributes;
-        if (commonUtils.isAdmin(user)) {
+        if (user.isAdmin()) {
             docAttributes = docAttributeRepository.findByNameContains(name);
         } else {
             docAttributes = docAttributeRepository.findByOrganizationIdAndNameContains(user.getOrganization().getId(), name);
