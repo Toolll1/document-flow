@@ -11,6 +11,7 @@ import ru.rosatom.documentflow.exceptions.ConflictException;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
 import ru.rosatom.documentflow.models.OrgCreationRequest;
 import ru.rosatom.documentflow.models.OrgUpdateRequest;
+import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.models.UserOrganization;
 import ru.rosatom.documentflow.repositories.UserOrganizationRepository;
 import ru.rosatom.documentflow.repositories.UserRepository;
@@ -75,20 +76,10 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
         throwIfOrganizationExists(orgId, orgUpdateRequest.getName());
         UserOrganization organization = getOrganization(orgId);
         organization.setName(Objects.requireNonNullElse(orgUpdateRequest.getName(), organization.getName()));
-        if (orgUpdateRequest.getUserId() != null) {
-            if (!userRepository.existsById(orgUpdateRequest.getUserId())) {
-                throw new BadRequestException(
-                        String.format("Пользователь с id = %d не найден. Назначение получателем по-умолчанию невозможно.",
-                                orgUpdateRequest.getUserId()));
-            }
-            if (!userRepository.getById(orgUpdateRequest.getUserId()).getOrganization().getId().equals(orgId)) {
-                throw new BadRequestException(
-                        String.format("Пользователь с id = %d не является сотрудником организации. " +
-                                        "Назначение получателем по-умолчанию невозможно.",
-                                orgUpdateRequest.getUserId()));
-            }
-            organization.setUser(orgUpdateRequest.getUserId());
-        }
+
+        Optional.ofNullable(orgUpdateRequest.getUserId())
+                .ifPresent(userId -> validateAndUpdateUserInOrganization(userId, orgId, organization));
+
         return repository.save(organization);
     }
 
@@ -136,6 +127,31 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
 
     private void throwIfOrganizationExists(String name) {
         throwIfOrganizationExists(-1L, name);
+    }
+
+    private void validateAndUpdateUserInOrganization(Long userId, Long orgId, UserOrganization organization) {
+        validateUserExistence(userId);
+        validateUserBelongsToOrganization(userId, orgId);
+        organization.setUser(userId);
+    }
+
+    private void validateUserExistence(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new BadRequestException(
+                    String.format("Пользователь с id = %d не найден. Назначение получателем по-умолчанию невозможно.", userId));
+        }
+    }
+
+    private void validateUserBelongsToOrganization(Long userId, Long orgId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BadRequestException(
+                        String.format("Пользователь с id = %d не найден.", userId)));
+
+        if (!user.getOrganization().getId().equals(orgId)) {
+            throw new BadRequestException(
+                    String.format("Пользователь с id = %d не является сотрудником организации. " +
+                            "Назначение получателем по-умолчанию невозможно.", userId));
+        }
     }
 
 
