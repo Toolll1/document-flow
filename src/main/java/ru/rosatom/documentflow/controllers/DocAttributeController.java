@@ -105,8 +105,9 @@ public class DocAttributeController {
         return modelMapper.map(docAttribute, DocAttributeDto.class);
     }
 
-    @Operation(summary = "Поиск атрибута по подстроке в имени, при запросе от ADMIN поиск будет проходить по всей базе, " +
-            "для остальных ролей поиск атрибутов внутри своей компании")
+    @Operation(summary = "Поиск атрибута по подстроке в имени. ",
+            description = "при запросе от ADMIN поиск будет проходить по всей базе, для остальных ролей поиск" +
+                    " атрибутов проходит внутри своей организации")
     @GetMapping("/name/{name}")
     @SecurityRequirement(name = "JWT")
     @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('USER') || hasAuthority('COMPANY_ADMIN')")

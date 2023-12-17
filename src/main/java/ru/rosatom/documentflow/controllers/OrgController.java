@@ -80,7 +80,7 @@ public class OrgController {
                 .collect(Collectors.toList());
     }
 
-    @Operation(summary = "Изменить организацию, при запросе от ADMIN по указанной компании, для остальных ролей обновиться своя компания.")
+    @Operation(summary = "Изменить организацию.", description = "При запросе от ADMIN по указанной компании, для остальных ролей обновиться своя компания.")
     @RequestMapping(value = "/{orgId}", method = RequestMethod.PATCH)
     @SecurityRequirement(name = "JWT")
     @PreAuthorize("(#orgId == authentication.principal.organization.id && hasAuthority('COMPANY_ADMIN')) || hasAuthority('ADMIN')")

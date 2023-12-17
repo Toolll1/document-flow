@@ -29,8 +29,8 @@ public class StatisticsController {
     private final ModelMapper modelMapper;
 
 
-    @Operation(summary = "Получить общее кол-во документов, при запросе от ADMIN поиск будет проходить по всей базе," +
-            " для остальных ролей поиск внутри своей компании")
+    @Operation(summary = "Получить общее кол-во документов.",
+    description = "при запросе от ADMIN поиск будет проходить по всей базе, для остальных ролей поиск внутри своей компании")
     @GetMapping("/documents/getCount")
     @SecurityRequirement(name = "JWT")
     @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('COMPANY_ADMIN')")
@@ -38,8 +38,8 @@ public class StatisticsController {
         return statisticsService.getCount(user);
     }
 
-    @Operation(summary = "Получить кол-во документов со статусом, при запросе от ADMIN поиск будет проходить по всей базе," +
-            " для остальных ролей поиск внутри своей компании")
+    @Operation(summary = "Получить кол-во документов со статусом",
+            description = "При запросе от ADMIN поиск будет проходить по всей базе, для остальных ролей поиск внутри своей компании")
     @GetMapping("/documents/getCountByStatus/{status}")
     @SecurityRequirement(name = "JWT")
     @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('COMPANY_ADMIN')")
@@ -49,8 +49,8 @@ public class StatisticsController {
         return statisticsService.getCountByStatus(status, user);
     }
 
-    @Operation(summary = "Получить кол-во пользователей, при запросе от ADMIN поиск будет проходить по всей базе," +
-            " для остальных ролей поиск внутри своей компании")
+    @Operation(summary = "Получить кол-во пользователей",
+    description = "При запросе от ADMIN поиск будет проходить по всей базе, для остальных ролей поиск внутри своей компании")
     @GetMapping("/users/count")
     @SecurityRequirement(name = "JWT")
     @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('COMPANY_ADMIN')")
@@ -66,8 +66,8 @@ public class StatisticsController {
         return modelMapper.map(statisticsService.statisticsUserAndOrganization(user), CountOrgDto.class);
     }
 
-    @Operation(summary = "Получить рейтинг активных пользователей по организации, при запросе от ADMIN по указанной компании," +
-            " для остальных ролей поиск внутри своей компании")
+    @Operation(summary = "Получить рейтинг активных пользователей по организации.",
+            description = "При запросе от ADMIN по указанной компании, для остальных ролей поиск внутри своей компании")
     @GetMapping("/userRating/{orgId}")
     @SecurityRequirement(name = "JWT")
     @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('COMPANY_ADMIN')")
