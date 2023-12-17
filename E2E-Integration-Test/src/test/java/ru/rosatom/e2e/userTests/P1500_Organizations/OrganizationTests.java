@@ -14,7 +14,8 @@ import java.util.stream.Stream;
 @DisplayName("Organization tests")
 public class OrganizationTests extends BasicHttpTest {
 
-    UserAuthorizationResponse fedotovAuth = getContextValue(Environment.USER_FEDOTOV_AUTHORIZATION);
+    UserAuthorizationResponse fedotovAuth = getContextValue(Environment.USER_FEDOTOV_AUTHORIZATION); //орг 1
+    UserAuthorizationResponse antonovAuth = getContextValue(Environment.USER_ANTONOV_AUTHORIZATION); // орг 2
 
     @Test
     @DisplayName("Get all organizations")
@@ -46,6 +47,46 @@ public class OrganizationTests extends BasicHttpTest {
     public void simpleGetAllOrganizationsWithIncorrectName() {
         getOrganizationWithIncorrectName(new OrganizationSearchRequestName("."));
     }
+
+    @Test
+    @DisplayName("Add organization")
+    public void simpleAddOrganization() {
+        addOrganization(new OrganizationAddRequest("New organization", "1234567890"));
+    }
+
+    @Test
+    @DisplayName("Add organization - fail forbidden")
+    public void simpleAddOrganizationFordidden() {
+        addOrganizationForbidden(new OrganizationAddRequest("New organization", "1234567890"));
+    }
+
+
+    @Test
+    @DisplayName("Update organization")
+    public void simpleUpdateOrganization() {
+        updateOrganization(new OrganizationUpdateRequest("New name"), new OrganizationSearchRequestId(2));
+    }
+
+    @Test
+    @DisplayName("Update organization Fail")
+    public void simpleUpdateOrganizationFail() {
+        updateOrganizationFail(new OrganizationUpdateRequest("New name"), new OrganizationSearchRequestId(1));
+    }
+
+    @Test
+    @DisplayName("Delete organization")
+    public void simpleDeleteOrganization() {
+        deleteOrganization( new OrganizationSearchRequestId(2));
+
+    }
+
+    @Test
+    @DisplayName("Delete organization Fail")
+    public void simpleDeleteOrganizationFail() {
+        deleteOrganizationFail( new OrganizationSearchRequestId(2));
+
+    }
+
 
     private WebTestClient.ResponseSpec getResponseSpecAllOrganizations() {
         return withAuthClient(fedotovAuth)
@@ -105,7 +146,7 @@ public class OrganizationTests extends BasicHttpTest {
     private void getOrganizationWithName(OrganizationSearchRequestName organizationSearchRequestName) {
         getResponseSpecAllOrganizationsWithName(organizationSearchRequestName)
                 .expectStatus().isOk()
-                .expectBodyList(OrganizationSearchResponseId.class) //OrganizationSearchResponse expectBodyList
+                .expectBodyList(OrganizationSearchResponseId.class)
                 .value(response -> {
                     Assertions.assertNotNull(response);
                     for (OrganizationSearchResponseId organizationSearchResponseId : response) {
@@ -119,4 +160,111 @@ public class OrganizationTests extends BasicHttpTest {
                 .expectStatus().is5xxServerError();
     }
 
+
+    private void deleteOrganization(OrganizationSearchRequestId organizationSearchRequestId){
+        getResponseSpecDeleteOrganization(organizationSearchRequestId)
+                .expectStatus().isOk();
+    }
+
+    private void deleteOrganizationFail(OrganizationSearchRequestId organizationSearchRequestId){
+        getResponseSpecDeleteOrganizationFail(organizationSearchRequestId)
+                .expectStatus().isForbidden();
+    }
+
+
+    private void updateOrganization(OrganizationUpdateRequest organizationUpdateRequest,
+                                    OrganizationSearchRequestId organizationSearchRequestId){
+        getResponseSpecUpdateOrganization(organizationUpdateRequest, organizationSearchRequestId)
+                .expectStatus().isOk()
+                .expectBody(OrganizationUpdateResponse.class)
+                .value(response -> {
+                    Assertions.assertNotNull(response);
+                    Stream.of(response.getId(), response.getInn(), response.getName()).forEach(Assertions::assertNotNull);
+                    Assertions.assertEquals(response.getName(), organizationUpdateRequest.getName());
+                     Assertions.assertEquals(response.getId(), organizationSearchRequestId.getId());
+                }).returnResult().getResponseBody();
+    }
+
+    private void updateOrganizationFail(OrganizationUpdateRequest organizationUpdateRequest,
+                                        OrganizationSearchRequestId organizationSearchRequestId) {
+        getResponseSpecUpdateOrganizationFail(organizationUpdateRequest, organizationSearchRequestId)
+                .expectStatus().isForbidden();
+    }
+
+    private WebTestClient.ResponseSpec getResponseSpecUpdateOrganizationFail(OrganizationUpdateRequest organizationUpdateRequest,
+                                                                         OrganizationSearchRequestId organizationSearchRequestId) {
+        return withAuthClient(antonovAuth) // тут  юзер другой орг
+                .patch()
+                .uri(uriBuilder -> uriBuilder
+                        .path(OrganizationsEndpoint.ORGANIZATION_SEARCH + "/" + organizationSearchRequestId.getId()) //  + organizationUpdateRequest.getId())
+                        .build())
+                .bodyValue(organizationUpdateRequest)
+                .exchange();
+    }
+
+    private WebTestClient.ResponseSpec getResponseSpecUpdateOrganization(OrganizationUpdateRequest organizationUpdateRequest,
+                                                                         OrganizationSearchRequestId organizationSearchRequestId) {
+        return withAuthClient(fedotovAuth)
+                .patch()
+                .uri(uriBuilder -> uriBuilder
+                        .path(OrganizationsEndpoint.ORGANIZATION_SEARCH + "/" + organizationSearchRequestId.getId()) //  + organizationUpdateRequest.getId())
+                        .build())
+                .bodyValue(organizationUpdateRequest)
+                .exchange();
+    }
+
+    private WebTestClient.ResponseSpec getResponseSpecDeleteOrganization(OrganizationSearchRequestId organizationSearchRequestId) {
+        return withAuthClient(fedotovAuth) // тут админ
+                .delete()
+                .uri(uriBuilder -> uriBuilder
+                        .path(OrganizationsEndpoint.ORGANIZATION_SEARCH + "/" + organizationSearchRequestId.getId())
+                        .build())
+                .exchange();
+    }
+
+    private WebTestClient.ResponseSpec getResponseSpecDeleteOrganizationFail(OrganizationSearchRequestId organizationSearchRequestId) {
+        return withAuthClient(fedotovAuth) // юзер - ошибка
+                .delete()
+                .uri(uriBuilder -> uriBuilder
+                        .path(OrganizationsEndpoint.ORGANIZATION_SEARCH + "/" + organizationSearchRequestId.getId())
+                        .build())
+                .exchange();
+    }
+
+    private WebTestClient.ResponseSpec getResponseSpecAddOrganization(OrganizationAddRequest organizationAddRequest) {
+        return withAuthClient(fedotovAuth)  // тут поменять на админа
+                .post()
+                .uri(uriBuilder -> uriBuilder
+                        .path(OrganizationsEndpoint.ORGANIZATION_SEARCH)  //+ "/" + organizationAddRequest.getId())
+                        .build())
+                .bodyValue(organizationAddRequest)
+                .exchange();
+    }
+
+    private void addOrganization(OrganizationAddRequest organizationAddRequest) {
+        getResponseSpecAddOrganization(organizationAddRequest)
+                .expectStatus().isOk()
+                .expectBody(OrganizationAddResponce.class)
+                .value(response -> {
+                    Assertions.assertNotNull(response);
+                    Stream.of(response.getInn(), response.getName()).forEach(Assertions::assertNotNull);
+                    Assertions.assertEquals(response.getName(), organizationAddRequest.getName());
+                    Assertions.assertEquals(response.getInn(), organizationAddRequest.getInn());
+                }).returnResult().getResponseBody();
+    }
+
+    private WebTestClient.ResponseSpec getResponseSpecAddOrganizationForbidden(OrganizationAddRequest organizationAddRequest) {
+        return withAuthClient(fedotovAuth)
+                .post()
+                .uri(uriBuilder -> uriBuilder
+                        .path(OrganizationsEndpoint.ORGANIZATION_SEARCH)
+                        .build())
+                .bodyValue(organizationAddRequest)
+                .exchange();
+    }
+
+    private void addOrganizationForbidden(OrganizationAddRequest organizationAddRequest){
+        getResponseSpecAddOrganizationForbidden(organizationAddRequest)
+                .expectStatus().isForbidden();
+    }
 }
