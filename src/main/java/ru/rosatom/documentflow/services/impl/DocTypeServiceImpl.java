@@ -23,7 +23,7 @@ public class DocTypeServiceImpl implements DocTypeService {
 
     private final DocTypeRepository docTypeRepository;
     private final DocAttributeRepository docAttributeRepository;
-    private final CommonUtils commonUtils;
+
 
 
     @Override

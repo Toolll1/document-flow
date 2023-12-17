@@ -28,7 +28,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     private UserService userService;
     private UserOrganizationService userOrganizationService;
     private UserRepository userRepository;
-    private CommonUtils commonUtils;
+
 
     /**
      * Получить общее кол-во документов, при запросе от ADMIN поиск будет проходить по всей базе,

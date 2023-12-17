@@ -27,7 +27,7 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
 
     private final UserOrganizationRepository repository;
 
-    private final CommonUtils commonUtils;
+
 
     @Override
     public UserOrganization getOrganization(Long orgId) {

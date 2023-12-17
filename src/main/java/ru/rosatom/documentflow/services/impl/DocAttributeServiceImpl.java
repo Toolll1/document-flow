@@ -26,7 +26,7 @@ public class DocAttributeServiceImpl implements DocAttributeService {
 
     private final DocAttributeRepository docAttributeRepository;
     private final UserOrganizationService userOrganizationService;
-    private final CommonUtils commonUtils;
+
 
 
     @Override
