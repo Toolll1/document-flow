@@ -6,6 +6,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import ru.rosatom.e2e.user.UserAuthorizationResponse;
 
+import java.time.Duration;
 import java.util.HashMap;
 
 @SpringJUnitConfig
@@ -23,6 +24,7 @@ public abstract class BasicHttpTest {
     public BasicHttpTest() {
         notAuthClient = WebTestClient.bindToServer()
                 .baseUrl(appConfiguration.getBaseUrl())
+                .responseTimeout(Duration.ofSeconds(10))
                 .defaultHeader("Content-Type", "application/json").build();
     }
 
