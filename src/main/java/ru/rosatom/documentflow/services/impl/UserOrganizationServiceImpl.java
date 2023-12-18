@@ -29,6 +29,8 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
     private final UserOrganizationRepository repository;
     private final UserRepository userRepository;
 
+
+
     @Override
     public UserOrganization getOrganization(Long orgId) {
         return repository
@@ -65,14 +67,19 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
     }
 
     /**
-     * Обновить организацию
+     * Обновить организацию при запросе от ADMIN по указанной компании,
+     * для остальных ролей всегда обновиться своя компания.
      *
      * @param orgId            id организации
      * @param orgUpdateRequest запрос на обновление организации
+     * @param user
      * @return UserOrganization обновленная организация
      */
     @Override
-    public UserOrganization updateOrganization(Long orgId, OrgUpdateRequest orgUpdateRequest) {
+    public UserOrganization updateOrganization(Long orgId, OrgUpdateRequest orgUpdateRequest, User user) {
+        if (!user.isAdmin()){
+            orgId = user.getOrganization().getId();
+        }
         throwIfOrganizationExists(orgId, orgUpdateRequest.getName());
         UserOrganization organization = getOrganization(orgId);
         organization.setName(Objects.requireNonNullElse(orgUpdateRequest.getName(), organization.getName()));

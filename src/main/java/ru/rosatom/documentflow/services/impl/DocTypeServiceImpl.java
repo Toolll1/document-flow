@@ -5,11 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.rosatom.documentflow.adapters.CommonUtils;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
-import ru.rosatom.documentflow.models.DocAttribute;
-import ru.rosatom.documentflow.models.DocType;
-import ru.rosatom.documentflow.models.DocTypeCreationRequest;
-import ru.rosatom.documentflow.models.DocTypeUpdateRequest;
+import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocAttributeRepository;
 import ru.rosatom.documentflow.repositories.DocTypeRepository;
 import ru.rosatom.documentflow.services.DocTypeService;
@@ -25,6 +23,8 @@ public class DocTypeServiceImpl implements DocTypeService {
 
     private final DocTypeRepository docTypeRepository;
     private final DocAttributeRepository docAttributeRepository;
+
+
 
     @Override
     public Page<DocType> getAllDocTypes(Pageable pageable, Optional<Long> orgId) {
@@ -63,9 +63,23 @@ public class DocTypeServiceImpl implements DocTypeService {
         docTypeRepository.delete(docType);
     }
 
+    /**
+     * Поиск типа по подстроке в имени, при запросе от ADMIN поиск будет проходить по всей базе,
+     * для остальных ролей поиск типов внутри своей компании.
+     *
+     * @param name - имя типа
+     * @param user - пользователь отправивший запрос
+     * @return DocType - список типов
+     */
     @Override
-    public List<DocType> getDocTypesByName(String name) {
-        return docTypeRepository.findByNameContains(name);
+    public List<DocType> getDocTypesByName(String name, User user) {
+        List<DocType> docTypes;
+        if (user.isAdmin()) {
+            docTypes = docTypeRepository.findByNameContains(name);
+        } else {
+            docTypes = docTypeRepository.findByUserOrganizationIdAndNameContains(user.getOrganization().getId(), name);
+        }
+        return docTypes;
     }
 
     @Override
@@ -76,5 +90,14 @@ public class DocTypeServiceImpl implements DocTypeService {
         docType.addAttributes(docAttribute);
 
         return docTypeRepository.save(docType);
+    }
+
+    public boolean isAllowedType(Long id, User user) {
+        return Objects.equals(getDocTypeById(id).getUserOrganization().getId(), user.getOrganization().getId());
+    }
+
+    public boolean isAllowedTypeAttribute(Long docTypeId, Long docAttributeId, User user) {
+        return Objects.equals(getDocTypeById(docTypeId).getUserOrganization().getId(), user.getOrganization().getId()) &&
+                Objects.equals(docAttributeRepository.findById(docAttributeId).get().getOrganization().getId(), user.getOrganization().getId());
     }
 }

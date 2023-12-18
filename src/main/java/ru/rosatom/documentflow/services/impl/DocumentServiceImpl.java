@@ -40,7 +40,7 @@ public class DocumentServiceImpl implements DocumentService {
     final DocTypeService docTypeService;
     final DocAttributeValuesRepository docAttributeValuesRepository;
     final DocAttributeService docAttributeService;
-    private final FileService fileService;
+    final FileService fileService;
 
     @Override
     @Transactional
@@ -127,14 +127,14 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public Page<Document> findDocuments(DocParams p,
-                                        Pageable pageable) {
-        BooleanBuilder booleanBuilder = new BooleanBuilder();
+    public Set<Document> findDocumentsByProcessStatusAndIdOrganization(DocProcessStatus status, Long id) {
+        return documentRepository.findDocumentsByProcessStatusAndIdOrganization(status, id);
+    }
 
-        if (p.getOrgId() != null) {
-            booleanBuilder.and(QDocument.document.idOrganization.eq(p.getOrgId()));
-        }
-
+    @Override
+    public Page<Document> findDocuments(Long userId, DocParams p, Pageable pageable) {
+        User user = userService.getUser(userId);
+        BooleanBuilder booleanBuilder = new BooleanBuilder(QDocument.document.idOrganization.eq(user.getOrganization().getId()));
         if (p.getRangeStart() != null && p.getRangeEnd() != null && p.getRangeEnd().isBefore(p.getRangeStart())) {
             throw new BadRequestException("Даты поиска событий не верны");
         }
@@ -163,7 +163,6 @@ public class DocumentServiceImpl implements DocumentService {
                             .where(qAttributeValue.value.lower().likeIgnoreCase("%" + p.getAttributeValue().toLowerCase() + "%"))
             ));
         }
-
         return documentRepository.findAll(booleanBuilder, pageable);
     }
 
