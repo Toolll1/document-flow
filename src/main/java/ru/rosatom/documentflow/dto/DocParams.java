@@ -26,6 +26,4 @@ public class DocParams {
     Long attributeId;
     @Schema(description = "Значение атрибута")
     String attributeValue;
-    @Schema(description = "ID организации")
-    Long orgId;
 }

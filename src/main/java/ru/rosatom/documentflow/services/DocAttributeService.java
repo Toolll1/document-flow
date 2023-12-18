@@ -20,7 +20,7 @@ public interface DocAttributeService {
 
     void deleteDocAttribute(Long id);
 
-    List<DocAttribute> getDocAttributesByName(String name);
+    List<DocAttribute> getDocAttributesByName(String name, User user);
 
     DocAttribute getDocAttributeById(Long id);
 }
