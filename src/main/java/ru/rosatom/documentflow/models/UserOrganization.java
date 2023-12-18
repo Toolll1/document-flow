@@ -21,5 +21,5 @@ public class UserOrganization {
     @Column(name = "name", nullable = false, length = 100)
     private String name;
     @Column(name = "user_id")
-    private long user;
+    private long defaultRecipient;
 }

@@ -61,7 +61,7 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
         UserOrganization organization = UserOrganization.builder()
                 .name(orgCreationRequest.getName())
                 .inn(orgCreationRequest.getInn())
-                .user(orgCreationRequest.getUserId())
+                .defaultRecipient(orgCreationRequest.getUserId())
                 .build();
         return repository.save(organization);
     }
@@ -139,7 +139,7 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
 
     private void validateAndUpdateUserInOrganization(Long userId, Long orgId, UserOrganization organization) {
         validateUserBelongsToOrganization(userId, orgId);
-        organization.setUser(userId);
+        organization.setDefaultRecipient(userId);
     }
 
     private void validateUserBelongsToOrganization(Long userId, Long orgId) {
