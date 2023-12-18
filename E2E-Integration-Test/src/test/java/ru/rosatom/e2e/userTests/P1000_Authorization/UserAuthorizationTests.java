@@ -24,6 +24,7 @@ public class UserAuthorizationTests extends BasicHttpTest {
 
     UserAuthorizationResponse fedotovAuth;
     UserAuthorizationResponse antonovAuth;
+    UserAuthorizationResponse andreevAuth;
 
     @DisplayName("Incorrect authorization: wrong password")
     @ParameterizedTest
