@@ -84,8 +84,9 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
         UserOrganization organization = getOrganization(orgId);
         organization.setName(Objects.requireNonNullElse(orgUpdateRequest.getName(), organization.getName()));
 
+        Long finalOrgId = orgId;
         Optional.ofNullable(orgUpdateRequest.getUserId())
-                .ifPresent(userId -> validateAndUpdateUserInOrganization(userId, orgId, organization));
+                .ifPresent(userId -> validateAndUpdateUserInOrganization(userId, finalOrgId, organization));
 
         return repository.save(organization);
     }

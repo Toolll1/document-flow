@@ -2,12 +2,18 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
-    <include file="classpath:db/changelog/updates/v.2.0/add_organization_to_document_process.xml"
+    <include file="classpath:db/changelog/updates/v.2.0/v2.1.1_add_organization_to_document_process.xml"
              relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/updates/v.2.0/add_user_to_organizations.xml"
+    <include file="classpath:db/changelog/updates/v.2.0/v2.1.2_add_user_to_organizations.xml"
              relativeToChangelogFile="false"/>
-    <include file="db/changelog/updates/v.2.0/add_organization_to_attributes.xml"
+    <include file="classpath:db/changelog/updates/v.2.0/v2.1.3_add_organization_to_attributes.xml"
              relativeToChangelogFile="false"/>
-    <include file="db/changelog/updates/v.2.0/add_organization_to_document_types.xml"
+    <include file="classpath:db/changelog/updates/v.2.0/v2.1.4_add_organization_to_document_types.xml"
+             relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/updates/v.2.0/v2.2.1_update_user_role_max_len.xml"
+             relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/updates/v.2.0/v2.2.2_update_final_docstatus_default_new.xml"
+             relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/updates/v.2.0/v2.2.3_add_company_admin.xml"
              relativeToChangelogFile="false"/>
 </databaseChangeLog>

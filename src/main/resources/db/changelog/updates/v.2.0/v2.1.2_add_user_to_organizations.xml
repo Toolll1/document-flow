@@ -4,7 +4,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="add_user_id_to_organizations" author="Vasily_Chumachenko">
+    <changeSet id="v2.1.4_add_user_to_organizations" author="Vasily_Chumachenko">
         <preConditions>
             <tableExists tableName="organizations"/>
         </preConditions>
