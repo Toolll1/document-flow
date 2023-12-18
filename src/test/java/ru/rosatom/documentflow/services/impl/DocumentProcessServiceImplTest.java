@@ -4,8 +4,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
+import ru.rosatom.documentflow.exceptions.IllegalProcessStatusException;
 import ru.rosatom.documentflow.kafka.Producer;
 import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
@@ -29,7 +32,6 @@ class DocumentProcessServiceImplTest {
     private final DocProcessRepository docProcessRepository = Mockito.mock(DocProcessRepository.class);
     private final EmailService emailService = Mockito.mock(EmailService.class);
     private final Producer producer = Mockito.mock(Producer.class);
-
     private final DocumentProcessService documentProcessService = new DocumentProcessServiceImpl(
             documentService,
             userService,
@@ -37,14 +39,67 @@ class DocumentProcessServiceImplTest {
             emailService,
             producer);
 
+    @Nested
+    class ApprovalTests {
+        private DocProcess updatableDocProcess;
+        private final ProcessUpdateRequest processUpdateRequest = new ProcessUpdateRequest();
+        private final Document updatableDocProcessDocument = Mockito.mock(Document.class);
+
+        @Test
+        void testSendToApproveWithOneDocProcess() {
+            updatableDocProcess = new DocProcess(1L,
+                    updatableDocProcessDocument,
+                    Mockito.mock(User.class),
+                    Mockito.mock(User.class),
+                    DocProcessStatus.NEW,
+                    "");
+            processUpdateRequest.setProcessId(updatableDocProcess.getId());
+
+            Mockito.doReturn(Optional.of(updatableDocProcess))
+                    .when(docProcessRepository).findById(updatableDocProcess.getId());
+
+            documentProcessService.sendToApprove(processUpdateRequest);
+            Mockito.verify(docProcessRepository).save(updatableDocProcess);
+
+            Assertions.assertEquals(DocProcessStatus.WAITING_FOR_APPROVE, updatableDocProcess.getStatus());
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = DocProcessStatus.class, names = {"APPROVED", "REJECTED"})
+        void testSendToApproveWithDocProcessesWhoseStatusShouldNotChange(DocProcessStatus docProcessStatus) {
+            DocProcess docProcess = generateMockDocProcessWithStatus(docProcessStatus, updatableDocProcessDocument);
+            processUpdateRequest.setProcessId(docProcess.getId());
+
+            Mockito.doReturn(Optional.of(docProcess))
+                    .when(docProcessRepository).findById(docProcess.getId());
+
+            Assertions.assertThrows(IllegalProcessStatusException.class, () ->
+                    documentProcessService.sendToApprove(processUpdateRequest));
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = DocProcessStatus.class, names = {"NEW", "CORRECTING"})
+        void testSendToApproveWithDocProcessesWhoseStatusShouldChange(DocProcessStatus docProcessStatus) {
+            DocProcess docProcess = generateMockDocProcessWithStatus(docProcessStatus, updatableDocProcessDocument);
+            processUpdateRequest.setProcessId(docProcess.getId());
+
+            Mockito.doReturn(Optional.of(docProcess))
+                    .when(docProcessRepository).findById(docProcess.getId());
+
+            documentProcessService.sendToApprove(processUpdateRequest);
+            Mockito.verify(docProcessRepository).save(docProcess);
+
+            Assertions.assertEquals(DocProcessStatus.WAITING_FOR_APPROVE, docProcess.getStatus());
+        }
+
+    }
 
     @Nested
     class CorrectionTests {
         private final ProcessUpdateRequest processUpdateRequest = new ProcessUpdateRequest();
         private DocProcess updatableDocProcess;
-
-        private final Document updatableDocProcessDocument = Mockito.mock(Document.class);
-
+        private final Document
+                updatableDocProcessDocument = Mockito.mock(Document.class);
 
         @BeforeEach
         void init() {
@@ -89,10 +144,7 @@ class DocumentProcessServiceImplTest {
             Mockito.verify(docProcessRepository).saveAll(ArgumentMatchers.anyIterable());
             docProcessesWhoseStatusShouldChange.forEach(docProcess -> Assertions.assertEquals(DocProcessStatus.CORRECTING, docProcess.getStatus()));
             docProcessesWhoseStatusShouldNotChange.forEach(docProcess -> Assertions.assertNotEquals(DocProcessStatus.CORRECTING, docProcess.getStatus()));
-
-
         }
-
 
     }
 
