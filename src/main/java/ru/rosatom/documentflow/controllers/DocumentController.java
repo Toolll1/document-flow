@@ -52,7 +52,7 @@ public class DocumentController {
 
     // создание нового документа
     @Operation(summary = "Добавить новый документ")
-    @PreAuthorize("hasAuthority('USER')")
+    @PreAuthorize("hasAuthority('USER') || hasAuthority('COMPANY_ADMIN')")
     @PostMapping
     @SecurityRequirement(name = "JWT")
     public DocumentDto createDocument(
@@ -68,6 +68,8 @@ public class DocumentController {
     @Operation(summary = "Получить документ по ID")
     @GetMapping("/{documentId}")
     @SecurityRequirement(name = "JWT")
+    @PreAuthorize("@documentProcessSecurityService.isMyCompany(#documentId,#user.id) && " +
+            "(hasAuthority('USER') || hasAuthority('COMPANY_ADMIN'))")
     public DocumentDto getDocumentById(
             @PathVariable @Parameter(description = "ID документа") Long documentId,
             @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
@@ -80,6 +82,7 @@ public class DocumentController {
     @Operation(summary = "Получить документы по своей организации")
     @GetMapping
     @SecurityRequirement(name = "JWT")
+    @PreAuthorize("hasAuthority('USER') || hasAuthority('COMPANY_ADMIN')")
     public Page<DocumentDto> findDocuments(
             @RequestParam(required = false) @Parameter(description = "Имя документа")
             String text,
@@ -100,15 +103,10 @@ public class DocumentController {
             Long attributeId,
             @RequestParam(required = false) @Parameter(description = "Значение атрибута")
             String attributeValue,
-            @RequestParam(required = false, name = "org_id") @Parameter(description = "ID организации")
-            Long orgId,
             @AuthenticationPrincipal @Parameter(name = "user", hidden = true) User user) {
         log.trace("Запрос информации о документах своей организации от пользователя {}", user.getId());
         return documentService
-                .findDocuments(
-                        new DocParams(
-                                text, rangeStart, rangeEnd, creatorId, typeId, attributeId, attributeValue, orgId),
-                        pageable)
+                .findDocuments(user.getId(), new DocParams(text, rangeStart, rangeEnd, creatorId, typeId, attributeId, attributeValue), pageable)
                 .map(o -> modelMapper.map(o, DocumentDto.class));
     }
 
@@ -116,6 +114,9 @@ public class DocumentController {
     @Operation(summary = "Получить историю изменений по ID")
     @GetMapping("/{documentId}/changes")
     @SecurityRequirement(name = "JWT")
+    @PreAuthorize(
+            "(@documentProcessSecurityService.isCanManageProcess(#documentId,#user.id) && hasAuthority('USER')) || " +
+            "(@documentProcessSecurityService.isMyCompany(#documentId,#user.id) && hasAuthority('COMPANY_ADMIN'))")
     public Page<DocumentChangesDto> findDocChangesByDocumentId(
             @PathVariable @Parameter(description = "ID документа") Long documentId,
             @ParameterObject @PageableDefault(page = 0, size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
@@ -133,7 +134,8 @@ public class DocumentController {
     // обновление документа
     @Operation(summary = "Изменить документ")
     @PreAuthorize(
-            "@documentProcessSecurityService.isCanManageProcess(#documentId,#user.id) && hasAuthority('USER')")
+            "(@documentProcessSecurityService.isCanManageProcess(#documentId,#user.id) && hasAuthority('USER')) || " +
+            "(@documentProcessSecurityService.isMyCompany(#documentId,#user.id) && hasAuthority('COMPANY_ADMIN'))")
     @PatchMapping("/{documentId}")
     @SecurityRequirement(name = "JWT")
     public DocumentDto updateDocument(
@@ -148,7 +150,8 @@ public class DocumentController {
     // удаление документа
     @Operation(summary = "Удалить документ")
     @PreAuthorize(
-            "@documentProcessSecurityService.isCanManageProcess(#documentId,#user.id) && hasAuthority('USER')")
+            "(@documentProcessSecurityService.isCanManageProcess(#documentId, #user.id) && hasAuthority('USER')) || " +
+            "(@documentProcessSecurityService.isMyCompany(#documentId,#user.id) && hasAuthority('COMPANY_ADMIN'))")
     @DeleteMapping("/{documentId}")
     @SecurityRequirement(name = "JWT")
     public void deleteDocument(
@@ -162,6 +165,8 @@ public class DocumentController {
     @Operation(summary = "Получить изменения документа по ID")
     @GetMapping("/changesById/{documentChangesId}")
     @SecurityRequirement(name = "JWT")
+    @PreAuthorize(
+            "@documentProcessSecurityService.isMyCompanyChanges(#documentChangesId, #user.id) && (hasAuthority('USER') || hasAuthority('COMPANY_ADMIN'))")
     public DocumentChangesDto findDocChangesById(
             @PathVariable @Parameter(description = "ID изменения документа") Long documentChangesId,
             @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
@@ -175,6 +180,7 @@ public class DocumentController {
     @Operation(summary = "Получить документы измененные пользователем")
     @GetMapping("/changesByCreator/{creatorId}")
     @SecurityRequirement(name = "JWT")
+    @PreAuthorize("@documentProcessSecurityService.isSameCompany(#creatorId, #user.id) && (hasAuthority('USER') || hasAuthority('COMPANY_ADMIN'))")
     public List<DocumentChangesDto> findDocChangesByUserId(
             @PathVariable @Parameter(description = "ID создателя документа") Long creatorId,
             @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {

@@ -24,6 +24,7 @@ import ru.rosatom.documentflow.services.UserOrganizationService;
 import ru.rosatom.documentflow.services.UserService;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -144,6 +145,11 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll(pageable);
     }
 
+    @Override
+    public List<User> findAllByOrganizationId(Long id) {
+        return userRepository.findAllByOrganizationId(id);
+    }
+
     private void checkUnique(User user) {
 
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
@@ -181,5 +187,10 @@ public class UserServiceImpl implements UserService {
     private PageRequest pageableCreator(Integer from, Integer size, String sort) {
         Sort sortBy = !sort.isEmpty() ? Sort.by(sort) : Sort.unsorted();
         return PageRequest.of(from / size, size, sortBy);
+    }
+
+    public boolean isAllowed(Long id, User user) {
+        boolean alllowed = Objects.equals(getUser(id).getOrganization().getId(), user.getOrganization().getId());
+        return alllowed;
     }
 }

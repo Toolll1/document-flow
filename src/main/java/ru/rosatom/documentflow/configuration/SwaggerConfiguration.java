@@ -10,6 +10,6 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
         type = SecuritySchemeType.HTTP,
         bearerFormat = "JWT",
         scheme = "bearer")
-@OpenAPIDefinition(info = @Info(title = "Document Flow API", version = "1.0.0"))
+@OpenAPIDefinition(info = @Info(title = "Document Flow API", version = "v.2.0"))
 public class SwaggerConfiguration {
 }
