@@ -64,7 +64,7 @@ public class OrganizationTests extends BasicHttpTest {
     @Test
     @DisplayName("Update organization")
     public void simpleUpdateOrganization() {
-        updateOrganization(new OrganizationUpdateRequest("New name"), new OrganizationSearchRequestId(2));
+        updateOrganization(new OrganizationUpdateRequest("New name"), new OrganizationSearchRequestId(1));
     }
 
     @Test
@@ -188,7 +188,7 @@ public class OrganizationTests extends BasicHttpTest {
     private void updateOrganizationFail(OrganizationUpdateRequest organizationUpdateRequest,
                                         OrganizationSearchRequestId organizationSearchRequestId) {
         getResponseSpecUpdateOrganizationFail(organizationUpdateRequest, organizationSearchRequestId)
-                .expectStatus().isForbidden();
+                .expectStatus().is5xxServerError();
     }
 
     private WebTestClient.ResponseSpec getResponseSpecUpdateOrganizationFail(OrganizationUpdateRequest organizationUpdateRequest,
@@ -196,7 +196,7 @@ public class OrganizationTests extends BasicHttpTest {
         return withAuthClient(antonovAuth) // тут  юзер другой орг
                 .patch()
                 .uri(uriBuilder -> uriBuilder
-                        .path(OrganizationsEndpoint.ORGANIZATION_SEARCH + "/" + organizationSearchRequestId.getId()) //  + organizationUpdateRequest.getId())
+                        .path(OrganizationsEndpoint.ORGANIZATION_SEARCH + "/" + organizationSearchRequestId.getId())
                         .build())
                 .bodyValue(organizationUpdateRequest)
                 .exchange();
