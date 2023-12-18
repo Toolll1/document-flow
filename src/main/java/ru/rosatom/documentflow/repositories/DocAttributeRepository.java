@@ -15,4 +15,6 @@ public interface DocAttributeRepository extends JpaRepository<DocAttribute, Long
 
     @Query("select d from DocAttribute d where d.organization.id = ?1")
     Page<DocAttribute> findAllByUserOrganization(Long orgId, Pageable pageable);
+
+    List<DocAttribute> findByOrganizationIdAndNameContains(Long organizationId, String name);
 }
