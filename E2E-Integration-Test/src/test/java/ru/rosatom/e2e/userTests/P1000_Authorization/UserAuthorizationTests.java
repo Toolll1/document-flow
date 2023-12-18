@@ -59,6 +59,15 @@ public class UserAuthorizationTests extends BasicHttpTest {
         antonovAuth = userAuthorizationResponse;
     }
 
+    @Test
+    @DisplayName("Success authorization")
+    @Order(1003)
+    public void testSuccessLoginAndreev(){
+        UserAuthorizationResponse userAuthorizationResponse = testSuccessAuth(new UserAndreevRequest());
+        setContextValue(Environment.USER_ANDREEV_AUTHORIZATION, userAuthorizationResponse);
+        andreevAuth = userAuthorizationResponse;
+    }
+
     @DisplayName("Success get profile info")
     @Test
     @Order(1004)

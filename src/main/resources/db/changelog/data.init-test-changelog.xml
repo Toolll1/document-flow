@@ -9,8 +9,6 @@
              relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/initial-changesets/initial-data-test/v1.1_insert_passports.xml"
              relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/initial-changesets/initial-data-test/v1.8_update_users.xml"
-             relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/initial-changesets/initial-data-test/v1.2_insert_users.xml"
              relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/initial-changesets/initial-data-test/v1.6_insert_users.xml"
