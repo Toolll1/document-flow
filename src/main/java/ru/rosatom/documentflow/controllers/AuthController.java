@@ -27,7 +27,6 @@ import ru.rosatom.documentflow.services.AuthService;
 public class AuthController {
 
     private final AuthService authService;
-
     private final UserMapper userMapper;
 
     @Operation(summary = "Авторизация")
@@ -37,12 +36,14 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody @Parameter(description = "Учетные данные пользователя")
                                    UserCredentialsDto userCredentialsDto) {
         log.info("Received a request to login user with email = {}", userCredentialsDto.getEmail());
-        return ResponseEntity.ok(authService.loginUser(userCredentialsDto.getEmail(), userCredentialsDto.getPassword()));
+        AuthTokenDto authTokenDto = authService.loginUser(userCredentialsDto.getEmail(),userCredentialsDto.getPassword());
+        return ResponseEntity.ok(authTokenDto);
     }
 
     @Operation(summary = "Получить информацию о пользователе по токену авторизации")
     @GetMapping("/info")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = AuthTokenDto.class)))
+    @ResponseStatus(HttpStatus.OK)
     @SecurityRequirement(name = "JWT")
     public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal @Parameter(hidden = true) User user) {
         log.info("Received a request to get info about user with email = {}", user.getEmail());
