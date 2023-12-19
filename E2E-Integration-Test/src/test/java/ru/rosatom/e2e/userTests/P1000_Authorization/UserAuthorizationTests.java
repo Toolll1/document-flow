@@ -100,7 +100,7 @@ public class UserAuthorizationTests extends BasicHttpTest {
 
     private UserAuthorizationResponse testSuccessAuth(UserAuthorizationRequest userAuthorizationRequest){
         return sendAuthRequest(userAuthorizationRequest)
-                .expectStatus().isAccepted()
+                .expectStatus().isOk()
                 .expectBody(UserAuthorizationResponse.class)
                 .value(response -> {
                     assert response != null;

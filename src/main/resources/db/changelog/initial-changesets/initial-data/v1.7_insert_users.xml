@@ -1,0 +1,27 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="v1.7_insert_users" author="Savin_Artem">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+            <sqlCheck expectedResult="${database.name}">SELECT current_database()</sqlCheck>
+            <tableExists tableName="users"/>
+        </preConditions>
+
+        <insert tableName="users">
+            <column name="last_name" value="User 4"/>
+            <column name="first_name" value="test"/>
+            <column name="patronymic" value="test"/>
+            <column name="date_of_birth" value="2002-09-26 00:00:00.000000"/>
+            <column name="email" value="user4@mail.ru"/>
+            <column name="phone" value="89999999994"/>
+            <column name="user_password" value="$2a$12$rVw4uFi3bdAgINhwLhbcKOuUiR44lwrNWx5.5Ysg0agGrreIxTFGK"/>
+            <column name="post" value="none"/>
+            <column name="role" value="COMPANY_ADMIN"/>
+            <column name="passport_id" value="1"/>
+            <column name="org_id" value="1"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
