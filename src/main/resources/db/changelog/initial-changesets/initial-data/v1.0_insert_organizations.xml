@@ -14,7 +14,7 @@
             <column name="inn" value="0000000000"/>
         </insert>
         <insert tableName="organizations">
-            <column name="name" value="'ООО Михаил Боярский"/>
+            <column name="name" value="ООО Михаил Боярский"/>
             <column name="inn" value="0002300000"/>
         </insert>
     </changeSet>

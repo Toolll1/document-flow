@@ -10,6 +10,8 @@ public interface DocumentProcessService {
 
     DocProcess createNewProcess(Long documentId, Long recipientId);
 
+    DocProcess createNewProcessToOtherCompany(Long documentId, Long companyId);
+
     void sendToApprove(ProcessUpdateRequest processUpdateRequest);
 
     DocProcess findProcessById(Long processId);

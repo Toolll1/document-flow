@@ -7,5 +7,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OrgUpdateRequest {
     private String name;
-
+    private Long defaultRecipient;
 }

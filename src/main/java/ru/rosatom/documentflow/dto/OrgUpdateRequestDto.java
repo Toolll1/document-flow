@@ -15,4 +15,7 @@ public class OrgUpdateRequestDto {
     @Schema(description = "Название", minLength = 1, maxLength = 255)
     @Size(min = 1, max = 255)
     private String name;
+
+    @Schema(description = "ID сотрудника, получающего по-умолчанию документы на согласование")
+    private Long defaultRecipient;
 }

@@ -59,7 +59,7 @@ public class UserAuthorizationTests extends BasicHttpTest {
                 .value(user -> {
                     assert user != null;
                     Stream.of(user.getId(), user.getFullName(),
-                            user.getDateOfBirth(), user.getEmail(), user.getPhone(), user.getUserOrganization(),
+                            user.getDateOfBirth(), user.getEmail(), user.getPhone(), user.getOrganization(),
                             user.getRole(), user.getPost(), user.getUserPassportDto()).forEach(Assertions::assertNotNull);
                 });
     }

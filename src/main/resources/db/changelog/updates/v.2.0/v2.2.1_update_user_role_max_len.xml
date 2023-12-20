@@ -3,17 +3,14 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="release-1.1-updates" author="nikita_glushko">
+    <changeSet id="v2.2.2_final_status_default_new" author="Savin_Artem">
         <preConditions onFail="MARK_RAN">
             <dbms type="postgresql"/>
             <sqlCheck expectedResult="${database.name}">SELECT current_database()</sqlCheck>
 
-            <tableExists tableName="document_types"/>
-
+            <tableExists tableName="users"/>
 
         </preConditions>
-        <update tableName="document_types">
-            <column name="org_id" value="1"/>
-        </update>
+        <modifyDataType tableName="users" columnName="role" newDataType="varchar(16)"/>
     </changeSet>
 </databaseChangeLog>

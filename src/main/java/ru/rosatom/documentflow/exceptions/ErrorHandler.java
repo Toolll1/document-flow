@@ -63,6 +63,11 @@ public class ErrorHandler {
         return createAppError(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<AppError> handleUnprocessableEntityException(final UnprocessableEntityException e) {
+        return createAppError(e, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
 
     public ResponseEntity<AppError> createAppError(Throwable e, HttpStatus status) {
         return new ResponseEntity<>(
