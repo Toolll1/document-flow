@@ -30,12 +30,12 @@ public class DocProcess {
     @ToString.Exclude
     @OneToOne
     @JoinColumn(name = "recipient_id")
-    private User recipientUserId;  //получатель
+    private User recipientUser;  //получатель
 
     @ToString.Exclude
     @OneToOne
     @JoinColumn(name = "org_id")
-    private UserOrganization recipientOrganizationId;
+    private UserOrganization recipientOrganization;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")

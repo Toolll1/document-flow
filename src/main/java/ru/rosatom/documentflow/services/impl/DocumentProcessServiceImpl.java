@@ -56,8 +56,8 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         DocProcess docProcess = DocProcess.builder()
                 .document(document)
                 .sender(sender)
-                .recipientUserId(userService.getUser(recipientCompany.getDefaultRecipient()))
-                .recipientOrganizationId(recipientCompany)
+                .recipientUser(userService.getUser(recipientCompany.getDefaultRecipient()))
+                .recipientOrganization(recipientCompany)
                 .status(DocProcessStatus.NEW)
                 .comment(EMPTY_COMMENT)
                 .build();
@@ -79,9 +79,9 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         User sender = userService.getUser(document.getOwnerId());
         DocProcess docProcess = DocProcess.builder()
                 .document(document)
-                .recipientUserId(recipient)
+                .recipientUser(recipient)
                 .sender(sender)
-                .recipientOrganizationId(sender.getOrganization())
+                .recipientOrganization(sender.getOrganization())
                 .status(DocProcessStatus.NEW)
                 .comment(EMPTY_COMMENT)
                 .build();
