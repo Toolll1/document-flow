@@ -10,7 +10,7 @@
         </preConditions>
         <addColumn tableName="organizations">
             <column name="user_id" type="bigint" defaultValueNumeric="1">
-                <constraints nullable="false"
+                <constraints nullable="true"
                              foreignKeyName="user_organization"
                              referencedTableName="users"
                              referencedColumnNames="user_id"/>

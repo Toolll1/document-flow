@@ -9,5 +9,4 @@ import lombok.NoArgsConstructor;
 public class OrgCreationRequest {
     private String name;
     private String inn;
-    private Long userId;
 }

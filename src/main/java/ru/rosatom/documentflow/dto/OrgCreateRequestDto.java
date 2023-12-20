@@ -20,7 +20,4 @@ public class OrgCreateRequestDto {
     @Pattern(regexp = "\\d{10}")
     private String inn;
 
-    @Schema(description = "ID сотрудника, по умолчанию назначенного на согласование документов")
-    private Long defaultRecipient;
-
 }

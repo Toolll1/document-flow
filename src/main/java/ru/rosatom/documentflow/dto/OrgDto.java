@@ -17,5 +17,5 @@ public class OrgDto {
     private String inn;
 
     @Schema(description = "ID сотрудника, получающего по-умолчанию документы на согласование")
-    private long userId;
+    private Long defaultRecipient;
 }

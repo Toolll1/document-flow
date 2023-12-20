@@ -17,5 +17,5 @@ public class OrgUpdateRequestDto {
     private String name;
 
     @Schema(description = "ID сотрудника, получающего по-умолчанию документы на согласование")
-    private Long userId;
+    private Long defaultRecipient;
 }
