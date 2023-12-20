@@ -52,8 +52,8 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         DocProcess docProcess = DocProcess.builder()
                 .document(document)
                 .sender(sender)
-                .recipient(userService.getUser(recipientCompany.getDefaultRecipient()))
-                .recipientOrganization(recipientCompany)
+                .recipientUserId(userService.getUser(recipientCompany.getDefaultRecipient()))
+                .recipientOrganizationId(recipientCompany)
                 .status(DocProcessStatus.NEW)
                 .comment(EMPTY_COMMENT)
                 .build();
@@ -75,9 +75,9 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         User sender = userService.getUser(document.getOwnerId());
         DocProcess docProcess = DocProcess.builder()
                 .document(document)
-                .recipient(recipient)
+                .recipientUserId(recipient)
                 .sender(sender)
-                .recipientOrganization(sender.getOrganization())
+                .recipientOrganizationId(sender.getOrganization())
                 .status(DocProcessStatus.NEW)
                 .comment(EMPTY_COMMENT)
                 .build();
@@ -105,7 +105,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
      * @return Список процессов
      */
     public List<DocProcess> getIncomingProcessesByUserId(Long userId) {
-        return docProcessRepository.findAllByRecipientId(userId)
+        return docProcessRepository.findAllByRecipientUserId(userId)
                 .stream()
                 .filter(docProcess -> !docProcess.getStatus().equals(NEW))
                 .collect(Collectors.toList());

@@ -49,7 +49,7 @@ public class FileServiceAbstract {
 
         for (DocProcess process : docProcess) {
             if (process.getStatus().equals(DocProcessStatus.APPROVED)) {
-                UserReplyDto recipientReplyDto = userMapper.objectToReplyDto(process.getRecipient());
+                UserReplyDto recipientReplyDto = userMapper.objectToReplyDto(process.getRecipientUserId());
                 mainDocumentPart.addParagraphOfText("ФИО: " + recipientReplyDto.getFullName());
                 mainDocumentPart.addParagraphOfText("Организация: " + recipientReplyDto.getOrganization().getName());
                 mainDocumentPart.addParagraphOfText("ИНН: " + recipientReplyDto.getOrganization().getInn());
