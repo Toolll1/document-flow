@@ -23,12 +23,12 @@ public abstract class AbstractEmailService implements EmailService {
     public void sendDocProcessAgreementMessageForRecipient(DocProcess docProcess) {
         MessageTemplate messageTemplate = messageTemplateService.getMessageTemplateByPattern(MessagePattern.AGREEMENT);
         Map<String, String> messageParams = Map.of(
-                "firstName", docProcess.getRecipient().getFirstName(),
+                "firstName", docProcess.getRecipientUser().getFirstName(),
                 "documentName", docProcess.getDocument().getName(),
                 "mail", docProcess.getSender().getEmail(),
                 "fullName", docProcess.getSender().getLastName() + ' ' + docProcess.getSender().getFirstName() + ' ' + docProcess.getSender().getPatronymic());
         StringSubstitutor substitutor = new StringSubstitutor(messageParams);
-        sendDocProcessMessage(docProcess.getRecipient().getEmail(), substitutor.replace(messageTemplate.getBody()), messageTemplate.getSubject());
+        sendDocProcessMessage(docProcess.getRecipientUser().getEmail(), substitutor.replace(messageTemplate.getBody()), messageTemplate.getSubject());
     }
 
     @Override

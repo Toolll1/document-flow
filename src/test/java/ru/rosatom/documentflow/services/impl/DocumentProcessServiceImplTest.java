@@ -9,10 +9,7 @@ import org.mockito.Mockito;
 import ru.rosatom.documentflow.kafka.Producer;
 import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
-import ru.rosatom.documentflow.services.DocumentProcessService;
-import ru.rosatom.documentflow.services.DocumentService;
-import ru.rosatom.documentflow.services.EmailService;
-import ru.rosatom.documentflow.services.UserService;
+import ru.rosatom.documentflow.services.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,13 +26,15 @@ class DocumentProcessServiceImplTest {
     private final DocProcessRepository docProcessRepository = Mockito.mock(DocProcessRepository.class);
     private final EmailService emailService = Mockito.mock(EmailService.class);
     private final Producer producer = Mockito.mock(Producer.class);
+    private final UserOrganizationService userOrganizationService = Mockito.mock(UserOrganizationService.class);
 
     private final DocumentProcessService documentProcessService = new DocumentProcessServiceImpl(
             documentService,
             userService,
             docProcessRepository,
             emailService,
-            producer);
+            producer,
+            userOrganizationService);
 
 
     @Nested
@@ -52,6 +51,7 @@ class DocumentProcessServiceImplTest {
                     updatableDocProcessDocument,
                     Mockito.mock(User.class),
                     Mockito.mock(User.class),
+                    Mockito.mock(UserOrganization.class),
                     DocProcessStatus.WAITING_FOR_APPROVE,
                     "");
             processUpdateRequest.setProcessId(updatableDocProcess.getId());
@@ -102,6 +102,7 @@ class DocumentProcessServiceImplTest {
                 document,
                 Mockito.mock(User.class),
                 Mockito.mock(User.class),
+                Mockito.mock(UserOrganization.class),
                 status,
                 "");
     }

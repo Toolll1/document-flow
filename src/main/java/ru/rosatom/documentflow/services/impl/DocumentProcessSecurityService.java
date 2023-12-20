@@ -21,12 +21,12 @@ public class DocumentProcessSecurityService {
 
     public boolean isHasAccessToProcess(Long processId, Long userId) {
         DocProcess docProcess = documentProcessService.findProcessById(processId);
-        return docProcess.getSender().getId().equals(userId) || docProcess.getRecipient().getId().equals(userId);
+        return docProcess.getSender().getId().equals(userId) || docProcess.getRecipientUser().getId().equals(userId);
     }
 
     public boolean isRecipient(Long processId, Long userId) {
         DocProcess docProcess = documentProcessService.findProcessById(processId);
-        return docProcess.getRecipient().getId().equals(userId);
+        return docProcess.getRecipientUser().getId().equals(userId);
     }
 
     public boolean isProcessDone(Long processId) {

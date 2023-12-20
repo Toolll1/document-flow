@@ -4,13 +4,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.rosatom.documentflow.exceptions.IllegalProcessStatusException;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
+import ru.rosatom.documentflow.exceptions.UnprocessableEntityException;
 import ru.rosatom.documentflow.kafka.Producer;
 import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
-import ru.rosatom.documentflow.services.DocumentProcessService;
-import ru.rosatom.documentflow.services.DocumentService;
-import ru.rosatom.documentflow.services.EmailService;
-import ru.rosatom.documentflow.services.UserService;
+import ru.rosatom.documentflow.services.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,6 +34,35 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     private final DocProcessRepository docProcessRepository;
     private final EmailService emailService;
     private final Producer producer;
+    private final UserOrganizationService userOrganizationService;
+
+
+    /**
+     * Создает новый процесс согласования документа для указанной компании.
+     * Статус процесса - NEW.
+     *
+     * @param documentId - id документа
+     * @param companyId  - id компании получателя
+     * @return DocProcess - процесс согласования
+     */
+    @Override
+    public DocProcess createNewProcessToOtherCompany(Long documentId, Long companyId) {
+        Document document = documentService.findDocumentById(documentId);
+        UserOrganization recipientCompany = userOrganizationService.getOrganization(companyId);
+        if (recipientCompany.getDefaultRecipient() == null)
+            throw new UnprocessableEntityException(
+                    String.format("The default recipient for company '%s' cannot be determined", recipientCompany.getName()));
+        User sender = userService.getUser(document.getOwnerId());
+        DocProcess docProcess = DocProcess.builder()
+                .document(document)
+                .sender(sender)
+                .recipientUser(userService.getUser(recipientCompany.getDefaultRecipient()))
+                .recipientOrganization(recipientCompany)
+                .status(DocProcessStatus.NEW)
+                .comment(EMPTY_COMMENT)
+                .build();
+        return docProcessRepository.save(docProcess);
+    }
 
 
     /**
@@ -52,8 +79,9 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         User sender = userService.getUser(document.getOwnerId());
         DocProcess docProcess = DocProcess.builder()
                 .document(document)
-                .recipient(recipient)
+                .recipientUser(recipient)
                 .sender(sender)
+                .recipientOrganization(sender.getOrganization())
                 .status(DocProcessStatus.NEW)
                 .comment(EMPTY_COMMENT)
                 .build();
@@ -81,7 +109,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
      * @return Список процессов
      */
     public List<DocProcess> getIncomingProcessesByUserId(Long userId) {
-        return docProcessRepository.findAllByRecipientId(userId)
+        return docProcessRepository.findAllByRecipientUserId(userId)
                 .stream()
                 .filter(docProcess -> !docProcess.getStatus().equals(NEW))
                 .collect(Collectors.toList());
@@ -259,7 +287,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
                     }
                 }
         }
-        if (document.getFinalDocStatus().equals(APPROVED)){
+        if (document.getFinalDocStatus().equals(APPROVED)) {
             producer.sendMessage("Документ с id- [" + documentId + "] переведен в статус: " + APPROVED);
         }
     }

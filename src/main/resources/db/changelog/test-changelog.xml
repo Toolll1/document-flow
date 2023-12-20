@@ -6,8 +6,8 @@
     <property  name="database.name"  value="document-flow-test"/>
 
 
-    <include file="classpath:db/changelog/db.init-changelog.xml"/>
-    <include file="classpath:db/changelog/db.update-changelog.xml"/>
-    <include file="classpath:db/changelog/data.init-test-changelog.xml"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-tables/db.init-changelog.xml"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-data-test/data.init-test-changelog.xml"/>
+    <include file="classpath:db/changelog/updates/db.update-changelog.xml"/>
 
 </databaseChangeLog>

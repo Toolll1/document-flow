@@ -4,7 +4,7 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
     <property  name="database.name"  value="document-flow"/>
-    <include file="classpath:db/changelog/db.init-changelog.xml"/>
-    <include file="classpath:db/changelog/db.update-changelog.xml"/>
-    <include file="classpath:db/changelog/data.init-changelog.xml"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-tables/db.init-changelog.xml"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-data/data.init-changelog.xml"/>
+    <include file="classpath:db/changelog/updates/db.update-changelog.xml"/>
 </databaseChangeLog>

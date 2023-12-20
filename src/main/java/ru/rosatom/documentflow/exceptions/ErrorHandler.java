@@ -65,6 +65,10 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
+    public ResponseEntity<AppError> handleUnprocessableEntityException(final UnprocessableEntityException e) {
+        return createAppError(e, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+    @ExceptionHandler
     public ResponseEntity<AppError> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException methodArgumentTypeMismatchException){
         String errorMessage = String.format("Parameter %s is invalid",
                 methodArgumentTypeMismatchException.getValue());

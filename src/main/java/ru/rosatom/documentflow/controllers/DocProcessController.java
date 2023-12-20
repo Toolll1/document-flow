@@ -29,6 +29,19 @@ public class DocProcessController {
     private final DocumentProcessService documentProcessService;
     private final ModelMapper modelMapper;
 
+
+    @Operation(summary = "Создать запрос на согласование с учетом компании получателя")
+    @PostMapping("/{documentId}/company/{companyId}/new-process")
+    @PreAuthorize(
+            "@documentProcessSecurityService.isCanManageProcess(#documentId, authentication.principal.id) && hasAuthority('USER')")
+    @SecurityRequirement(name = "JWT")
+    public DocProcessDto createNewProcessWithCompany(
+            @PathVariable @Parameter(description = "ID документа") Long documentId,
+            @PathVariable @Parameter(description = "ID компании получателя") Long companyId) {
+        return modelMapper.map(
+                documentProcessService.createNewProcessToOtherCompany(documentId, companyId), DocProcessDto.class);
+    }
+
     @Operation(summary = "Создать запрос на согласование")
     @PostMapping("/{documentId}/recipient/{recipientId}/new-process")
     @PreAuthorize(

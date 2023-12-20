@@ -46,7 +46,7 @@ public class DocumentServiceImpl implements DocumentService {
     @Transactional
     public Document createDocument(Document document, User user) {
 
-        userOrganizationService.getOrganization(document.getIdOrganization());
+        userOrganizationService.getOrganization(user.getOrganization().getId());
         document.setOwnerId(user.getId());
         document.setIdOrganization(user.getOrganization().getId());
         document.setDate(LocalDateTime.now());
