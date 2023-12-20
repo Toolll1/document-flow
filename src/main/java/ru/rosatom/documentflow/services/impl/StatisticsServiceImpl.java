@@ -3,7 +3,6 @@ package ru.rosatom.documentflow.services.impl;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import ru.rosatom.documentflow.adapters.CommonUtils;
 import ru.rosatom.documentflow.dto.DocParams;
 import ru.rosatom.documentflow.dto.DocStatisticDTO;
 import ru.rosatom.documentflow.dto.StatisticUsersAndOrgDto;
