@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -76,6 +77,11 @@ public class ErrorHandler {
         return createAppError(e, HttpStatus.FORBIDDEN);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<AppError> handleBadCredentialsException(final BadCredentialsException e){
+        return createAppError(e, HttpStatus.UNAUTHORIZED);
+    }
+
 
     @ExceptionHandler
     public ResponseEntity<AppError> handleRemainingErrors(final Exception e) {
@@ -93,7 +99,6 @@ public class ErrorHandler {
                 methodArgumentTypeMismatchException.getValue());
         return createAppError(errorMessage, HttpStatus.BAD_REQUEST);
     }
-
 
 
     public ResponseEntity<AppError> createAppError(Throwable e, HttpStatus status) {
