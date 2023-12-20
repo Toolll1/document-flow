@@ -10,8 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class OrganizationUpdateResponse {
-
-    private Long id;
+    private Integer id;
 
     private String name;
 

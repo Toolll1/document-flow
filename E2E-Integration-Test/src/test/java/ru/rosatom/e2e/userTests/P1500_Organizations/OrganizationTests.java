@@ -184,7 +184,7 @@ public class OrganizationTests extends BasicHttpTest {
     private void updateOrganizationFail(OrganizationUpdateRequest organizationUpdateRequest,
                                         OrganizationSearchRequestId organizationSearchRequestId) {
         getResponseSpecUpdateOrganizationFail(organizationUpdateRequest, organizationSearchRequestId)
-                .expectStatus().is5xxServerError();
+                .expectStatus().isForbidden();
     }
 
     private WebTestClient.ResponseSpec getResponseSpecUpdateOrganizationFail(OrganizationUpdateRequest organizationUpdateRequest,
