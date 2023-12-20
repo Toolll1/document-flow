@@ -69,12 +69,6 @@ public class OrganizationTests extends BasicHttpTest {
         updateOrganizationFail(new OrganizationUpdateRequest("New name"), new OrganizationSearchRequestId(1));
     }
 
-    @Test
-    @DisplayName("Delete organization")
-    public void simpleDeleteOrganization() {
-        deleteOrganization( new OrganizationSearchRequestId(2));
-
-    }
 
     @Test
     @DisplayName("Delete organization Fail")
@@ -157,11 +151,6 @@ public class OrganizationTests extends BasicHttpTest {
     }
 
 
-    private void deleteOrganization(OrganizationSearchRequestId organizationSearchRequestId){
-        getResponseSpecDeleteOrganization(organizationSearchRequestId)
-                .expectStatus().isOk();
-    }
-
     private void deleteOrganizationFail(OrganizationSearchRequestId organizationSearchRequestId){
         getResponseSpecDeleteOrganizationFail(organizationSearchRequestId)
                 .expectStatus().isForbidden();
@@ -209,14 +198,6 @@ public class OrganizationTests extends BasicHttpTest {
                 .exchange();
     }
 
-    private WebTestClient.ResponseSpec getResponseSpecDeleteOrganization(OrganizationSearchRequestId organizationSearchRequestId) {
-        return withAuthClient(andreevAuth) // админ 2 компании
-                .delete()
-                .uri(uriBuilder -> uriBuilder
-                        .path(OrganizationsEndpoint.ORGANIZATION_SEARCH + "/" + organizationSearchRequestId.getId())
-                        .build())
-                .exchange();
-    }
 
     private WebTestClient.ResponseSpec getResponseSpecDeleteOrganizationFail(OrganizationSearchRequestId organizationSearchRequestId) {
         return withAuthClient(fedotovAuth) // юзер - ошибка
@@ -241,9 +222,10 @@ public class OrganizationTests extends BasicHttpTest {
         getResponseSpecAddOrganizationForbidden(organizationAddRequest)
                 .expectStatus().isForbidden();
     }
+}
 
 
-  // МЕТОД ДЛЯ АДМИНА:
+  // МЕТОДЫ ДЛЯ АДМИНА:
 //    @Test
 //    @DisplayName("Add organization")
 //    public void simpleAddOrganization() {
@@ -270,4 +252,23 @@ public class OrganizationTests extends BasicHttpTest {
 //            .bodyValue(organizationAddRequest)
 //            .exchange();
 //}
-}
+
+//    private WebTestClient.ResponseSpec getResponseSpecDeleteOrganization(OrganizationSearchRequestId organizationSearchRequestId) {
+//        return withAuthClient(andreevAuth) // админ 2 компании
+//                .delete()
+//                .uri(uriBuilder -> uriBuilder
+//                        .path(OrganizationsEndpoint.ORGANIZATION_SEARCH + "/" + organizationSearchRequestId.getId())
+//                        .build())
+//                .exchange();
+//    }
+//    @Test
+//    @DisplayName("Delete organization")
+//    public void simpleDeleteOrganization() {
+//        deleteOrganization( new OrganizationSearchRequestId(2));
+//
+//    }
+//private void deleteOrganization(OrganizationSearchRequestId organizationSearchRequestId){
+//    getResponseSpecDeleteOrganization(organizationSearchRequestId)
+//            .expectStatus().isOk();
+//}
+
