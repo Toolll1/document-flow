@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.rosatom.documentflow.exceptions.IllegalProcessStatusException;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
+import ru.rosatom.documentflow.exceptions.UnprocessableEntityException;
 import ru.rosatom.documentflow.kafka.Producer;
 import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
@@ -48,6 +49,9 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     public DocProcess createNewProcessToOtherCompany(Long documentId, Long companyId) {
         Document document = documentService.findDocumentById(documentId);
         UserOrganization recipientCompany = userOrganizationService.getOrganization(companyId);
+        if (recipientCompany.getDefaultRecipient() == null)
+            throw new UnprocessableEntityException(
+                    String.format("The default recipient for company '%s' cannot be determined", recipientCompany.getName()));
         User sender = userService.getUser(document.getOwnerId());
         DocProcess docProcess = DocProcess.builder()
                 .document(document)
@@ -283,7 +287,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
                     }
                 }
         }
-        if (document.getFinalDocStatus().equals(APPROVED)){
+        if (document.getFinalDocStatus().equals(APPROVED)) {
             producer.sendMessage("Документ с id- [" + documentId + "] переведен в статус: " + APPROVED);
         }
     }
