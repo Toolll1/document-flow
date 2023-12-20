@@ -19,6 +19,6 @@
              relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/initial-changesets/initial-data-test/v1.8_insert_documents.xml"
              relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/initial-changesets/initial-data/v1.9_insert_organizations.xml"
+    <include file="classpath:db/changelog/initial-changesets/initial-data-test/v1.9_insert_organizations.xml"
              relativeToChangelogFile="false"/>
 </databaseChangeLog>
