@@ -1,5 +1,23 @@
 package ru.rosatom.documentflow.services.impl;
 
+import com.documents4j.api.DocumentType;
+import com.documents4j.api.IConverter;
+import com.documents4j.job.LocalConverter;
+import io.minio.BucketExistsArgs;
+import io.minio.CopyObjectArgs;
+import io.minio.CopySource;
+import io.minio.MakeBucketArgs;
+import io.minio.MinioClient;
+import io.minio.RemoveObjectArgs;
+import io.minio.UploadObjectArgs;
+import io.minio.errors.ErrorResponseException;
+import io.minio.errors.InsufficientDataException;
+import io.minio.errors.InternalException;
+import io.minio.errors.InvalidResponseException;
+import io.minio.errors.MinioException;
+import io.minio.errors.ServerException;
+import io.minio.errors.XmlParserException;
+import lombok.RequiredArgsConstructor;
 import io.minio.*;
 import io.minio.errors.*;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
@@ -15,6 +33,11 @@ import ru.rosatom.documentflow.dto.UserReplyDto;
 import ru.rosatom.documentflow.exceptions.BadRequestException;
 import ru.rosatom.documentflow.exceptions.ConflictException;
 import ru.rosatom.documentflow.mappers.UserMapper;
+import ru.rosatom.documentflow.models.DocAttributeValues;
+import ru.rosatom.documentflow.models.DocProcess;
+import ru.rosatom.documentflow.models.DocProcessStatus;
+import ru.rosatom.documentflow.models.Document;
+import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.models.DocProcess;
 import ru.rosatom.documentflow.models.Document;
 import ru.rosatom.documentflow.models.User;
@@ -62,11 +85,12 @@ public class FileServiceMinioImpl extends FileServiceAbstract implements FileSer
         String nameDocx = TranslitText.transliterate(user.getLastName()).replaceAll(" ", "").toLowerCase() + System.currentTimeMillis() + ".docx";
         String pathDocx = FileSystems.getDefault().getPath("files", nameDocx).toAbsolutePath().toString();
         File fileDocx = new File(pathDocx);
+        fileDocx.getParentFile().mkdirs();
 
         if (fileDocx.exists()) {
             throw new ConflictException("Такой файл уже существует");
         }
-
+        
         try {
             UserReplyDto userReplyDto = userMapper.objectToReplyDto(user);
             MainDocumentPart mainDocumentPart = wordPackage.getMainDocumentPart();
@@ -119,6 +143,7 @@ public class FileServiceMinioImpl extends FileServiceAbstract implements FileSer
             deleteLocalFile(file);
         }
 
+        document.setDocumentPath("https://minio.docflow.fokidoki.su/browser/" + bucketName);
         document.setDocumentPath(minioConfig.getPrefix() + bucketName);
         document.setName(name);
 
@@ -135,6 +160,7 @@ public class FileServiceMinioImpl extends FileServiceAbstract implements FileSer
     public Document editFileInMinio(Document newDocument, Document oldDocument, String basketVersionControl, Collection<DocProcess> docProcess) {
 
         String fileName = oldDocument.getName();
+        String bucketName = oldDocument.getDocumentPath().replace("https://minio.docflow.fokidoki.su/browser/", "");
         String bucketName = oldDocument.getDocumentPath().replace(minioConfig.getPrefix(), "");
 
         try {

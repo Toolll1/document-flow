@@ -2,7 +2,7 @@ services:
 
   document-flow:
     build: ./
-    image: document-flow
+    image: document-flow:1.0
     container_name: document-flow
     ports:
       - "8080:8080"
@@ -12,7 +12,7 @@ services:
       - kafka
     command: "--kafka.bootstrap_servers=kafka:9092"
     environment:
-      - DB_NAME=document-flow
+      - DB_NAME=docflow
       - USER=root
       - PASSWORD=root
       - DB_HOST=document-flow-db
@@ -30,7 +30,7 @@ services:
     image: postgres:16-alpine
     container_name: document-flow-db
     environment:
-      - POSTGRES_DB=document-flow
+      - POSTGRES_DB=docflow
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
     networks:

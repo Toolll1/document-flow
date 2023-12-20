@@ -16,14 +16,13 @@ import javax.validation.constraints.Size;
 @Schema(description = "Данные для обновления пользователя")
 public class UserUpdateDto {
 
-    @Schema(description = "ID пользователя")
-    private final Long id;
 
-    @Schema(description = "Фамилия", minLength = 2, maxLength = 100)
-    @Nullable
-    @Pattern(regexp = "\\A(?!\\s*\\Z).+")
-    @Size(min = 2, max = 100)
-    private final String lastName;
+
+  @Schema(description = "Фамилия", minLength = 2, maxLength = 100)
+  @Nullable
+  @Pattern(regexp = "\\A(?!\\s*\\Z).+")
+  @Size(min = 2, max = 100)
+  private final String lastName;
 
     @Schema(description = "Имя", minLength = 2, maxLength = 100)
     @Nullable

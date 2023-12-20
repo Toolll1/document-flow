@@ -13,6 +13,7 @@ import ru.rosatom.documentflow.configuration.JWT.JWTUtil;
 import ru.rosatom.documentflow.dto.AuthTokenDto;
 import ru.rosatom.documentflow.dto.UserWithoutPassportDto;
 import ru.rosatom.documentflow.models.User;
+import ru.rosatom.documentflow.repositories.UserRepository;
 import ru.rosatom.documentflow.services.AuthService;
 import ru.rosatom.documentflow.services.UserService;
 

@@ -15,13 +15,12 @@ import javax.validation.constraints.Size;
 @Builder
 @Schema(description = "Данные для создания пользователя")
 public class UserCreateDto {
-    @Schema(description = "ID пользователя")
-    private final Long id;
 
-    @Schema(description = "Фамилия", minLength = 2, maxLength = 100)
-    @NotBlank
-    @Size(min = 2, max = 100)
-    private final String lastName;
+
+  @Schema(description = "Фамилия", minLength = 2, maxLength = 100)
+  @NotBlank
+  @Size(min = 2, max = 100)
+  private final String lastName;
 
     @Schema(description = "Имя", minLength = 2, maxLength = 100)
     @NotBlank
