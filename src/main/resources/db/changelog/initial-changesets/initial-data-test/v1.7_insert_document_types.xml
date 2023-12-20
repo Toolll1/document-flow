@@ -1,0 +1,28 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="v1.7_insert_document_types" author="nikita_glushko">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+            <sqlCheck expectedResult="${database.name}">SELECT current_database()</sqlCheck>
+            <tableExists tableName="document_types"/>
+        </preConditions>
+        <insert tableName="document_types">
+            <column name="name" value="Накладная"/>
+        </insert>
+        <insert tableName="document_types">
+            <column name="name" value="Счёт-фактура"/>
+        </insert>
+        <insert tableName="document_types">
+            <column name="name" value="Опись имущества"/>
+        </insert>
+        <insert tableName="document_types">
+            <column name="name" value="Письмо"/>
+        </insert>
+        <insert tableName="document_types">
+            <column name="name" value="Донос"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

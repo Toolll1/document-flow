@@ -23,6 +23,9 @@ import java.util.stream.Stream;
 public class UserAuthorizationTests extends BasicHttpTest {
 
     UserAuthorizationResponse fedotovAuth;
+    UserAuthorizationResponse antonovAuth;
+    UserAuthorizationResponse andreevAuth;
+
     @DisplayName("Incorrect authorization: wrong password")
     @ParameterizedTest
     @ValueSource(strings = {"", " ", "\"'@!:',m)(*&^"})
@@ -47,6 +50,23 @@ public class UserAuthorizationTests extends BasicHttpTest {
         fedotovAuth = userAuthorizationResponse;
     }
 
+    @Test
+    @DisplayName("Success authorization")
+    @Order(1003)
+    public void testSuccessLoginAntonov(){
+        UserAuthorizationResponse userAuthorizationResponse = testSuccessAuth(new UserAntonovRequests());
+        setContextValue(Environment.USER_ANTONOV_AUTHORIZATION, userAuthorizationResponse);
+        antonovAuth = userAuthorizationResponse;
+    }
+
+    @Test
+    @DisplayName("Success authorization")
+    @Order(1003)
+    public void testSuccessLoginAndreev(){
+        UserAuthorizationResponse userAuthorizationResponse = testSuccessAuth(new UserAndreevRequest());
+        setContextValue(Environment.USER_ANDREEV_AUTHORIZATION, userAuthorizationResponse);
+        andreevAuth = userAuthorizationResponse;
+    }
 
     @DisplayName("Success get profile info")
     @Test

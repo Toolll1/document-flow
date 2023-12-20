@@ -68,6 +68,7 @@ public class OrgController {
         return modelMapper.map(organization, OrgDto.class);
     }
 
+
     @Operation(summary = "Поиск организации по подстроке в имени")
     @GetMapping("/name/{name}")
     @SecurityRequirement(name = "JWT")

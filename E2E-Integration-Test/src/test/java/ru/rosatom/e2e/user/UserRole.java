@@ -3,5 +3,6 @@ package ru.rosatom.e2e.user;
 public enum UserRole  {
 
     USER,
-    ADMIN
+    ADMIN,
+    COMPANY_ADMIN
 }
