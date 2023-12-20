@@ -10,6 +10,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import ru.rosatom.documentflow.dto.AppError;
 
 @Slf4j
@@ -67,12 +68,27 @@ public class ErrorHandler {
     public ResponseEntity<AppError> handleUnprocessableEntityException(final UnprocessableEntityException e) {
         return createAppError(e, HttpStatus.UNPROCESSABLE_ENTITY);
     }
+    @ExceptionHandler
+    public ResponseEntity<AppError> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException methodArgumentTypeMismatchException){
+        String errorMessage = String.format("Parameter %s is invalid",
+                methodArgumentTypeMismatchException.getValue());
+        return createAppError(errorMessage, HttpStatus.BAD_REQUEST);
+    }
 
 
     public ResponseEntity<AppError> createAppError(Throwable e, HttpStatus status) {
         return new ResponseEntity<>(
                 AppError.builder()
                         .message(e.getMessage())
+                        .build(),
+                status
+        );
+    }
+
+    public ResponseEntity<AppError> createAppError(String message, HttpStatus status){
+        return new ResponseEntity<>(
+                AppError.builder()
+                        .message(message)
                         .build(),
                 status
         );
