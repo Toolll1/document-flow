@@ -66,7 +66,9 @@ public class ErrorHandler {
 
     @ExceptionHandler
     public ResponseEntity<AppError> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException methodArgumentTypeMismatchException){
-        return createAppError(methodArgumentTypeMismatchException, HttpStatus.BAD_REQUEST);
+        String errorMessage = String.format("Parameter %s is invalid",
+                methodArgumentTypeMismatchException.getValue());
+        return createAppError(errorMessage, HttpStatus.BAD_REQUEST);
     }
 
 
@@ -74,6 +76,15 @@ public class ErrorHandler {
         return new ResponseEntity<>(
                 AppError.builder()
                         .message(e.getMessage())
+                        .build(),
+                status
+        );
+    }
+
+    public ResponseEntity<AppError> createAppError(String message, HttpStatus status){
+        return new ResponseEntity<>(
+                AppError.builder()
+                        .message(message)
                         .build(),
                 status
         );
