@@ -2,6 +2,7 @@
 package ru.rosatom.e2e.organization;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

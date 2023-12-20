@@ -14,72 +14,79 @@ import java.util.stream.Stream;
 @DisplayName("Organization tests")
 public class OrganizationTests extends BasicHttpTest {
 
-    UserAuthorizationResponse fedotovAuth = getContextValue(Environment.USER_FEDOTOV_AUTHORIZATION); //орг 1
-    UserAuthorizationResponse antonovAuth = getContextValue(Environment.USER_ANTONOV_AUTHORIZATION); // орг 2
-    UserAuthorizationResponse andreevAuth = getContextValue(Environment.USER_ANDREEV_AUTHORIZATION); //админ орг 2
+    UserAuthorizationResponse userOrg1Auth = getContextValue(Environment.USER_FEDOTOV_AUTHORIZATION);
+    UserAuthorizationResponse userOrg2Auth = getContextValue(Environment.USER_ANTONOV_AUTHORIZATION);
+    UserAuthorizationResponse adminOrg2Auth = getContextValue(Environment.USER_ANDREEV_AUTHORIZATION);
 
     @Test
     @DisplayName("Get all organizations")
-    public void simpleGetAllOrganizations() {
+    public void getAllOrganizations() {
         testGetAllOrganizationSuccess();
     }
 
 
     @Test
     @DisplayName("Get organizations with id")
-    public void simpleGetOrganizationsWithId() {
+    public void getOrganizationsWithId() {
         getOrganizationWithId(new OrganizationSearchRequestId(1));
     }
 
     @Test
     @DisplayName("Get organizations with incorrect id")
-    public void simpleGetOrganizationsWithIncorrectId() {
+    public void getOrganizationsWithIncorrectId() {
         getOrganizationWithIncorrectId(new OrganizationSearchRequestId(-2));
     }
 
     @Test
     @DisplayName("Get organizations with name")
-    public void simpleGetAllOrganizationsWithName() {
+    public void getAllOrganizationsWithName() {
         getOrganizationWithName(new OrganizationSearchRequestName(" "));
     }
 
     @Test
+    @DisplayName("Get organizations with preffix")
+    public void getOrganizationWithNamePreffix() {
+        getOrganizationWithNamePreffix(new OrganizationSearchRequestName("Рос"));
+    }
+
+
+    @Test
     @DisplayName("Get organizations with incorrect name")
-    public void simpleGetAllOrganizationsWithIncorrectName() {
-        getOrganizationWithIncorrectName(new OrganizationSearchRequestName("."));
+    public void getAllOrganizationsWithIncorrectName() {
+        getOrganizationWithIncorrectName(new OrganizationSearchRequestName("/"));
     }
 
 
     @Test
     @DisplayName("Add organization - fail forbidden")
-    public void simpleAddOrganizationFordidden() {
+    public void addOrganizationForbidden() {
         addOrganizationForbidden(new OrganizationAddRequest("New organization", "1234567890"));
     }
 
 
     @Test
     @DisplayName("Update organization")
-    public void simpleUpdateOrganization() {
-        updateOrganization(new OrganizationUpdateRequest("New name"), new OrganizationSearchRequestId(2));
+    public void updateOrganization() {
+        updateOrganization(new OrganizationUpdateRequest(faker.company().name()), new OrganizationSearchRequestId(2));
     }
 
     @Test
     @DisplayName("Update organization Fail")
-    public void simpleUpdateOrganizationFail() {
-        updateOrganizationFail(new OrganizationUpdateRequest("New name"), new OrganizationSearchRequestId(1));
+    public void updateOrganizationFail() {
+        updateOrganizationFail(new OrganizationUpdateRequest(faker.company().name()), new OrganizationSearchRequestId(1));
     }
 
 
     @Test
     @DisplayName("Delete organization Fail")
-    public void simpleDeleteOrganizationFail() {
+    public void deleteOrganizationFail() {
         deleteOrganizationFail( new OrganizationSearchRequestId(2));
 
     }
 
 
     private WebTestClient.ResponseSpec getResponseSpecAllOrganizations() {
-        return withAuthClient(fedotovAuth)
+        return withAuthClient(userOrg1Auth)
                 .get()
                 .uri(OrganizationsEndpoint.ORGANIZATION_SEARCH)
                 .exchange();
@@ -91,6 +98,7 @@ public class OrganizationTests extends BasicHttpTest {
                 .expectBody(OrganizationSearchResponse.class).
                 value(organizationSearchResponse -> {
                     organizationSearchResponse.getOrganizations().forEach(organization -> {
+                        Assertions.assertNotNull(organization);
                         Assertions.assertNotNull(organization.getId());
                         Assertions.assertNotNull(organization.getName());
                         Assertions.assertNotNull(organization.getInn());
@@ -100,7 +108,7 @@ public class OrganizationTests extends BasicHttpTest {
     }
 
     private WebTestClient.ResponseSpec getResponseSpecOrganizationWithId(OrganizationSearchRequestId organizationSearchRequestId) {
-        return withAuthClient(fedotovAuth)
+        return withAuthClient(userOrg1Auth)
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path(OrganizationsEndpoint.ORGANIZATION_SEARCH + "/" + organizationSearchRequestId.getId())
@@ -116,16 +124,18 @@ public class OrganizationTests extends BasicHttpTest {
                     Assertions.assertNotNull(response);
                     Assertions.assertEquals(response.getId(), organizationSearchRequestId.getId());
                     Stream.of(response.getInn(), response.getName()).forEach(Assertions::assertNotNull);
-                }).returnResult().getResponseBody();
+                }).returnResult();
     }
 
     private void getOrganizationWithIncorrectId(OrganizationSearchRequestId organizationSearchRequestId) {
         getResponseSpecOrganizationWithId(organizationSearchRequestId)
-                .expectStatus().is4xxClientError();
+                .expectStatus().isNotFound()
+                .expectBody(OrganizationSearchResponseId.class)
+                .value(Assertions::assertNotNull).returnResult();
     }
 
     private WebTestClient.ResponseSpec getResponseSpecAllOrganizationsWithName(OrganizationSearchRequestName organizationSearchRequestName) {
-        return withAuthClient(fedotovAuth)
+        return withAuthClient(userOrg1Auth)
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path(OrganizationsEndpoint.ORGANIZATION_SEARCH_NAME+ organizationSearchRequestName.getName())
@@ -142,7 +152,23 @@ public class OrganizationTests extends BasicHttpTest {
                     for (OrganizationSearchResponseId organizationSearchResponseId : response) {
                         Stream.of(organizationSearchResponseId.getInn(), organizationSearchResponseId.getName()).forEach(Assertions::assertNotNull);
                     }
-                }).returnResult().getResponseBody();
+                }).returnResult();
+    }
+
+    private void getOrganizationWithNamePreffix(OrganizationSearchRequestName organizationSearchRequestName) {
+        OrganizationSearchResponseId organization1 = new OrganizationSearchResponseId(3,"Pocатом", "9938230050");
+        OrganizationSearchResponseId organization2 = new OrganizationSearchResponseId(4,"Ростагрокомплекс", "5995681370");
+        getResponseSpecAllOrganizationsWithName(organizationSearchRequestName)
+                .expectStatus().isOk()
+                .expectBodyList(OrganizationSearchResponseId.class)
+                .value(response -> {
+                    Assertions.assertNotNull(response);
+                    for (OrganizationSearchResponseId organizationSearchResponseId : response) {
+                        Stream.of(organizationSearchResponseId.getInn(), organizationSearchResponseId.getName()).forEach(Assertions::assertNotNull);
+                    }
+                    Assertions.assertTrue(response.contains(organization1));
+                    Assertions.assertTrue(response.contains(organization2));
+                }).hasSize(2).returnResult();
     }
 
     private void getOrganizationWithIncorrectName(OrganizationSearchRequestName organizationSearchRequestName) {
@@ -153,7 +179,9 @@ public class OrganizationTests extends BasicHttpTest {
 
     private void deleteOrganizationFail(OrganizationSearchRequestId organizationSearchRequestId){
         getResponseSpecDeleteOrganizationFail(organizationSearchRequestId)
-                .expectStatus().isForbidden();
+                .expectStatus().isForbidden().expectBody(OrganizationSearchResponseId.class)
+                .value(Assertions::assertNotNull)
+                .returnResult();
     }
 
 
@@ -167,18 +195,21 @@ public class OrganizationTests extends BasicHttpTest {
                     Stream.of(response.getId(), response.getInn(), response.getName()).forEach(Assertions::assertNotNull);
                     Assertions.assertEquals(response.getName(), organizationUpdateRequest.getName());
                      Assertions.assertEquals(response.getId(), organizationSearchRequestId.getId());
-                }).returnResult().getResponseBody();
+                }).returnResult();
     }
 
     private void updateOrganizationFail(OrganizationUpdateRequest organizationUpdateRequest,
                                         OrganizationSearchRequestId organizationSearchRequestId) {
         getResponseSpecUpdateOrganizationFail(organizationUpdateRequest, organizationSearchRequestId)
-                .expectStatus().isForbidden();
+                .expectStatus().isForbidden()
+                .expectBody(OrganizationUpdateResponse.class)
+                .value(Assertions::assertNotNull)
+                .returnResult();;;
     }
 
     private WebTestClient.ResponseSpec getResponseSpecUpdateOrganizationFail(OrganizationUpdateRequest organizationUpdateRequest,
                                                                          OrganizationSearchRequestId organizationSearchRequestId) {
-        return withAuthClient(antonovAuth) // тут  юзер другой орг
+        return withAuthClient(userOrg2Auth)
                 .patch()
                 .uri(uriBuilder -> uriBuilder
                         .path(OrganizationsEndpoint.ORGANIZATION_SEARCH + "/" + organizationSearchRequestId.getId())
@@ -189,10 +220,10 @@ public class OrganizationTests extends BasicHttpTest {
 
     private WebTestClient.ResponseSpec getResponseSpecUpdateOrganization(OrganizationUpdateRequest organizationUpdateRequest,
                                                                          OrganizationSearchRequestId organizationSearchRequestId) {
-        return withAuthClient(andreevAuth)
+        return withAuthClient(adminOrg2Auth)
                 .patch()
                 .uri(uriBuilder -> uriBuilder
-                        .path(OrganizationsEndpoint.ORGANIZATION_SEARCH + "/" + organizationSearchRequestId.getId()) //  + organizationUpdateRequest.getId())
+                        .path(OrganizationsEndpoint.ORGANIZATION_SEARCH + "/" + organizationSearchRequestId.getId())
                         .build())
                 .bodyValue(organizationUpdateRequest)
                 .exchange();
@@ -200,7 +231,7 @@ public class OrganizationTests extends BasicHttpTest {
 
 
     private WebTestClient.ResponseSpec getResponseSpecDeleteOrganizationFail(OrganizationSearchRequestId organizationSearchRequestId) {
-        return withAuthClient(fedotovAuth) // юзер - ошибка
+        return withAuthClient(userOrg1Auth)
                 .delete()
                 .uri(uriBuilder -> uriBuilder
                         .path(OrganizationsEndpoint.ORGANIZATION_SEARCH + "/" + organizationSearchRequestId.getId())
@@ -209,7 +240,7 @@ public class OrganizationTests extends BasicHttpTest {
     }
 
     private WebTestClient.ResponseSpec getResponseSpecAddOrganizationForbidden(OrganizationAddRequest organizationAddRequest) {
-        return withAuthClient(fedotovAuth)
+        return withAuthClient(userOrg1Auth)
                 .post()
                 .uri(uriBuilder -> uriBuilder
                         .path(OrganizationsEndpoint.ORGANIZATION_SEARCH)
@@ -220,6 +251,8 @@ public class OrganizationTests extends BasicHttpTest {
 
     private void addOrganizationForbidden(OrganizationAddRequest organizationAddRequest){
         getResponseSpecAddOrganizationForbidden(organizationAddRequest)
-                .expectStatus().isForbidden();
+                .expectStatus().isForbidden().expectBody(OrganizationAddResponce.class)
+                .value(Assertions::assertNotNull)
+                .returnResult();;
     }
 }

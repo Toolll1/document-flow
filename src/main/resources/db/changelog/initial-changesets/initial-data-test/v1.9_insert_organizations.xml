@@ -1,0 +1,21 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="v1.9_insert_organizations" author="nikita_glushko">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+            <sqlCheck expectedResult="${database.name}">SELECT current_database()</sqlCheck>
+            <tableExists tableName="organizations"/>
+        </preConditions>
+        <insert tableName="organizations">
+            <column name="name" value="Pocатом"/>
+            <column name="inn" value="9938230050"/>
+        </insert>
+        <insert tableName="organizations">
+            <column name="name" value="Ростагрокомплекс"/>
+            <column name="inn" value="5995681370"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
