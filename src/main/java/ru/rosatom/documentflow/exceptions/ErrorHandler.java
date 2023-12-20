@@ -10,6 +10,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import ru.rosatom.documentflow.dto.AppError;
 
 @Slf4j
@@ -61,6 +62,11 @@ public class ErrorHandler {
     public ResponseEntity<AppError> handleRemainingErrors(final Exception e) {
         log.error("Unhandled exception", e);
         return createAppError(e, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<AppError> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException methodArgumentTypeMismatchException){
+        return createAppError(methodArgumentTypeMismatchException, HttpStatus.BAD_REQUEST);
     }
 
 
