@@ -25,7 +25,6 @@ import ru.rosatom.documentflow.services.UserService;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -165,19 +164,21 @@ public class UserServiceImpl implements UserService {
 
     private void checkUnique(UserUpdateDto dto, Long userId) {
 
-        Optional<User> userToEmail = userRepository.findByEmail(dto.getEmail());
-        Optional<User> userToPhone = userRepository.findByPhone(dto.getPhone());
-        Optional<User> userToPassport = userRepository.findByPassportSeriesAndPassportNumber(dto.getPassportSeries(), dto.getPassportNumber());
-
-        if (userToEmail.isPresent() && !userToEmail.get().getId().equals(userId)) {
-            throw new ConflictException("Пользователь с таким email уже существует");
-        }
-        if (userToPhone.isPresent() && !userToPhone.get().getId().equals(userId)) {
-            throw new ConflictException("Пользователь с таким телефоном уже существует");
-        }
-        if (userToPassport.isPresent() && !userToPassport.get().getId().equals(userId)) {
-            throw new ConflictException("Пользователь с таким паспортом уже существует");
-        }
+        userRepository.findByEmail(dto.getEmail())
+                .filter(user -> !user.getId().equals(userId))
+                .ifPresent(u -> {
+                    throw new ConflictException("Пользователь с таким email уже существует");
+                });
+        userRepository.findByPhone(dto.getPhone())
+                .filter(user -> !user.getId().equals(userId))
+                .ifPresent(u -> {
+                    throw new ConflictException("Пользователь с таким телефоном уже существует");
+                });
+        userRepository.findByPassportSeriesAndPassportNumber(dto.getPassportSeries(),dto.getPassportNumber())
+                .filter(user -> !user.getId().equals(userId))
+                .ifPresent(u -> {
+                    throw new ConflictException("Пользователь с таким паспортом уже существует");
+                });
     }
 
     private <T> T defaultIfNull(T value, T defaultValue) {

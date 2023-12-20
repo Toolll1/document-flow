@@ -47,6 +47,7 @@ public class FileServiceLocalImpl extends FileServiceAbstract implements FileSer
         String nameDocx = TranslitText.transliterate(user.getLastName()).replaceAll(" ", "").toLowerCase() + System.currentTimeMillis() + ".docx";
         String pathDocx = FileSystems.getDefault().getPath("files", nameDocx).toAbsolutePath().toString();
         File fileDocx = new File(pathDocx);
+        fileDocx.getParentFile().mkdirs();
 
         if (fileDocx.exists()) {
             throw new ConflictException("Такой файл уже существует");

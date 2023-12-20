@@ -1,3 +1,4 @@
+/*
 package ru.rosatom.documentflow.services.impl;
 /*
 import org.junit.Assert;
@@ -95,6 +96,4 @@ class UserOrganizationServiceImplTest {
         }
         Mockito.when(repository.findActiveOrganization()).thenReturn(organisationActive);
     }
-}
-
- */
+}*/
