@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -50,10 +49,7 @@ public class ErrorHandler {
     public ResponseEntity<AppError> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         return createAppError(e, HttpStatus.BAD_REQUEST);
     }
-    @ExceptionHandler
-    public ResponseEntity<AppError> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
-       return createAppError(e, HttpStatus.BAD_REQUEST);
-    }
+
   
     public ResponseEntity<AppError> handleDateTimeParseException(final DateTimeParseException e) {
         return createAppError(e, HttpStatus.BAD_REQUEST);
@@ -62,11 +58,6 @@ public class ErrorHandler {
     @ExceptionHandler
     public ResponseEntity<ValidationError> handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
         return createValidationError(e, HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<AppError> handleAuthenticationException(final AuthenticationException e) {
-        return createAppError(e, HttpStatus.UNAUTHORIZED);
     }
 
 
@@ -104,8 +95,8 @@ public class ErrorHandler {
     }
 
 
+
     public ResponseEntity<AppError> createAppError(Throwable e, HttpStatus status) {
-    private ResponseEntity<AppError> createAppError(Throwable e, HttpStatus status) {
         return new ResponseEntity<>(
                 AppError.builder()
                         .message(e.getMessage())
@@ -114,7 +105,7 @@ public class ErrorHandler {
         );
     }
 
-    public ResponseEntity<AppError> createAppError(String message, HttpStatus status){
+    private ResponseEntity<AppError> createAppError(String message, HttpStatus status){
         return new ResponseEntity<>(
                 AppError.builder()
                         .message(message)
@@ -128,8 +119,6 @@ public class ErrorHandler {
                 .stream()
                 .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage,
                         (errorMsg1, errorMsg2) -> errorMsg1));
-
-
         return new ResponseEntity<>(
                 ValidationError
                         .builder()

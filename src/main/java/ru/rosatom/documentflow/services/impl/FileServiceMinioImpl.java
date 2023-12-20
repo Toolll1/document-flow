@@ -1,8 +1,5 @@
 package ru.rosatom.documentflow.services.impl;
 
-import com.documents4j.api.DocumentType;
-import com.documents4j.api.IConverter;
-import com.documents4j.job.LocalConverter;
 import io.minio.BucketExistsArgs;
 import io.minio.CopyObjectArgs;
 import io.minio.CopySource;
@@ -17,9 +14,6 @@ import io.minio.errors.InvalidResponseException;
 import io.minio.errors.MinioException;
 import io.minio.errors.ServerException;
 import io.minio.errors.XmlParserException;
-import lombok.RequiredArgsConstructor;
-import io.minio.*;
-import io.minio.errors.*;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
@@ -33,11 +27,6 @@ import ru.rosatom.documentflow.dto.UserReplyDto;
 import ru.rosatom.documentflow.exceptions.BadRequestException;
 import ru.rosatom.documentflow.exceptions.ConflictException;
 import ru.rosatom.documentflow.mappers.UserMapper;
-import ru.rosatom.documentflow.models.DocAttributeValues;
-import ru.rosatom.documentflow.models.DocProcess;
-import ru.rosatom.documentflow.models.DocProcessStatus;
-import ru.rosatom.documentflow.models.Document;
-import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.models.DocProcess;
 import ru.rosatom.documentflow.models.Document;
 import ru.rosatom.documentflow.models.User;
@@ -161,7 +150,6 @@ public class FileServiceMinioImpl extends FileServiceAbstract implements FileSer
 
         String fileName = oldDocument.getName();
         String bucketName = oldDocument.getDocumentPath().replace("https://minio.docflow.fokidoki.su/browser/", "");
-        String bucketName = oldDocument.getDocumentPath().replace(minioConfig.getPrefix(), "");
 
         try {
             copyFileFromMinio(fileName, bucketName, basketVersionControl);
