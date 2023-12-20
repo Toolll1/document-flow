@@ -18,11 +18,11 @@ public class UserUpdateDto {
 
 
 
-  @Schema(description = "Фамилия", minLength = 2, maxLength = 100)
-  @Nullable
-  @Pattern(regexp = "\\A(?!\\s*\\Z).+")
-  @Size(min = 2, max = 100)
-  private final String lastName;
+    @Schema(description = "Фамилия", minLength = 2, maxLength = 100)
+    @Nullable
+    @Pattern(regexp = "\\A(?!\\s*\\Z).+")
+    @Size(min = 2, max = 100)
+    private final String lastName;
 
     @Schema(description = "Имя", minLength = 2, maxLength = 100)
     @Nullable
