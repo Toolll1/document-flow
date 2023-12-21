@@ -2,9 +2,6 @@ package ru.rosatom.documentflow.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +31,6 @@ public class AuthController {
 
     @Operation(summary = "Авторизация")
     @PostMapping("/login")
-    @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = AuthTokenDto.class)))
     public AuthTokenDto login(@RequestBody @Parameter(description = "Учетные данные пользователя")
                                    UserCredentialsDto userCredentialsDto) {
         log.info("Received a request to login user with email = {}", userCredentialsDto.getEmail());
@@ -43,7 +39,6 @@ public class AuthController {
 
     @Operation(summary = "Получить информацию о пользователе по токену авторизации")
     @GetMapping("/info")
-    @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = AuthTokenDto.class)))
     @SecurityRequirement(name = "JWT")
     public UserReplyDto getUserInfo(@AuthenticationPrincipal @Parameter(hidden = true) User user) {
         log.info("Received a request to get info about user with email = {}", user.getEmail());
