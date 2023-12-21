@@ -12,7 +12,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.rosatom.documentflow.dto.*;
+import ru.rosatom.documentflow.dto.CountOrgDto;
+import ru.rosatom.documentflow.dto.CountUsersDto;
+import ru.rosatom.documentflow.dto.DocStatisticDTO;
+import ru.rosatom.documentflow.dto.OrgDto;
+import ru.rosatom.documentflow.dto.UserRatingDto;
 import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.services.StatisticsService;
 
