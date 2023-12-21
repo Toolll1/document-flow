@@ -50,6 +50,7 @@ public class DocumentServiceImpl implements DocumentService {
         document.setOwnerId(user.getId());
         document.setIdOrganization(user.getOrganization().getId());
         document.setDate(LocalDateTime.now());
+        document.setFinalDocStatus(DocProcessStatus.NEW);
         docAttributeValuesRepository.saveAll(document.getAttributeValues());
 
         Document newDocument = fileService.createFile(document, null);

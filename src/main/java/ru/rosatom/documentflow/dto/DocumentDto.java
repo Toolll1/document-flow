@@ -27,6 +27,9 @@ public class DocumentDto {
     @NotEmpty
     String name;
 
+    @Schema(description = "Пользовательское название документа")
+    String title;
+
     @Schema(description = "Путь документа")
     @NotNull
     @NotEmpty
