@@ -97,7 +97,7 @@ public class DocumentServiceImpl implements DocumentService {
         }
 
         if (documentUpdateDto.getAttributeValues() != null) {
-            if (documentUpdateDto.getAttributeValues().size() != 0) {
+            if (!documentUpdateDto.getAttributeValues().isEmpty()) {
                 List<DocAttributeValues> attributeValues = new ArrayList<>();
                 for (DocAttributeValueCreateDto value : documentUpdateDto.getAttributeValues()) {
                     DocAttributeValues values = new DocAttributeValues();
@@ -116,6 +116,7 @@ public class DocumentServiceImpl implements DocumentService {
             docAttributeValuesRepository.saveAll(newDocument.getAttributeValues());
             docChangesRepository.save(docChanges);
         }
+        newDocument.setTitle(documentUpdateDto.getTitle());
 
         Document correctDocument = fileService.updateFile(newDocument, oldDocument, null);
 
