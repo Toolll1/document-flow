@@ -6,13 +6,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
-import ru.rosatom.documentflow.models.DocAttribute;
-import ru.rosatom.documentflow.models.DocType;
-import ru.rosatom.documentflow.models.DocTypeCreationRequest;
-import ru.rosatom.documentflow.models.DocTypeUpdateRequest;
-import ru.rosatom.documentflow.models.User;
+import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocAttributeRepository;
 import ru.rosatom.documentflow.repositories.DocTypeRepository;
+import ru.rosatom.documentflow.repositories.UserOrganizationRepository;
 import ru.rosatom.documentflow.services.DocTypeService;
 
 import java.util.List;
@@ -26,6 +23,7 @@ public class DocTypeServiceImpl implements DocTypeService {
 
     private final DocTypeRepository docTypeRepository;
     private final DocAttributeRepository docAttributeRepository;
+    private final UserOrganizationRepository userOrganizationRepository;
 
     /**
      * Получает все типы документов с учетом пагинации. Если предоставлен идентификатор организации,
@@ -37,8 +35,7 @@ public class DocTypeServiceImpl implements DocTypeService {
      */
     @Override
     public Page<DocType> getAllDocTypes(Pageable pageable, Optional<Long> orgId) {
-        return orgId.map(id -> docTypeRepository.findAllByUserOrganization(id, pageable))
-                .orElse(docTypeRepository.findAll(pageable));
+        return orgId.map(id -> docTypeRepository.findAllByUserOrganization(id, pageable)).orElse(docTypeRepository.findAll(pageable));
     }
 
     /**
@@ -50,9 +47,7 @@ public class DocTypeServiceImpl implements DocTypeService {
      */
     @Override
     public DocType getDocTypeById(Long id) {
-        return docTypeRepository.findById(id)
-                .orElseThrow(() ->
-                        new ObjectNotFoundException("Тип документа с ID " + id + " не найден."));
+        return docTypeRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException("Тип документа с ID " + id + " не найден."));
     }
 
     /**
@@ -63,9 +58,13 @@ public class DocTypeServiceImpl implements DocTypeService {
      */
     @Override
     public DocType createDocType(DocTypeCreationRequest docTypeCreationRequest) {
+        UserOrganization userOrganization = userOrganizationRepository.findById(docTypeCreationRequest.getOrganizationId())
+                .orElseThrow(() -> new ObjectNotFoundException("Организация с ID " + docTypeCreationRequest.getOrganizationId() + " не найден."));
+
         DocType docType = DocType.builder()
                 .name(docTypeCreationRequest.getName())
                 .agreementType(docTypeCreationRequest.getAgreementType())
+                .userOrganization(userOrganization)
                 .build();
         return docTypeRepository.save(docType);
     }
@@ -80,8 +79,7 @@ public class DocTypeServiceImpl implements DocTypeService {
     @Override
     public DocType updateDocType(Long docTypeId, DocTypeUpdateRequest docTypeUpdateRequest) {
         DocType docType = getDocTypeById(docTypeId);
-        docType.setName(
-                Objects.requireNonNullElse(docTypeUpdateRequest.getName(), docType.getName()));
+        docType.setName(Objects.requireNonNullElse(docTypeUpdateRequest.getName(), docType.getName()));
 
         return docTypeRepository.save(docType);
     }
