@@ -156,8 +156,8 @@ public class OrganizationTests extends BasicHttpTest {
     }
 
     private void getOrganizationWithNamePreffix(OrganizationSearchRequestName organizationSearchRequestName) {
-        OrganizationSearchResponseId organization1 = new OrganizationSearchResponseId(3,"Pocатом", "9938230050");
-        OrganizationSearchResponseId organization2 = new OrganizationSearchResponseId(4,"Ростагрокомплекс", "5995681370");
+        OrganizationSearchResponseId organization1 = new OrganizationSearchResponseId(5,"Pocатом", "9938230050");
+        OrganizationSearchResponseId organization2 = new OrganizationSearchResponseId(6,"Ростагрокомплекс", "5995681370");
         getResponseSpecAllOrganizationsWithName(organizationSearchRequestName)
                 .expectStatus().isOk()
                 .expectBodyList(OrganizationSearchResponseId.class)
