@@ -62,7 +62,7 @@ public class DocTypeController {
     Page<DocTypeDto> getAllDocTypes(@ParameterObject @PageableDefault(page = 0, size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
                                     @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user,
                                     @RequestParam(required = false, name = "org_id") @Parameter(description = "ID организации") Optional<Long> orgId) {
-        return docTypeService.getAllDocTypes(pageable,  orgId)
+        return docTypeService.getAllDocTypes(pageable, orgId)
                 .map(o -> modelMapper.map(o, DocTypeDto.class));
     }
 
@@ -83,8 +83,7 @@ public class DocTypeController {
     @SecurityRequirement(name = "JWT")
     @PreAuthorize("hasAuthority('ADMIN') || (#docTypeCreateDto.organizationId==#authentication.principal.organization.id && hasAuthority('COMPANY_ADMIN'))")
     public DocTypeDto createDocType(@Valid @RequestBody @Parameter(description = "DTO создания типа") DocTypeCreateDto docTypeCreateDto) {
-        DocTypeCreationRequest docTypeCreationRequest =
-                modelMapper.map(docTypeCreateDto, DocTypeCreationRequest.class);
+        DocTypeCreationRequest docTypeCreationRequest = modelMapper.map(docTypeCreateDto, DocTypeCreationRequest.class);
         DocType docType = docTypeService.createDocType(docTypeCreationRequest);
         log.info("Получен запрос на создание DocType: {}", docTypeCreateDto);
 

@@ -15,6 +15,7 @@ import ru.rosatom.documentflow.services.DocTypeService;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -59,12 +60,18 @@ public class DocTypeServiceImpl implements DocTypeService {
     @Override
     public DocType createDocType(DocTypeCreationRequest docTypeCreationRequest) {
         UserOrganization userOrganization = userOrganizationRepository.findById(docTypeCreationRequest.getOrganizationId())
-                .orElseThrow(() -> new ObjectNotFoundException("Организация с ID " + docTypeCreationRequest.getOrganizationId() + " не найден."));
+                .orElseThrow(() -> new ObjectNotFoundException("Организация с ID " + docTypeCreationRequest.getOrganizationId() + " не найдена."));
+
+        List<DocAttribute> attributes = docTypeCreationRequest.getAttributes().stream()
+                .map(attrId -> docAttributeRepository.findById(attrId)
+                        .orElseThrow(() -> new ObjectNotFoundException("Атрибут с ID " + attrId + " не найден.")))
+                .collect(Collectors.toList());
 
         DocType docType = DocType.builder()
                 .name(docTypeCreationRequest.getName())
                 .agreementType(docTypeCreationRequest.getAgreementType())
                 .userOrganization(userOrganization)
+                .attributes(attributes)
                 .build();
         return docTypeRepository.save(docType);
     }
@@ -81,6 +88,13 @@ public class DocTypeServiceImpl implements DocTypeService {
         DocType docType = getDocTypeById(docTypeId);
         docType.setName(Objects.requireNonNullElse(docTypeUpdateRequest.getName(), docType.getName()));
 
+        if (docTypeUpdateRequest.getAttributes() != null && !docTypeUpdateRequest.getAttributes().isEmpty()) {
+            List<DocAttribute> updatedAttributes = docTypeUpdateRequest.getAttributes().stream()
+                    .map(attrId -> docAttributeRepository.findById(attrId)
+                            .orElseThrow(() -> new ObjectNotFoundException("Атрибут с ID " + attrId + " не найден.")))
+                    .collect(Collectors.toList());
+            docType.setAttributes(updatedAttributes);
+        }
         return docTypeRepository.save(docType);
     }
 
