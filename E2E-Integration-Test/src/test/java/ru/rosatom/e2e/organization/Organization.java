@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Data
+@AllArgsConstructor
 public class Organization {
 
     
