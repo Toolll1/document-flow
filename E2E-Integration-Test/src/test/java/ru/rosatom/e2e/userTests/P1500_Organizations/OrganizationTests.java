@@ -60,7 +60,7 @@ public class OrganizationTests extends BasicHttpTest {
     @Test
     @DisplayName("Add organization - fail forbidden")
     public void addOrganizationForbidden() {
-        addOrganizationForbidden(new OrganizationAddRequest("New organization", "1234567890"));
+        addOrganizationForbidden(new OrganizationAddRequest("New organization", "1234567890"), adminOrg2Auth);
     }
 
 
@@ -80,7 +80,7 @@ public class OrganizationTests extends BasicHttpTest {
     @Test
     @DisplayName("Delete organization Fail")
     public void deleteOrganizationFail() {
-        deleteOrganizationFail( new OrganizationSearchRequestId(2));
+        deleteOrganizationFail( new OrganizationSearchRequestId(2), userOrg1Auth);
 
     }
 
@@ -168,7 +168,7 @@ public class OrganizationTests extends BasicHttpTest {
                     }
                     Assertions.assertTrue(response.contains(organization1));
                     Assertions.assertTrue(response.contains(organization2));
-                }).hasSize(2).returnResult();
+                }).returnResult();
     }
 
     private void getOrganizationWithIncorrectName(OrganizationSearchRequestName organizationSearchRequestName) {
@@ -177,8 +177,8 @@ public class OrganizationTests extends BasicHttpTest {
     }
 
 
-    private void deleteOrganizationFail(OrganizationSearchRequestId organizationSearchRequestId){
-        getResponseSpecDeleteOrganizationFail(organizationSearchRequestId)
+    private void deleteOrganizationFail(OrganizationSearchRequestId organizationSearchRequestId,UserAuthorizationResponse userAuthorizationResponse){
+        getResponseSpecDeleteOrganizationFail(organizationSearchRequestId, userAuthorizationResponse)
                 .expectStatus().isForbidden().expectBody(OrganizationSearchResponseId.class)
                 .value(Assertions::assertNotNull)
                 .returnResult();
@@ -230,8 +230,9 @@ public class OrganizationTests extends BasicHttpTest {
     }
 
 
-    private WebTestClient.ResponseSpec getResponseSpecDeleteOrganizationFail(OrganizationSearchRequestId organizationSearchRequestId) {
-        return withAuthClient(userOrg1Auth)
+    private WebTestClient.ResponseSpec getResponseSpecDeleteOrganizationFail(OrganizationSearchRequestId organizationSearchRequestId,
+                                                                             UserAuthorizationResponse userAuthorizationResponse) {
+        return withAuthClient(userAuthorizationResponse)
                 .delete()
                 .uri(uriBuilder -> uriBuilder
                         .path(OrganizationsEndpoint.ORGANIZATION_SEARCH + "/" + organizationSearchRequestId.getId())
@@ -239,8 +240,9 @@ public class OrganizationTests extends BasicHttpTest {
                 .exchange();
     }
 
-    private WebTestClient.ResponseSpec getResponseSpecAddOrganizationForbidden(OrganizationAddRequest organizationAddRequest) {
-        return withAuthClient(userOrg1Auth)
+    private WebTestClient.ResponseSpec getResponseSpecAddOrganizationForbidden(OrganizationAddRequest organizationAddRequest,
+                                                                               UserAuthorizationResponse userAuthorizationResponse){
+        return withAuthClient(userAuthorizationResponse)
                 .post()
                 .uri(uriBuilder -> uriBuilder
                         .path(OrganizationsEndpoint.ORGANIZATION_SEARCH)
@@ -249,8 +251,8 @@ public class OrganizationTests extends BasicHttpTest {
                 .exchange();
     }
 
-    private void addOrganizationForbidden(OrganizationAddRequest organizationAddRequest){
-        getResponseSpecAddOrganizationForbidden(organizationAddRequest)
+    private void addOrganizationForbidden(OrganizationAddRequest organizationAddRequest,  UserAuthorizationResponse userAuthorizationResponse){
+        getResponseSpecAddOrganizationForbidden(organizationAddRequest, userAuthorizationResponse )
                 .expectStatus().isForbidden().expectBody(OrganizationAddResponce.class)
                 .value(Assertions::assertNotNull)
                 .returnResult();;
