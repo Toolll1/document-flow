@@ -7,10 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
 import ru.rosatom.documentflow.models.*;
-import ru.rosatom.documentflow.repositories.DocAttributeRepository;
 import ru.rosatom.documentflow.repositories.DocTypeRepository;
-import ru.rosatom.documentflow.repositories.UserOrganizationRepository;
+import ru.rosatom.documentflow.services.DocAttributeService;
 import ru.rosatom.documentflow.services.DocTypeService;
+import ru.rosatom.documentflow.services.UserOrganizationService;
 
 import java.util.List;
 import java.util.Objects;
@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
 public class DocTypeServiceImpl implements DocTypeService {
 
     private final DocTypeRepository docTypeRepository;
-    private final DocAttributeRepository docAttributeRepository;
-    private final UserOrganizationRepository userOrganizationRepository;
+    private final DocAttributeService docAttributeService;
+    private final UserOrganizationService userOrganizationService;
 
     /**
      * Получает все типы документов с учетом пагинации. Если предоставлен идентификатор организации,
@@ -42,13 +42,14 @@ public class DocTypeServiceImpl implements DocTypeService {
     /**
      * Получает тип документа по его идентификатору.
      *
-     * @param id - идентификатор типа документа
+     * @param docTypeId - идентификатор типа документа
      * @return DocType - найденный тип документа
      * @throws ObjectNotFoundException если тип документа не найден
      */
     @Override
-    public DocType getDocTypeById(Long id) {
-        return docTypeRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException("Тип документа с ID " + id + " не найден."));
+    public DocType getDocTypeById(Long docTypeId) {
+        return docTypeRepository.findById(docTypeId)
+                .orElseThrow(() -> new ObjectNotFoundException("Тип документа с ID " + docTypeId + " не найден."));
     }
 
     /**
@@ -59,13 +60,14 @@ public class DocTypeServiceImpl implements DocTypeService {
      */
     @Override
     public DocType createDocType(DocTypeCreationRequest docTypeCreationRequest) {
-        UserOrganization userOrganization = userOrganizationRepository.findById(docTypeCreationRequest.getOrganizationId())
-                .orElseThrow(() -> new ObjectNotFoundException("Организация с ID " + docTypeCreationRequest.getOrganizationId() + " не найдена."));
-
+        UserOrganization userOrganization = userOrganizationService.getOrganization(docTypeCreationRequest.getOrganizationId());
         List<DocAttribute> attributes = docTypeCreationRequest.getAttributes().stream()
-                .map(attrId -> docAttributeRepository.findById(attrId)
-                        .orElseThrow(() -> new ObjectNotFoundException("Атрибут с ID " + attrId + " не найден.")))
+                .map(docAttributeService::getDocAttributeById)
                 .collect(Collectors.toList());
+
+        if (docAttributeService.areAttributesNotUnique(attributes)) {
+            throw new IllegalArgumentException("Атрибуты должны быть уникальными");
+        }
 
         DocType docType = DocType.builder()
                 .name(docTypeCreationRequest.getName())
@@ -90,10 +92,12 @@ public class DocTypeServiceImpl implements DocTypeService {
 
         if (docTypeUpdateRequest.getAttributes() != null && !docTypeUpdateRequest.getAttributes().isEmpty()) {
             List<DocAttribute> updatedAttributes = docTypeUpdateRequest.getAttributes().stream()
-                    .map(attrId -> docAttributeRepository.findById(attrId)
-                            .orElseThrow(() -> new ObjectNotFoundException("Атрибут с ID " + attrId + " не найден.")))
+                    .map(docAttributeService::getDocAttributeById)
                     .collect(Collectors.toList());
             docType.setAttributes(updatedAttributes);
+
+            if (docAttributeService.areAttributesNotUnique(updatedAttributes))
+                throw new IllegalArgumentException("Атрибуты должны быть уникальными");
         }
         return docTypeRepository.save(docType);
     }
@@ -101,11 +105,16 @@ public class DocTypeServiceImpl implements DocTypeService {
     /**
      * Удаляет тип документа по его идентификатору.
      *
-     * @param id - идентификатор удаляемого типа документа
+     * @param docTypeId - идентификатор удаляемого типа документа
      */
     @Override
-    public void deleteDocType(Long id) {
-        DocType docType = getDocTypeById(id);
+    public void deleteDocType(Long docTypeId) {
+        DocType docType = docTypeRepository.findById(docTypeId)
+                .orElseThrow(() -> new ObjectNotFoundException("Тип документа с ID " + docTypeId + " не найден."));
+
+        docType.getAttributes().clear();
+        docTypeRepository.save(docType);
+
         docTypeRepository.delete(docType);
     }
 
@@ -139,8 +148,7 @@ public class DocTypeServiceImpl implements DocTypeService {
     public DocType attributeToType(Long docTypeId, Long docAttributeId) {
         DocType docType = docTypeRepository.findById(docTypeId)
                 .orElseThrow(() -> new ObjectNotFoundException("Тип документа с ID " + docTypeId + " не найден."));
-        DocAttribute docAttribute = docAttributeRepository.findById(docAttributeId)
-                .orElseThrow(() -> new ObjectNotFoundException("Атрибут документа с ID " + docAttributeId + " не найден."));
+        DocAttribute docAttribute = docAttributeService.getDocAttributeById(docAttributeId);
 
         docType.addAttributes(docAttribute);
 
@@ -168,8 +176,7 @@ public class DocTypeServiceImpl implements DocTypeService {
      */
     public boolean isAllowedTypeAttribute(Long docTypeId, Long docAttributeId, User user) {
         DocType docType = getDocTypeById(docTypeId);
-        DocAttribute docAttribute = docAttributeRepository.findById(docAttributeId)
-                .orElseThrow(() -> new ObjectNotFoundException("Атрибут документа с ID " + docAttributeId + " не найден."));
+        DocAttribute docAttribute = docAttributeService.getDocAttributeById(docAttributeId);
 
         return Objects.equals(docType.getUserOrganization().getId(), user.getOrganization().getId()) &&
                 Objects.equals(docAttribute.getOrganization().getId(), user.getOrganization().getId());
