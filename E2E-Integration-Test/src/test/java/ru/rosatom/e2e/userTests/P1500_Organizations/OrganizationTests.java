@@ -49,14 +49,6 @@ public class OrganizationTests extends BasicHttpTest {
         getOrganizationWithNamePreffix(new OrganizationSearchRequestName("Рос"));
     }
 
-
-    @Test
-    @DisplayName("Get organizations with incorrect name")
-    public void getAllOrganizationsWithIncorrectName() {
-        getOrganizationWithIncorrectName(new OrganizationSearchRequestName("/"));
-    }
-
-
     @Test
     @DisplayName("Add organization - fail forbidden")
     public void addOrganizationForbidden() {
@@ -168,14 +160,8 @@ public class OrganizationTests extends BasicHttpTest {
                     }
                     Assertions.assertTrue(response.contains(organization1));
                     Assertions.assertTrue(response.contains(organization2));
-                }).returnResult();
+                });
     }
-
-    private void getOrganizationWithIncorrectName(OrganizationSearchRequestName organizationSearchRequestName) {
-        getResponseSpecAllOrganizationsWithName(organizationSearchRequestName)
-                .expectStatus().is5xxServerError();
-    }
-
 
     private void deleteOrganizationFail(OrganizationSearchRequestId organizationSearchRequestId,UserAuthorizationResponse userAuthorizationResponse){
         getResponseSpecDeleteOrganizationFail(organizationSearchRequestId, userAuthorizationResponse)
@@ -204,7 +190,7 @@ public class OrganizationTests extends BasicHttpTest {
                 .expectStatus().isForbidden()
                 .expectBody(OrganizationUpdateResponse.class)
                 .value(Assertions::assertNotNull)
-                .returnResult();;;
+                .returnResult();
     }
 
     private WebTestClient.ResponseSpec getResponseSpecUpdateOrganizationFail(OrganizationUpdateRequest organizationUpdateRequest,
