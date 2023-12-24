@@ -37,6 +37,7 @@ public class DocumentMapper {
         return Document.builder()
                 .docType(docTypeService.getDocTypeById(dto.getDocTypId()))
                 .attributeValues(attributeValues)
+                .title(dto.getTitle())
                 .build();
     }
 
