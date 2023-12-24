@@ -1,0 +1,19 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="v1.12_insert_attribute_values" author="svyat">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+            <sqlCheck expectedResult="${database.name}">SELECT current_database()</sqlCheck>
+            <tableExists tableName="attribute_values"/>
+        </preConditions>
+        <insert tableName="attribute_values">
+            <column name="attribute_value" value="1000$"/>
+            <column name="attribute_id" value="1"/>
+            <column name="document_id" value="1"/>
+        </insert>
+
+    </changeSet>
+</databaseChangeLog>

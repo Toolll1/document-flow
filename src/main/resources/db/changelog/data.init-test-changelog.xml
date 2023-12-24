@@ -11,4 +11,12 @@
              relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/initial-changesets/initial-data-test/v1.3_insert_attributes.xml"
              relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-data-test/v1.10_insert_document_types.xml"
+             relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-data-test/v1.11_insert_documents.xml"
+             relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-data-test/v1.12_insert_attribute_values.xml"
+             relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/initial-changesets/initial-data-test/v1.13_insert_type_attributes.xml"
+             relativeToChangelogFile="false"/>
 </databaseChangeLog>

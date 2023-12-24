@@ -1,0 +1,24 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="v.1.11_insert_documents" author="svyat">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+            <sqlCheck expectedResult="${database.name}">SELECT current_database()</sqlCheck>
+            <tableExists tableName="documents"/>
+        </preConditions>
+        <insert tableName="documents">
+            <column name="name" value="Document1"/>
+            <column name="document_path" value="C:\Document_Path"/>
+            <column name="created_at" value="2023-06-15"/>
+            <column name="organization_id" value="1"/>
+            <column name="owner_id" value="2"/>
+            <column name="type_id" value="1"/>
+<!--            <column name="value_id" value="1"/>-->
+            <column name="final_doc_status" value="WAITING_FOR_APPROVE"/>
+        </insert>
+
+    </changeSet>
+</databaseChangeLog>
