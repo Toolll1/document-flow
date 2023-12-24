@@ -10,7 +10,7 @@
             <tableExists tableName="organizations"/>
         </preConditions>
         <insert tableName="organizations">
-            <column name="name" value="Росатом"/>
+            <column name="name" value="Ростелеком"/>
             <column name="inn" value="9938230050"/>
         </insert>
         <insert tableName="organizations">

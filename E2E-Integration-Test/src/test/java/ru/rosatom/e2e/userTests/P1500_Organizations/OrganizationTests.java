@@ -148,7 +148,7 @@ public class OrganizationTests extends BasicHttpTest {
     }
 
     private void getOrganizationWithNamePreffix(OrganizationSearchRequestName organizationSearchRequestName) {
-        OrganizationSearchResponseId organization1 = new OrganizationSearchResponseId(5,"Pocатом", "9938230050");
+        OrganizationSearchResponseId organization1 = new OrganizationSearchResponseId(5,"Ростелеком", "9938230050");
         OrganizationSearchResponseId organization2 = new OrganizationSearchResponseId(6,"Ростагрокомплекс", "5995681370");
         getResponseSpecAllOrganizationsWithName(organizationSearchRequestName)
                 .expectStatus().isOk()
@@ -160,7 +160,7 @@ public class OrganizationTests extends BasicHttpTest {
                     }
                     Assertions.assertTrue(response.contains(organization1));
                     Assertions.assertTrue(response.contains(organization2));
-                });
+                }).returnResult();
     }
 
     private void deleteOrganizationFail(OrganizationSearchRequestId organizationSearchRequestId,UserAuthorizationResponse userAuthorizationResponse){
