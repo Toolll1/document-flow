@@ -20,7 +20,7 @@ public class DocumentsTests extends BasicHttpTest {
     @Test
     @DisplayName("Get all documents")
     public void simpleGetAllDocuments() {
-        testGetAllOrganizationSuccess();
+        testGetAllDocumentSuccess();
     }
 
     private WebTestClient.ResponseSpec getResponseSpecAllDocuments() {
@@ -30,7 +30,7 @@ public class DocumentsTests extends BasicHttpTest {
                 .exchange();
     }
 
-    private void testGetAllOrganizationSuccess(){
+    private void testGetAllDocumentSuccess(){
         getResponseSpecAllDocuments()
                 .expectStatus().isOk()
                 .expectBody(DocumentSearchResponse.class)
