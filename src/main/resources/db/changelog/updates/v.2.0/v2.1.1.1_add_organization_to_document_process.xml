@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="v2.1.2_add_organization_to_document_process" author="Vasily_Chumachenko">
+    <changeSet id="v2.1.1.1_add_organization_to_document_process" author="Vasily_Chumachenko">
 
         <preConditions>
             <tableExists tableName="document_process"/>
@@ -14,18 +14,6 @@
             <column name="org_id" type="bigint"/>
         </addColumn>
 
-        <comment>Update existing records with org_id</comment>
-        <update tableName="document_process">
-            <column name="org_id" value="2"/>
-            <where>process_id = 1</where>
-        </update>
-        <update tableName="document_process">
-            <column name="org_id" value="1"/>
-            <where>process_id = 2</where>
-        </update>
-
-        <comment>Add not null constraint</comment>
-        <addNotNullConstraint tableName="document_process" columnName="org_id"/>
 
         <comment>Add foreign key constraint to user_id</comment>
         <addForeignKeyConstraint baseTableName="document_process" baseColumnNames="org_id"
