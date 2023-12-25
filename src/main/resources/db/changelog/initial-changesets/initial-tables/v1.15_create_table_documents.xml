@@ -44,7 +44,7 @@
                              referencedColumnNames="value_id"
                              deleteCascade="true"/>
             </column>
-            <column name="comment" type="varchar(1000)">
+            <column name="comments" type="varchar(1000)">
                 <constraints nullable="true"/>
             </column>
             <column name="final_doc_status" type="varchar(32)" defaultValue="WAITING_FOR_APPROVE"/>
