@@ -29,7 +29,7 @@ public class DocAttributeServiceImpl implements DocAttributeService {
      * Если предоставлен идентификатор организации, возвращает атрибуты только для этой организации.
      *
      * @param pageable Параметры пагинации
-     * @param orgId Опциональный идентификатор организации
+     * @param orgId    Опциональный идентификатор организации
      * @return Page<DocAttribute> Страница с атрибутами документов
      */
     @Override
@@ -73,7 +73,7 @@ public class DocAttributeServiceImpl implements DocAttributeService {
     /**
      * Обновление существующего атрибута документа.
      *
-     * @param docAttributeId Идентификатор обновляемого атрибута
+     * @param docAttributeId            Идентификатор обновляемого атрибута
      * @param docAttributeUpdateRequest Запрос на обновление атрибута документа
      * @return DocAttribute Обновленный атрибут документа
      */
@@ -121,11 +121,26 @@ public class DocAttributeServiceImpl implements DocAttributeService {
      * Проверяет, разрешен ли доступ к атрибуту для заданного пользователя.
      * Доступ разрешен, если атрибут принадлежит организации пользователя.
      *
-     * @param id Идентификатор атрибута
+     * @param id   Идентификатор атрибута
      * @param user Пользователь, для которого проверяется доступ
      * @return boolean true, если доступ разрешен, иначе false
      */
     public boolean isAllowedAttribute(Long id, User user) {
         return Objects.equals(getDocAttributeById(id).getOrganization().getId(), user.getOrganization().getId());
+    }
+
+    /**
+     * Получает список атрибутов документа по их идентификаторам.
+     * Этот метод использует {@link DocAttributeRepository#findAllById(Iterable)} для извлечения атрибутов,
+     * что позволяет оптимизировать производительность за счет уменьшения количества запросов к базе данных.
+     * Вместо множественных запросов для каждого идентификатора, все атрибуты извлекаются за один запрос.
+     *
+     * @param ids Список идентификаторов атрибутов документа, которые необходимо получить.
+     * @return Список {@link DocAttribute}, соответствующих предоставленным идентификаторам.
+     *         Если некоторые идентификаторы не найдены, они будут просто пропущены в возвращаемом списке.
+     */
+    @Override
+    public List<DocAttribute> getDocAttributesByIds(List<Long> ids) {
+        return docAttributeRepository.findAllById(ids);
     }
 }

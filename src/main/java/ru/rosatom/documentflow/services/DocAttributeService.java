@@ -23,4 +23,6 @@ public interface DocAttributeService {
     List<DocAttribute> getDocAttributesByName(String name, User user);
 
     DocAttribute getDocAttributeById(Long id);
+
+    List<DocAttribute> getDocAttributesByIds(List<Long> ids);
 }

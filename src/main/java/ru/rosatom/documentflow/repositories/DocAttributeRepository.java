@@ -1,5 +1,6 @@
 package ru.rosatom.documentflow.repositories;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,4 +18,7 @@ public interface DocAttributeRepository extends JpaRepository<DocAttribute, Long
     Page<DocAttribute> findAllByUserOrganization(Long orgId, Pageable pageable);
 
     List<DocAttribute> findByOrganizationIdAndNameContains(Long organizationId, String name);
+
+    @NotNull
+    List<DocAttribute> findAllById(@NotNull Iterable<Long> ids);
 }

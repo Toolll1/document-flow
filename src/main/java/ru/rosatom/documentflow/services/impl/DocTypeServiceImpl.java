@@ -12,11 +12,7 @@ import ru.rosatom.documentflow.services.DocAttributeService;
 import ru.rosatom.documentflow.services.DocTypeService;
 import ru.rosatom.documentflow.services.UserOrganizationService;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
 @Transactional
@@ -62,9 +58,7 @@ public class DocTypeServiceImpl implements DocTypeService {
     @Override
     public DocType createDocType(DocTypeCreationRequest docTypeCreationRequest) {
         UserOrganization userOrganization = userOrganizationService.getOrganization(docTypeCreationRequest.getOrganizationId());
-        Set<DocAttribute> attributes = docTypeCreationRequest.getAttributes().stream()
-                .map(docAttributeService::getDocAttributeById)
-                .collect(Collectors.toSet());
+        Set<DocAttribute> attributes = new HashSet<>(docAttributeService.getDocAttributesByIds(docTypeCreationRequest.getAttributes()));
 
         DocType docType = DocType.builder()
                 .name(docTypeCreationRequest.getName())
@@ -88,12 +82,10 @@ public class DocTypeServiceImpl implements DocTypeService {
         docType.setName(Objects.requireNonNullElse(docTypeUpdateRequest.getName(), docType.getName()));
 
         if (docTypeUpdateRequest.getAttributes() != null && !docTypeUpdateRequest.getAttributes().isEmpty()) {
-            Set<DocAttribute> updatedAttributes = docTypeUpdateRequest.getAttributes().stream()
-                    .map(docAttributeService::getDocAttributeById)
-                    .collect(Collectors.toSet());
+            Set<DocAttribute> updatedAttributes = new HashSet<>(docAttributeService.getDocAttributesByIds(docTypeUpdateRequest.getAttributes()));
             docType.setAttributes(updatedAttributes);
-
         }
+
         return docTypeRepository.save(docType);
     }
 
