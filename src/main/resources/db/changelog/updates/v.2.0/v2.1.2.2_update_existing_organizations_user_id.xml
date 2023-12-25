@@ -4,18 +4,11 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="v2.1.4_add_user_to_organizations" author="Vasily_Chumachenko">
-        <preConditions>
+    <changeSet id="v2.1.2.2_update_existing_organizations_user_id" author="Vasily_Chumachenko">
+        <preConditions onFail="MARK_RAN">
+            <changeLogPropertyDefined property="initial.data.enabled" value="true" />
             <tableExists tableName="organizations"/>
         </preConditions>
-        <addColumn tableName="organizations">
-            <column name="user_id" type="bigint" defaultValueNumeric="1">
-                <constraints nullable="true"
-                             foreignKeyName="user_organization"
-                             referencedTableName="users"
-                             referencedColumnNames="user_id"/>
-            </column>
-        </addColumn>
 
         <comment>Update existing records with user_id</comment>
         <update tableName="organizations">
@@ -26,10 +19,6 @@
             <column name="user_id" value="2"/>
             <where>org_id = 2</where>
         </update>
-
-        <rollback>
-            <dropColumn tableName="organizations" columnName="user_id"/>
-        </rollback>
 
     </changeSet>
 </databaseChangeLog>
