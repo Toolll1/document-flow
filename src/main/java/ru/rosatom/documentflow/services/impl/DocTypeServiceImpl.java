@@ -15,6 +15,7 @@ import ru.rosatom.documentflow.services.UserOrganizationService;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -61,13 +62,9 @@ public class DocTypeServiceImpl implements DocTypeService {
     @Override
     public DocType createDocType(DocTypeCreationRequest docTypeCreationRequest) {
         UserOrganization userOrganization = userOrganizationService.getOrganization(docTypeCreationRequest.getOrganizationId());
-        List<DocAttribute> attributes = docTypeCreationRequest.getAttributes().stream()
+        Set<DocAttribute> attributes = docTypeCreationRequest.getAttributes().stream()
                 .map(docAttributeService::getDocAttributeById)
-                .collect(Collectors.toList());
-
-        if (docAttributeService.areAttributesNotUnique(attributes)) {
-            throw new IllegalArgumentException("Атрибуты должны быть уникальными");
-        }
+                .collect(Collectors.toSet());
 
         DocType docType = DocType.builder()
                 .name(docTypeCreationRequest.getName())
@@ -91,13 +88,11 @@ public class DocTypeServiceImpl implements DocTypeService {
         docType.setName(Objects.requireNonNullElse(docTypeUpdateRequest.getName(), docType.getName()));
 
         if (docTypeUpdateRequest.getAttributes() != null && !docTypeUpdateRequest.getAttributes().isEmpty()) {
-            List<DocAttribute> updatedAttributes = docTypeUpdateRequest.getAttributes().stream()
+            Set<DocAttribute> updatedAttributes = docTypeUpdateRequest.getAttributes().stream()
                     .map(docAttributeService::getDocAttributeById)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
             docType.setAttributes(updatedAttributes);
 
-            if (docAttributeService.areAttributesNotUnique(updatedAttributes))
-                throw new IllegalArgumentException("Атрибуты должны быть уникальными");
         }
         return docTypeRepository.save(docType);
     }
@@ -111,9 +106,6 @@ public class DocTypeServiceImpl implements DocTypeService {
     public void deleteDocType(Long docTypeId) {
         DocType docType = docTypeRepository.findById(docTypeId)
                 .orElseThrow(() -> new ObjectNotFoundException("Тип документа с ID " + docTypeId + " не найден."));
-
-        docType.getAttributes().clear();
-        docTypeRepository.save(docType);
 
         docTypeRepository.delete(docType);
     }

@@ -17,4 +17,5 @@ public interface DocTypeRepository extends JpaRepository<DocType, Long> {
     List<DocType> findByNameContains(String name);
 
     List<DocType> findByUserOrganizationIdAndNameContains(Long userOrganizationId, String name);
+
 }

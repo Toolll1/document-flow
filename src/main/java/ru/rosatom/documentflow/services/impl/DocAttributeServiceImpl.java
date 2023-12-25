@@ -128,15 +128,4 @@ public class DocAttributeServiceImpl implements DocAttributeService {
     public boolean isAllowedAttribute(Long id, User user) {
         return Objects.equals(getDocAttributeById(id).getOrganization().getId(), user.getOrganization().getId());
     }
-
-    /**
-     * Проверяет список атрибутов на уникальность.
-     *
-     * @param attributes Список атрибутов для проверки
-     * @return true если все атрибуты уникальны, иначе false
-     */
-    public boolean areAttributesNotUnique(List<DocAttribute> attributes) {
-        Set<DocAttribute> uniqueAttributes = new HashSet<>(attributes);
-        return uniqueAttributes.size() != attributes.size();
-    }
 }
