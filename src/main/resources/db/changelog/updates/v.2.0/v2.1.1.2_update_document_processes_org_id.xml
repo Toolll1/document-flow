@@ -3,9 +3,9 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="v2.1.2_update_document_processes_org_id" author="Vasily_Chumachenko">
+    <changeSet id="v2.1.1.2_update_document_processes_org_id" author="Vasily_Chumachenko">
 
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <changeLogPropertyDefined property="initial.data.enabled" value="true" />
             <tableExists tableName="document_process"/>
         </preConditions>

@@ -3,11 +3,11 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="v2.1.3_add_not_null_constraint_to_document_processes.xml" author="Vasily_Chumachenko">
-
+    <changeSet id="v2.1.1.3_add_not_null_constraint_to_document_processes" author="Vasily_Chumachenko">
         <preConditions>
             <tableExists tableName="document_process"/>
         </preConditions>
+
         <comment>Add not null constraint</comment>
         <addNotNullConstraint tableName="document_process" columnName="org_id"/>
     </changeSet>

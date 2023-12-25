@@ -4,10 +4,10 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="v2.1.4_add_organization_to_attributes" author="Vasily_Chumachenko">
+    <changeSet id="v2.1.3_add_organization_to_attributes" author="Vasily_Chumachenko">
         <preConditions onFail="MARK_RAN">
             <dbms type="postgresql"/>
-            <sqlCheck expectedResult="${database.name}">SELECT current_database()</sqlCheck>
+
             <tableExists tableName="attributes"/>
             <and>
                 <tableExists tableName="document_types"/>

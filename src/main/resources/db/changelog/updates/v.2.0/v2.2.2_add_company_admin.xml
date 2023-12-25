@@ -3,12 +3,9 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="v2.2.1_add_company_admin" author="Savin_Artem">
+    <changeSet id="v2.2.2_add_company_admin" author="Savin_Artem">
         <preConditions onFail="MARK_RAN">
-            <dbms type="postgresql"/>
             <changeLogPropertyDefined property="initial.data.enabled" value="true" />
-            <sqlCheck expectedResult="${database.name}">SELECT current_database()</sqlCheck>
-            <tableExists tableName="users"/>
         </preConditions>
 
         <insert tableName="users">

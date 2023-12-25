@@ -4,8 +4,8 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="v2.1.6_update_organizations_default_user_id" author="Vasily_Chumachenko">
-        <preConditions>
+    <changeSet id="v2.1.2.2_update_existing_organizations_user_id" author="Vasily_Chumachenko">
+        <preConditions onFail="MARK_RAN">
             <changeLogPropertyDefined property="initial.data.enabled" value="true" />
             <tableExists tableName="organizations"/>
         </preConditions>
