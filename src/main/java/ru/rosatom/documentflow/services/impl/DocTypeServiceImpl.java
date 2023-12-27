@@ -57,14 +57,12 @@ public class DocTypeServiceImpl implements DocTypeService {
      */
     @Override
     public DocType createDocType(DocTypeCreationRequest docTypeCreationRequest) {
-        UserOrganization userOrganization = userOrganizationService.getOrganization(docTypeCreationRequest.getOrganizationId());
-        Set<DocAttribute> attributes = new HashSet<>(docAttributeService.getDocAttributesByIds(docTypeCreationRequest.getAttributes()));
 
         DocType docType = DocType.builder()
                 .name(docTypeCreationRequest.getName())
                 .agreementType(docTypeCreationRequest.getAgreementType())
-                .userOrganization(userOrganization)
-                .attributes(attributes)
+                .userOrganization(userOrganizationService.getOrganization(docTypeCreationRequest.getOrganizationId()))
+                .attributes(docAttributeService.getDocAttributesByIds(docTypeCreationRequest.getAttributes()))
                 .build();
         return docTypeRepository.save(docType);
     }
@@ -81,9 +79,8 @@ public class DocTypeServiceImpl implements DocTypeService {
         DocType docType = getDocTypeById(docTypeId);
         docType.setName(Objects.requireNonNullElse(docTypeUpdateRequest.getName(), docType.getName()));
 
-        if (docTypeUpdateRequest.getAttributes() != null && !docTypeUpdateRequest.getAttributes().isEmpty()) {
-            Set<DocAttribute> updatedAttributes = new HashSet<>(docAttributeService.getDocAttributesByIds(docTypeUpdateRequest.getAttributes()));
-            docType.setAttributes(updatedAttributes);
+        if (docTypeUpdateRequest.getAttributes() != null) {
+            docType.setAttributes(docAttributeService.getDocAttributesByIds(docTypeUpdateRequest.getAttributes()));
         }
 
         return docTypeRepository.save(docType);

@@ -137,10 +137,10 @@ public class DocAttributeServiceImpl implements DocAttributeService {
      *
      * @param ids Список идентификаторов атрибутов документа, которые необходимо получить.
      * @return Список {@link DocAttribute}, соответствующих предоставленным идентификаторам.
-     *         Если некоторые идентификаторы не найдены, они будут просто пропущены в возвращаемом списке.
+     * Если некоторые идентификаторы не найдены, они будут просто пропущены в возвращаемом списке.
      */
     @Override
-    public List<DocAttribute> getDocAttributesByIds(List<Long> ids) {
-        return docAttributeRepository.findAllById(ids);
+    public Set<DocAttribute> getDocAttributesByIds(List<Long> ids) {
+        return docAttributeRepository.findDistinctByIds(new HashSet<>(ids));
     }
 }

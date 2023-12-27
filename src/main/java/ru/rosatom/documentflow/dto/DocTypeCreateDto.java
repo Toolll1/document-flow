@@ -5,8 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -26,6 +26,6 @@ public class DocTypeCreateDto {
     @Schema(description = "Организация")
     private Long organizationId;
 
-    @Schema(description = "Список идентификаторов атрибутов")
-    private List<Long> attributes = new ArrayList<>();
+    @Schema(description = "Список уникальных идентификаторов атрибутов")
+    private Set<Long> attributes = new HashSet<>();
 }

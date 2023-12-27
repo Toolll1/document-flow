@@ -9,6 +9,7 @@ import ru.rosatom.documentflow.models.User;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface DocAttributeService {
     Page<DocAttribute> getAllDocAttributes(Pageable pageable, Optional<Long> otgId);
@@ -24,5 +25,5 @@ public interface DocAttributeService {
 
     DocAttribute getDocAttributeById(Long id);
 
-    List<DocAttribute> getDocAttributesByIds(List<Long> ids);
+    Set<DocAttribute> getDocAttributesByIds(List<Long> ids);
 }

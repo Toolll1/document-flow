@@ -4,8 +4,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import ru.rosatom.documentflow.models.AgreementType;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Schema(description = "Тип документа")
@@ -17,7 +17,7 @@ public class DocTypeDto {
     private String name;
 
     @Schema(description = "Аттрибуты привязанные к типу")
-    private List<DocAttributeDto> attributes = new ArrayList<>();
+    private Set<DocAttributeDto> attributes = new HashSet<>();
 
     @Schema(description = "Для согласования документа требуется: " +
             "EVERYONE - все получатели, " +
