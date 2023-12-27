@@ -16,5 +16,5 @@ public class DocAttributeDto {
     private String type;
 
     @Schema(description = "Организация атрибута")
-    private OrgDto organization;
+    private long organizationId;
 }
