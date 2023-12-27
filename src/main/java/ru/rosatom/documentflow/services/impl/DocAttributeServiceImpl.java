@@ -149,8 +149,8 @@ public class DocAttributeServiceImpl implements DocAttributeService {
     /**
      * Получает список атрибутов документа по их идентификаторам.
      * Если какой-либо идентификатор не найден, будет выброшено исключение {@link SomeIdsInArrayNotFoundException}.
-     * @param searchIds
-     * @return
+     * @param searchIds Список идентификаторов атрибутов документа, которые необходимо получить.
+     * @return Список {@link DocAttribute}, соответствующих предоставленным идентификаторам.
      */
     @Override
     public Set<DocAttribute> getAllByIdsElseThrow(List<Long> searchIds) {
