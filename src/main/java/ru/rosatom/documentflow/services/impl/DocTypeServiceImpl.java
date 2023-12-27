@@ -66,7 +66,7 @@ public class DocTypeServiceImpl implements DocTypeService {
                 .name(docTypeCreationRequest.getName())
                 .agreementType(docTypeCreationRequest.getAgreementType())
                 .userOrganization(userOrganizationService.getOrganization(docTypeCreationRequest.getOrganizationId()))
-                .attributes(docAttributeService.getDocAttributesByIds(docTypeCreationRequest.getAttributes()))
+                .attributes(docAttributeService.getAllByIdsElseThrow(docTypeCreationRequest.getAttributes()))
                 .build();
         return docTypeRepository.save(docType);
     }
@@ -84,7 +84,7 @@ public class DocTypeServiceImpl implements DocTypeService {
         docType.setName(Objects.requireNonNullElse(docTypeUpdateRequest.getName(), docType.getName()));
 
         if (docTypeUpdateRequest.getAttributes() != null) {
-            docType.setAttributes(docAttributeService.getDocAttributesByIds(docTypeUpdateRequest.getAttributes()));
+            docType.setAttributes(docAttributeService.getAllByIdsElseThrow(docTypeUpdateRequest.getAttributes()));
         }
 
         return docTypeRepository.save(docType);

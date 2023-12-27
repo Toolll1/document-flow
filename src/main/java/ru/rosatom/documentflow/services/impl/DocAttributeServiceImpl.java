@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
+import ru.rosatom.documentflow.exceptions.SomeIdsInArrayNotFoundException;
 import ru.rosatom.documentflow.models.DocAttribute;
 import ru.rosatom.documentflow.models.DocAttributeCreationRequest;
 import ru.rosatom.documentflow.models.DocAttributeUpdateRequest;
@@ -15,6 +16,7 @@ import ru.rosatom.documentflow.services.UserOrganizationService;
 
 import javax.transaction.Transactional;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -142,5 +144,25 @@ public class DocAttributeServiceImpl implements DocAttributeService {
     @Override
     public Set<DocAttribute> getDocAttributesByIds(List<Long> ids) {
         return docAttributeRepository.findDistinctByIds(new HashSet<>(ids));
+    }
+
+    /**
+     * Получает список атрибутов документа по их идентификаторам.
+     * Если какой-либо идентификатор не найден, будет выброшено исключение {@link SomeIdsInArrayNotFoundException}.
+     * @param searchIds
+     * @return
+     */
+    @Override
+    public Set<DocAttribute> getAllByIdsElseThrow(List<Long> searchIds) {
+        Set<DocAttribute> docAttributes = getDocAttributesByIds(searchIds);
+        if (docAttributes.size() != searchIds.size()) {
+            throw new SomeIdsInArrayNotFoundException(
+                    searchIds.stream()
+                            .filter(id -> docAttributes.stream().noneMatch(docAttribute -> docAttribute.getId().equals(id)))
+                            .collect(Collectors.toList()),
+                    "Атрибут"
+            );
+        }
+        return docAttributes;
     }
 }

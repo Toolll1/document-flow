@@ -26,4 +26,6 @@ public interface DocAttributeService {
     DocAttribute getDocAttributeById(Long id);
 
     Set<DocAttribute> getDocAttributesByIds(List<Long> ids);
+
+    Set<DocAttribute> getAllByIdsElseThrow(List<Long> ids);
 }
