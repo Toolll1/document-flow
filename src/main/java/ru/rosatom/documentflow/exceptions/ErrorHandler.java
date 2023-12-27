@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import ru.rosatom.documentflow.dto.AppError;
+import ru.rosatom.documentflow.dto.InvalidIdsError;
 import ru.rosatom.documentflow.dto.ValidationError;
 
 import java.time.format.DateTimeParseException;
@@ -100,12 +101,26 @@ public class ErrorHandler {
         return createAppError(errorMessage, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<? extends AppError> handleSomeObjectInArrayNotFoundException(SomeIdsInArrayNotFoundException e) {
+        return createWithCustomAppError(
+                new InvalidIdsError(e.getMessage(), e.getNotFoundIds()),
+                HttpStatus.NOT_FOUND);
+    }
+
 
     public ResponseEntity<AppError> createAppError(Throwable e, HttpStatus status) {
         return new ResponseEntity<>(
                 AppError.builder()
                         .message(e.getMessage())
                         .build(),
+                status
+        );
+    }
+
+    private ResponseEntity<? extends AppError> createWithCustomAppError(AppError appError, HttpStatus status) {
+        return new ResponseEntity<>(
+                appError,
                 status
         );
     }
