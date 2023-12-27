@@ -58,4 +58,8 @@ public class DocType {
     public void addAttributes(DocAttribute docAttribute) {
         attributes.add(docAttribute);
     }
+
+    public boolean containsAttribute(DocAttribute docAttribute){
+        return attributes.contains(docAttribute);
+    }
 }

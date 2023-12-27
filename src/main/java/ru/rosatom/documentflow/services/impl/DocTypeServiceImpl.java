@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.rosatom.documentflow.exceptions.AlreadyExistsException;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
 import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocTypeRepository;
@@ -12,7 +13,10 @@ import ru.rosatom.documentflow.services.DocAttributeService;
 import ru.rosatom.documentflow.services.DocTypeService;
 import ru.rosatom.documentflow.services.UserOrganizationService;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
 
 @Service
 @Transactional
@@ -130,9 +134,10 @@ public class DocTypeServiceImpl implements DocTypeService {
         DocType docType = docTypeRepository.findById(docTypeId)
                 .orElseThrow(() -> new ObjectNotFoundException("Тип документа с ID " + docTypeId + " не найден."));
         DocAttribute docAttribute = docAttributeService.getDocAttributeById(docAttributeId);
-
+        if (docType.containsAttribute(docAttribute)){
+            throw new AlreadyExistsException(docAttribute.getName(), docType.getName());
+        }
         docType.addAttributes(docAttribute);
-
         return docTypeRepository.save(docType);
     }
 
