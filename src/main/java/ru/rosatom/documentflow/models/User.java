@@ -98,7 +98,21 @@ public class User implements UserDetails {
         return true;
     }
 
+    public String getFullName(){
+        StringBuilder fullName = new StringBuilder();
+
+        fullName.append(getFirstName());
+
+        if (getPatronymic() != null) {
+            fullName.append(" ").append(getPatronymic());
+        }
+
+        fullName.append(" ").append(getLastName());
+
+        return fullName.toString();
+    }
     public boolean isAdmin() {
         return this.getRole() == UserRole.ADMIN;
     }
+
 }

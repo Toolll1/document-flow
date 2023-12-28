@@ -6,6 +6,8 @@ import ru.rosatom.documentflow.exceptions.IllegalProcessStatusException;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
 import ru.rosatom.documentflow.exceptions.UnprocessableEntityException;
 import ru.rosatom.documentflow.kafka.Producer;
+import ru.rosatom.documentflow.models.*;
+import ru.rosatom.documentflow.repositories.DocProcessCommentRepository;
 import ru.rosatom.documentflow.models.AgreementType;
 import ru.rosatom.documentflow.models.DocProcess;
 import ru.rosatom.documentflow.models.DocProcessStatus;
@@ -15,11 +17,14 @@ import ru.rosatom.documentflow.models.ProcessUpdateRequest;
 import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.models.UserOrganization;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
+import ru.rosatom.documentflow.repositories.DocumentRepository;
 import ru.rosatom.documentflow.services.DocumentProcessService;
 import ru.rosatom.documentflow.services.DocumentService;
 import ru.rosatom.documentflow.services.EmailService;
 import ru.rosatom.documentflow.services.UserOrganizationService;
 import ru.rosatom.documentflow.services.UserService;
+import java.time.LocalDateTime;
+import java.util.*;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -34,7 +39,6 @@ import static ru.rosatom.documentflow.models.DocProcessStatus.*;
 @AllArgsConstructor
 public class DocumentProcessServiceImpl implements DocumentProcessService {
 
-    private final static String EMPTY_COMMENT = "";
     private final static Map<DocProcessStatus, List<DocProcessStatus>> ALLOWED_STATUS_CHANGES = Map.of(
             DocProcessStatus.NEW, List.of(DocProcessStatus.WAITING_FOR_APPROVE),
             DocProcessStatus.WAITING_FOR_APPROVE, List.of(DocProcessStatus.APPROVED, DocProcessStatus.REJECTED
@@ -49,6 +53,8 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     private final DocProcessRepository docProcessRepository;
     private final EmailService emailService;
     private final Producer producer;
+    private final DocProcessCommentRepository docProcessCommentRepository;
+
     private final UserOrganizationService userOrganizationService;
 
 
@@ -74,11 +80,9 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
                 .recipientUser(userService.getUser(recipientCompany.getDefaultRecipient()))
                 .recipientOrganization(recipientCompany)
                 .status(DocProcessStatus.NEW)
-                .comment(EMPTY_COMMENT)
                 .build();
         return docProcessRepository.save(docProcess);
     }
-
 
     /**
      * Создает новый процесс согласования документа. Статус процесса - NEW
@@ -98,7 +102,6 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
                 .sender(sender)
                 .recipientOrganization(sender.getOrganization())
                 .status(DocProcessStatus.NEW)
-                .comment(EMPTY_COMMENT)
                 .build();
         return docProcessRepository.save(docProcess);
     }
@@ -218,7 +221,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
 
     private DocProcess getProcessAndApplyRequest(ProcessUpdateRequest processUpdateRequest) {
         DocProcess docProcess = findProcessById(processUpdateRequest.getProcessId());
-        docProcess.setComment(Objects.requireNonNullElse(processUpdateRequest.getComment(), docProcess.getComment()));
+        setCommentDocProcess(processUpdateRequest, docProcess);
         return docProcess;
     }
 
@@ -319,5 +322,26 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         docProcess.setStatus(DELEGATED);
         docProcessRepository.save(docProcess);
         return createNewProcess(docProcess.getDocument().getId(), recipientId);
+    }
+
+
+    public void setCommentDocProcess(ProcessUpdateRequest processUpdateRequest, DocProcess docProcess){
+        Document document = docProcess.getDocument();
+        List<DocProcessComment> comments = document.getComment();
+        String textComment = processUpdateRequest.getComment();
+        DocProcessComment comment = createComment(textComment, docProcess.getSender(), docProcess);
+        document.setComment(comments);
+        docProcessCommentRepository.save(comment);
+        emailService.sendMessageWithNewComment(docProcess);
+    }
+
+    @Override
+    public DocProcessComment createComment(String text, User user, DocProcess docProcess) {
+        return  DocProcessComment.builder()
+                .authorComment(user)
+                .docProcess(docProcess)
+                .textComment(text)
+                .date(LocalDateTime.now())
+                .build();
     }
 }

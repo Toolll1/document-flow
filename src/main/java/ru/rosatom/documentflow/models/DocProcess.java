@@ -17,7 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
+import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
@@ -54,7 +54,4 @@ public class DocProcess {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private DocProcessStatus status;
-
-    @Column(name = "comment", nullable = false, length = 1000)
-    private String comment;
 }
