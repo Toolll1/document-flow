@@ -10,13 +10,13 @@
             <tableExists tableName="document_process_comment"/>
         </preConditions>
         <insert tableName="document_process_comment">
-            <column name="document_id" value="1"/>
+            <column name="document_process_id" value="1"/>
             <column name="user_id" value="2"/>
             <column name="text_comment" value="Text comment"/>
             <column name="date_comment" value="NOW()"/>
         </insert>
         <insert tableName="document_process_comment">
-            <column name="document_id" value="2"/>
+            <column name="document_process_id" value="2"/>
             <column name="user_id" value="2"/>
             <column name="text_comment" value="Text comment 2"/>
             <column name="date_comment" value="NOW()"/>

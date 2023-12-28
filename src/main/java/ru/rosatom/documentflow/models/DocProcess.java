@@ -54,6 +54,4 @@ public class DocProcess {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private DocProcessStatus status;
-    @Column(name = "comment", nullable = false, length = 1000)
-    private String comment;
 }
