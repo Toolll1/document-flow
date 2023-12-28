@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import ru.rosatom.documentflow.models.DocType;
 import ru.rosatom.documentflow.models.DocTypeCreationRequest;
 import ru.rosatom.documentflow.models.DocTypeUpdateRequest;
+import ru.rosatom.documentflow.models.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +21,7 @@ public interface DocTypeService {
 
     void deleteDocType(Long id);
 
-    List<DocType> getDocTypesByName(String name);
+    List<DocType> getDocTypesByName(String name, User user);
 
     DocType attributeToType(Long docTypeId, Long docAttributeId);
 }

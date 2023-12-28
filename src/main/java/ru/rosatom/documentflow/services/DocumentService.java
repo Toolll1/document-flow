@@ -4,7 +4,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import ru.rosatom.documentflow.dto.DocParams;
 import ru.rosatom.documentflow.dto.DocumentUpdateDto;
-import ru.rosatom.documentflow.models.*;
+import ru.rosatom.documentflow.models.DocChanges;
+import ru.rosatom.documentflow.models.DocProcess;
+import ru.rosatom.documentflow.models.DocProcessStatus;
+import ru.rosatom.documentflow.models.Document;
+import ru.rosatom.documentflow.models.User;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,8 +28,9 @@ public interface DocumentService {
 
     Set<Document> findDocumentsByProcessStatus(DocProcessStatus status);
 
-    Page<Document> findDocuments(DocParams p,
-                                 Pageable pageable);
+    Set<Document> findDocumentsByProcessStatusAndIdOrganization(DocProcessStatus status, Long id);
+
+    Page<Document> findDocuments(Long userId, DocParams p, Pageable pageable);
 
     void deleteDocumentById(Long id, Long userId);
 

@@ -1,10 +1,26 @@
 package ru.rosatom.documentflow.models;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -29,7 +45,7 @@ public class DocType {
             joinColumns = @JoinColumn(name = "type_id", referencedColumnName = "type_id"),
             inverseJoinColumns =
             @JoinColumn(name = "attribute_id", referencedColumnName = "attribute_id"))
-    private List<DocAttribute> attributes = new ArrayList<>();
+    private Set<DocAttribute> attributes = new HashSet<>();
 
     @Column(name = "agreement_type", length = 16)
     @Enumerated(EnumType.STRING)
@@ -41,5 +57,9 @@ public class DocType {
 
     public void addAttributes(DocAttribute docAttribute) {
         attributes.add(docAttribute);
+    }
+
+    public boolean containsAttribute(DocAttribute docAttribute){
+        return attributes.contains(docAttribute);
     }
 }

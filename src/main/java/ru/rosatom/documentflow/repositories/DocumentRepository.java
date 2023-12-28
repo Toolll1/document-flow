@@ -19,5 +19,11 @@ public interface DocumentRepository extends JpaRepository<Document, Long>, Query
             "where dp.status = :status")
     Set<Document> findDocumentsByProcessStatus(@Param("status") DocProcessStatus status);
 
+    @Query("select d from Document d " +
+            "left join DocProcess dp on dp.document.id=d.id " +
+            "where dp.status = :status and d.idOrganization = :id")
+    Set<Document> findDocumentsByProcessStatusAndIdOrganization(@Param("status") DocProcessStatus status, @Param("id")Long id);
+
     Page<Document> findAllByIdOrganization(Long idOrganization, Pageable pageable);
+
 }

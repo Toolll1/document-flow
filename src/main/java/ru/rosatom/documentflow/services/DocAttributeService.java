@@ -9,6 +9,7 @@ import ru.rosatom.documentflow.models.User;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface DocAttributeService {
     Page<DocAttribute> getAllDocAttributes(Pageable pageable, Optional<Long> otgId);
@@ -20,7 +21,11 @@ public interface DocAttributeService {
 
     void deleteDocAttribute(Long id);
 
-    List<DocAttribute> getDocAttributesByName(String name);
+    List<DocAttribute> getDocAttributesByName(String name, User user);
 
     DocAttribute getDocAttributeById(Long id);
+
+    Set<DocAttribute> getDocAttributesByIds(List<Long> ids);
+
+    Set<DocAttribute> getAllByIdsElseThrow(List<Long> ids);
 }

@@ -20,7 +20,10 @@ public class DocProcessDto {
     private Long sender;
 
     @Schema(description = "Получатель")
-    private Long recipient;
+    private Long recipientUserId;
+
+    @Schema(description = "Организация получатель")
+    private Long recipientOrganizationId;
 
     @Schema(description = "Статус")
     private String status;

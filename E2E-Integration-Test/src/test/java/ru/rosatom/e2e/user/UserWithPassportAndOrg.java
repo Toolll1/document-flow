@@ -15,5 +15,5 @@ public class UserWithPassportAndOrg {
     private String post;
     private String role;
     private Passport userPassportDto;
-    private Organization userOrganization;
+    private Organization organization;
 }

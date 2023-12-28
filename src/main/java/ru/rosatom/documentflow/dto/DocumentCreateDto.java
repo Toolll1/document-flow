@@ -19,8 +19,10 @@ public class DocumentCreateDto {
     @NotNull
     Long docTypId;
 
+    @Schema(description = "Пользовательское название документа")
+    String title;
+
     @Schema(description = "Список атрибутов")
     @NotNull
     List<DocAttributeValueCreateDto> docAttributeValueCreateDtos;
-
 }

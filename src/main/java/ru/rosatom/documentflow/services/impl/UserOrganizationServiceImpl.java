@@ -6,12 +6,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.rosatom.documentflow.exceptions.BadRequestException;
 import ru.rosatom.documentflow.exceptions.ConflictException;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
 import ru.rosatom.documentflow.models.OrgCreationRequest;
 import ru.rosatom.documentflow.models.OrgUpdateRequest;
+import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.models.UserOrganization;
 import ru.rosatom.documentflow.repositories.UserOrganizationRepository;
+import ru.rosatom.documentflow.repositories.UserRepository;
 import ru.rosatom.documentflow.services.UserOrganizationService;
 
 import java.util.List;
@@ -24,6 +27,9 @@ import java.util.Optional;
 public class UserOrganizationServiceImpl implements UserOrganizationService {
 
     private final UserOrganizationRepository repository;
+    private final UserRepository userRepository;
+
+
 
     @Override
     public UserOrganization getOrganization(Long orgId) {
@@ -60,17 +66,27 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
     }
 
     /**
-     * Обновить организацию
+     * Обновить организацию при запросе от ADMIN по указанной компании,
+     * для остальных ролей всегда обновиться своя компания.
      *
      * @param orgId            id организации
      * @param orgUpdateRequest запрос на обновление организации
+     * @param user
      * @return UserOrganization обновленная организация
      */
     @Override
-    public UserOrganization updateOrganization(Long orgId, OrgUpdateRequest orgUpdateRequest) {
+    public UserOrganization updateOrganization(Long orgId, OrgUpdateRequest orgUpdateRequest, User user) {
+        if (!user.isAdmin()){
+            orgId = user.getOrganization().getId();
+        }
         throwIfOrganizationExists(orgId, orgUpdateRequest.getName());
         UserOrganization organization = getOrganization(orgId);
         organization.setName(Objects.requireNonNullElse(orgUpdateRequest.getName(), organization.getName()));
+
+        Long finalOrgId = orgId;
+        Optional.ofNullable(orgUpdateRequest.getDefaultRecipient())
+                .ifPresent(userId -> validateAndUpdateUserInOrganization(userId, finalOrgId, organization));
+
         return repository.save(organization);
     }
 
@@ -120,5 +136,20 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
         throwIfOrganizationExists(-1L, name);
     }
 
+    private void validateAndUpdateUserInOrganization(Long userId, Long orgId, UserOrganization organization) {
+        validateUserBelongsToOrganization(userId, orgId);
+        organization.setDefaultRecipient(userId);
+    }
 
+    private void validateUserBelongsToOrganization(Long userId, Long orgId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BadRequestException(
+                        String.format("Пользователь с id = %d не найден.", userId)));
+
+        if (!user.getOrganization().getId().equals(orgId)) {
+            throw new BadRequestException(
+                    String.format("Пользователь с id = %d не является сотрудником организации. " +
+                            "Назначение получателем по умолчанию невозможно.", userId));
+        }
+    }
 }

@@ -23,4 +23,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "from User u join Document d on u.id = d.ownerId " +
             "where u.organization.id = :organizationId group by u")
     List<UserRatingDto> findRatingForAllUsersByOrganizationId(Long organizationId);
+
+    List<User> findAllByOrganizationId(Long id);
 }

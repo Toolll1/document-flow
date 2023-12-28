@@ -24,7 +24,7 @@ import ru.rosatom.documentflow.services.UserOrganizationService;
 import ru.rosatom.documentflow.services.UserService;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -144,6 +144,11 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll(pageable);
     }
 
+    @Override
+    public List<User> findAllByOrganizationId(Long id) {
+        return userRepository.findAllByOrganizationId(id);
+    }
+
     private void checkUnique(User user) {
 
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
@@ -159,19 +164,21 @@ public class UserServiceImpl implements UserService {
 
     private void checkUnique(UserUpdateDto dto, Long userId) {
 
-        Optional<User> userToEmail = userRepository.findByEmail(dto.getEmail());
-        Optional<User> userToPhone = userRepository.findByPhone(dto.getPhone());
-        Optional<User> userToPassport = userRepository.findByPassportSeriesAndPassportNumber(dto.getPassportSeries(), dto.getPassportNumber());
-
-        if (userToEmail.isPresent() && !userToEmail.get().getId().equals(userId)) {
-            throw new ConflictException("Пользователь с таким email уже существует");
-        }
-        if (userToPhone.isPresent() && !userToPhone.get().getId().equals(userId)) {
-            throw new ConflictException("Пользователь с таким телефоном уже существует");
-        }
-        if (userToPassport.isPresent() && !userToPassport.get().getId().equals(userId)) {
-            throw new ConflictException("Пользователь с таким паспортом уже существует");
-        }
+        userRepository.findByEmail(dto.getEmail())
+                .filter(user -> !user.getId().equals(userId))
+                .ifPresent(u -> {
+                    throw new ConflictException("Пользователь с таким email уже существует");
+                });
+        userRepository.findByPhone(dto.getPhone())
+                .filter(user -> !user.getId().equals(userId))
+                .ifPresent(u -> {
+                    throw new ConflictException("Пользователь с таким телефоном уже существует");
+                });
+        userRepository.findByPassportSeriesAndPassportNumber(dto.getPassportSeries(),dto.getPassportNumber())
+                .filter(user -> !user.getId().equals(userId))
+                .ifPresent(u -> {
+                    throw new ConflictException("Пользователь с таким паспортом уже существует");
+                });
     }
 
     private <T> T defaultIfNull(T value, T defaultValue) {
@@ -181,5 +188,10 @@ public class UserServiceImpl implements UserService {
     private PageRequest pageableCreator(Integer from, Integer size, String sort) {
         Sort sortBy = !sort.isEmpty() ? Sort.by(sort) : Sort.unsorted();
         return PageRequest.of(from / size, size, sortBy);
+    }
+
+    public boolean isAllowed(Long id, User user) {
+        boolean alllowed = Objects.equals(getUser(id).getOrganization().getId(), user.getOrganization().getId());
+        return alllowed;
     }
 }

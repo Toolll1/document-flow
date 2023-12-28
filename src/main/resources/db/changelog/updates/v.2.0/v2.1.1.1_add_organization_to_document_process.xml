@@ -1,0 +1,27 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="v2.1.1.1_add_organization_to_document_process" author="Vasily_Chumachenko">
+
+        <preConditions>
+            <tableExists tableName="document_process"/>
+        </preConditions>
+
+        <comment>Add column org_id to document_process</comment>
+        <addColumn tableName="document_process">
+            <column name="org_id" type="bigint"/>
+        </addColumn>
+
+
+        <comment>Add foreign key constraint to user_id</comment>
+        <addForeignKeyConstraint baseTableName="document_process" baseColumnNames="org_id"
+                                 constraintName="organization_process" referencedTableName="organizations"
+                                 referencedColumnNames="org_id"/>
+
+        <rollback>
+            <dropColumn tableName="document_process" columnName="org_id"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
