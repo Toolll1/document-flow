@@ -22,8 +22,6 @@
              relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/updates/v.2.0/v2.3.1_add_title_column_to_documents.xml"
              relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/updates/v.2.0/v2.3.2_insert_attributes.xml"
-             relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/updates/v.2.0/v2.4.1_add_cascade_deletion.xml"
              relativeToChangelogFile="false"/>
 
