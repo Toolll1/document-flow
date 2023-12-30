@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import ru.rosatom.documentflow.dto.PasswordDto;
 import ru.rosatom.documentflow.dto.UserCreateDto;
 import ru.rosatom.documentflow.dto.UserReplyDto;
 import ru.rosatom.documentflow.dto.UserUpdateDto;
@@ -39,7 +40,6 @@ import ru.rosatom.documentflow.services.UserOrganizationService;
 import ru.rosatom.documentflow.services.UserService;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Size;
 import java.util.List;
 
 @Slf4j
@@ -89,18 +89,14 @@ public class UserController {
     @Operation(summary = "Установить пароль для пользователя")
     @PreAuthorize("(#userId==#user.id && hasAuthority('USER')) || hasAuthority('ADMIN') || " +
             "(@userServiceImpl.isAllowed(#userId, #user) && hasAuthority('COMPANY_ADMIN'))")
-    @PatchMapping("/password/{userId}")
+    @PostMapping("/password/{userId}")
     @SecurityRequirement(name = "JWT")
     public ResponseEntity<?> setUserPassword(
-            @Valid
-            @Size(min = 8, message = "password is too short")
-            @RequestParam(value = "password")
-            @Parameter(description = "Пароль пользователя")
-            String password,
+            @RequestBody @Valid @Parameter (description = "Пароль пользователя") PasswordDto passwordDto,
             @PathVariable @Parameter(description = "ID пользователя") Long userId,
             @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
         log.info("Received a request to set password to user with userId = {}", userId);
-        if (userService.setPasswordToUser(password, userId)) {
+        if (userService.setPasswordToUser(passwordDto.getPassword(), userId)) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>("User with id " + userId + " not found", HttpStatus.BAD_REQUEST);
