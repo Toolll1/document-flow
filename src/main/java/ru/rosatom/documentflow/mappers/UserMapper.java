@@ -3,7 +3,6 @@ package ru.rosatom.documentflow.mappers;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
-import ru.rosatom.documentflow.adapters.DateTimeAdapter;
 import ru.rosatom.documentflow.dto.OrgDto;
 import ru.rosatom.documentflow.dto.UserCreateDto;
 import ru.rosatom.documentflow.dto.UserPassportDto;
@@ -25,7 +24,7 @@ public class UserMapper {
         return UserReplyDto.builder()
                 .id(user.getId())
                 .fullName(createFullName(user))
-                .dateOfBirth(DateTimeAdapter.dateToString(user.getDateOfBirth()))
+                .dateOfBirth(user.getDateOfBirth())
                 .phone(user.getPhone())
                 .email(user.getEmail())
                 .post(user.getPost())
@@ -48,7 +47,7 @@ public class UserMapper {
                 .firstName(dto.getFirstName())
                 .lastName(dto.getLastName())
                 .patronymic(dto.getPatronymic())
-                .dateOfBirth(DateTimeAdapter.stringToDate(dto.getDateOfBirth()))
+                .dateOfBirth(dto.getDateOfBirth())
                 .email(dto.getEmail())
                 .phone(dto.getPhone())
                 .post(dto.getPost())

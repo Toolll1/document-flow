@@ -1,7 +1,6 @@
 package ru.rosatom.documentflow.mappers;
 
 import org.springframework.stereotype.Component;
-import ru.rosatom.documentflow.adapters.DateTimeAdapter;
 import ru.rosatom.documentflow.dto.UserCreateDto;
 import ru.rosatom.documentflow.models.UserPassport;
 
@@ -14,7 +13,7 @@ public class UserPassportMapper {
                 .series(dto.getPassportSeries())
                 .number(dto.getPassportNumber())
                 .issued(dto.getPassportIssued())
-                .date(DateTimeAdapter.stringToDate(dto.getPassportDate()))
+                .date(dto.getPassportDate())
                 .kp(dto.getPassportKp())
                 .build();
     }

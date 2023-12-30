@@ -9,11 +9,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.rosatom.documentflow.adapters.DateTimeAdapter;
 import ru.rosatom.documentflow.dto.UserUpdateDto;
 import ru.rosatom.documentflow.exceptions.BadRequestException;
 import ru.rosatom.documentflow.exceptions.ConflictException;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
+import ru.rosatom.documentflow.exceptions.UserRoleNotFoundException;
 import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.models.UserOrganization;
 import ru.rosatom.documentflow.models.UserPassport;
@@ -76,16 +76,20 @@ public class UserServiceImpl implements UserService {
         passport.setNumber(defaultIfNull(dto.getPassportNumber(), passport.getNumber()));
         passport.setIssued(defaultIfNull(dto.getPassportIssued(), passport.getIssued()));
         passport.setKp(defaultIfNull(dto.getPassportKp(), passport.getKp()));
-        passport.setDate((dto.getPassportDate() != null) ? DateTimeAdapter.stringToDate(dto.getPassportDate()) : passport.getDate());
+        passport.setDate((dto.getPassportDate() != null) ? dto.getPassportDate() : passport.getDate());
 
         user.setFirstName(defaultIfNull(dto.getFirstName(), user.getFirstName()));
         user.setLastName(defaultIfNull(dto.getLastName(), user.getLastName()));
         user.setPatronymic(defaultIfNull(dto.getPatronymic(), user.getPatronymic()));
-        user.setDateOfBirth((dto.getDateOfBirth() != null) ? DateTimeAdapter.stringToDate(dto.getDateOfBirth()) : user.getDateOfBirth());
+        user.setDateOfBirth((dto.getDateOfBirth() != null) ? dto.getDateOfBirth() : user.getDateOfBirth());
         user.setEmail(defaultIfNull(dto.getEmail(), user.getEmail()));
         user.setPhone(defaultIfNull(dto.getPhone(), user.getPhone()));
         user.setPost(defaultIfNull(dto.getPost(), user.getPost()));
-        user.setRole((dto.getRole() != null) ? UserRole.valueOf(dto.getRole()) : user.getRole());
+        try {
+            user.setRole((dto.getRole() != null) ? UserRole.valueOf(dto.getRole().toUpperCase()) : user.getRole());
+        } catch (IllegalArgumentException e) {
+            throw new UserRoleNotFoundException("Роль пользователя '" + dto.getRole() + "' не найдена");
+        }
         user.setOrganization((dto.getOrganizationId() == null) ? user.getOrganization() : organizationService.getOrganization(dto.getOrganizationId()));
         user.setPassport(passport);
 

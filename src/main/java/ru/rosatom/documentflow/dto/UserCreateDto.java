@@ -4,12 +4,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -32,11 +32,9 @@ public class UserCreateDto {
     @Size(min = 2, max = 100)
     private final String patronymic;
 
-    @Schema(description = "Дата рождения", minLength = 10, maxLength = 10)
-    @NotBlank
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Size(min = 10, max = 10)
-    private final String dateOfBirth;
+    @Schema(description = "Дата рождения")
+    @NotNull
+    private final LocalDate dateOfBirth;
 
     @Schema(description = "Email", minLength = 6, maxLength = 320)
     @Email
@@ -64,10 +62,9 @@ public class UserCreateDto {
     @Size(min = 2, max = 1000)
     private final String passportIssued; // кем выдан
 
-    @Schema(description = "Дата выдачи паспорта", minLength = 10, maxLength = 10)
-    @NotBlank
-    @Size(min = 10, max = 10)
-    private final String passportDate;
+    @Schema(description = "Дата выдачи паспорта")
+    @NotNull
+    private final LocalDate passportDate;
 
     @Schema(description = "Код подразделения", minLength = 6, maxLength = 6)
     @NotBlank
