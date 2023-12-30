@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -33,6 +34,7 @@ public class UserCreateDto {
 
     @Schema(description = "Дата рождения", minLength = 10, maxLength = 10)
     @NotBlank
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Size(min = 10, max = 10)
     private final String dateOfBirth;
 

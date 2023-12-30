@@ -8,6 +8,7 @@ import ru.rosatom.documentflow.dto.OrgDto;
 import ru.rosatom.documentflow.dto.UserCreateDto;
 import ru.rosatom.documentflow.dto.UserPassportDto;
 import ru.rosatom.documentflow.dto.UserReplyDto;
+import ru.rosatom.documentflow.exceptions.UserRoleNotFoundException;
 import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.models.UserOrganization;
 import ru.rosatom.documentflow.models.UserPassport;
@@ -35,7 +36,12 @@ public class UserMapper {
     }
 
     public User dtoToObject(UserCreateDto dto, UserOrganization organization, UserPassport passport) {
-
+        UserRole role;
+        try {
+            role = UserRole.valueOf(dto.getRole().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new UserRoleNotFoundException("Роль пользователя '" + dto.getRole() + "' не найдена");
+        }
         return User.builder()
                 .organization(organization)
                 .passport(passport)
@@ -46,7 +52,7 @@ public class UserMapper {
                 .email(dto.getEmail())
                 .phone(dto.getPhone())
                 .post(dto.getPost())
-                .role(UserRole.valueOf(dto.getRole()))
+                .role(role)
                 .build();
     }
 
