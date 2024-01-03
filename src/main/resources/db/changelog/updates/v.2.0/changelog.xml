@@ -32,8 +32,9 @@
              relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/updates/v.2.0/v2.6.2.2_delete_old_data.xml"
              relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/updates/v.2.0/v2.6.3.1_update_tetratech_admin_and_doctypes.xml"
+    <include file="classpath:db/changelog/updates/v.2.0/v2.6.3.1_add_doctypes_and_attributes_to_tetratech.xml"
              relativeToChangelogFile="false"/>
-
+    <include file="classpath:db/changelog/updates/v.2.0/v2.6.3.2_add_doctypes_and_attributes_to_opticlink.xml"
+             relativeToChangelogFile="false"/>
 
 </databaseChangeLog>

@@ -4,7 +4,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="v2.6.3.1_update_tetratech_admin_and_doctypes" author="FokiDoki">
+    <changeSet id="v2.6.3.1_add_doctypes_and_attributes_to_tetratech.xml" author="FokiDoki">
         <preConditions>
             <tableExists tableName="documents"/>
         </preConditions>

@@ -11,7 +11,7 @@
         </preConditions>
         <insert tableName="passports">
             <column name="series" value="4084"/>
-            <column name="number" value="582612"/>
+            <column name="number" value="481001"/>
             <column name="kp" value="110006"/>
             <column name="issued" value="Управление внутренних дел по г. Липецк"/>
             <column name="date" value="2022-01-29 00:00:00.000000"/>
@@ -20,13 +20,73 @@
             <column name="first_name" value="Вера"/>
             <column name="last_name" value="Байдавлетова"/>
             <column name="patronymic" value="Федотовна"/>
-            <column name="email" value="baydavletovaVF@greenatom.ru"/>
+            <column name="email" value="baydavletovaVF@tetratech.org"/>
             <column name="phone" value="79969821729"/>
+            <column name="date_of_birth" value="2000-01-15 00:00:00.000000"/>
             <column name="user_password" value="$2a$10$cQFePvGZSKi/XA4J0.BoQeki1cjpniwMJTCP5ByUGQJhyAAkHeMlG"/>
             <column name="post" value="Бухгалтер"/>
-            <column name="passport_id" value="2"/>
+            <column name="passport_id" valueComputed="(SELECT last_value FROM passports_passport_id_seq)"/>
             <where>user_id = 2</where>
         </update>
 
+        <insert tableName="passports">
+            <column name="series" value="4149"/>
+            <column name="number" value="321684"/>
+            <column name="kp" value="650246"/>
+            <column name="issued" value="Отделением УФМС России в г. Красногорск"/>
+            <column name="date" value="2014-04-14 00:00:00.000000"/>
+        </insert>
+        <update tableName="users">
+            <column name="first_name" value="Антон"/>
+            <column name="last_name" value="Туров"/>
+            <column name="patronymic" value="Иннокентиевич"/>
+            <column name="date_of_birth" value="2002-05-20 00:00:00.000000"/>
+            <column name="email" value="turovAI@tetratech.org"/>
+            <column name="phone" value="79999289922"/>
+            <column name="user_password" value="$2a$10$cQFePvGZSKi/XA4J0.BoQeki1cjpniwMJTCP5ByUGQJhyAAkHeMlG"/>
+            <column name="post" value="Директор"/>
+            <column name="passport_id" valueComputed="(SELECT last_value FROM passports_passport_id_seq)"/>
+            <where>user_id = 3</where>
+        </update>
+
+        <insert tableName="passports">
+            <column name="series" value="8591"/>
+            <column name="number" value="827491"/>
+            <column name="kp" value="980930"/>
+            <column name="issued" value="Отделением УФМС России по г. Киров"/>
+            <column name="date" value="2014-01-05 00:00:00.000000"/>
+        </insert>
+        <update tableName="users">
+            <column name="first_name" value="Ростислав"/>
+            <column name="last_name" value="Андреев"/>
+            <column name="patronymic" value=""/>
+            <column name="email" value="andreevR@olink.com"/>
+            <column name="phone" value="79919928474"/>
+            <column name="user_password" value="$2a$10$cQFePvGZSKi/XA4J0.BoQeki1cjpniwMJTCP5ByUGQJhyAAkHeMlG"/>
+            <column name="post" value="Зам. Директора"/>
+            <column name="passport_id" valueComputed="(SELECT last_value FROM passports_passport_id_seq)"/>
+            <where>user_id = 4</where>
+        </update>
+
+
+        <insert tableName="passports">
+            <column name="series" value="4791"/>
+            <column name="number" value="198819"/>
+            <column name="kp" value="980930"/>
+            <column name="issued" value="Отделением УФМС России по г. Киров"/>
+            <column name="date" value="2014-06-01 00:00:00.000000"/>
+        </insert>
+        <update tableName="users">
+            <column name="first_name" value="Квитко"/>
+            <column name="last_name" value="Инна"/>
+            <column name="patronymic" value="Валентиновна"/>
+            <column name="email" value="kvitkoIV@olink.com"/>
+            <column name="phone" value="79928494872"/>
+            <column name="date_of_birth" value="1992-03-03 00:00:00.000000"/>
+            <column name="user_password" value="$2a$10$cQFePvGZSKi/XA4J0.BoQeki1cjpniwMJTCP5ByUGQJhyAAkHeMlG"/>
+            <column name="post" value="Гл. Бухгалтер"/>
+            <column name="passport_id" valueComputed="(SELECT last_value FROM passports_passport_id_seq)"/>
+            <where>user_id = 5</where>
+        </update>
     </changeSet>
 </databaseChangeLog>
