@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="" author="FokiDoki">
+        <preConditions>
+            <tableExists tableName="documents"/>
+        </preConditions>
+
+        <insert tableName="passports">
+            <column name="series" value="4084"/>
+            <column name="number" value="582612"/>
+            <column name="issued" value="Управление внутренних дел по г. Липецк"/>
+            <column name="date" value="2022-01-29 00:00:00.000000"/>
+            <column name="user_id" value="2"/>
+        </insert>
+        <update tableName="users">
+            <column name="first_name" value="Вера"/>
+            <column name="last_name" value="Байдавлетова"/>
+            <column name="patronymic" value="Федотовна"/>
+            <column name="email" value="baydavletovaVF@greenatom.ru"/>
+            <column name="phone" value="79969821729"/>
+            <column name="user_password" value="$2a$10$cQFePvGZSKi/XA4J0.BoQeki1cjpniwMJTCP5ByUGQJhyAAkHeMlG"/>
+            <column name="post" value="Бухгалтер"/>
+            <column name="passport_id" value="2"/>
+            <where>user_id = 2</where>
+        </update>
+
+    </changeSet>
+</databaseChangeLog>

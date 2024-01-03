@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="" author="FokiDoki">
+        <preConditions>
+            <tableExists tableName="documents"/>
+        </preConditions>
+
+        <update tableName="organizations">
+            <column name="name" value="Акционерное общество «ТетраТех»"/>
+            <column name="inn" value="7706729736"/>
+            <where>org_id = 1</where>
+        </update>
+        <update tableName="organizations">
+            <column name="name" value="ООО «Оптик Линк»"/>
+            <column name="inn" value="7842393933"/>
+            <where>org_id = 2</where>
+        </update>
+    </changeSet>
+</databaseChangeLog>
