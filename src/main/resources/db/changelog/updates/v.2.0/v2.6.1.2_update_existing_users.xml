@@ -4,17 +4,17 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="" author="FokiDoki">
+    <changeSet id="v2.6.1.2_update_existing_users" author="FokiDoki">
         <preConditions>
-            <tableExists tableName="documents"/>
+            <tableExists tableName="passports"/>
+            <tableExists tableName="users"/>
         </preConditions>
-
         <insert tableName="passports">
             <column name="series" value="4084"/>
             <column name="number" value="582612"/>
+            <column name="kp" value="110006"/>
             <column name="issued" value="Управление внутренних дел по г. Липецк"/>
             <column name="date" value="2022-01-29 00:00:00.000000"/>
-            <column name="user_id" value="2"/>
         </insert>
         <update tableName="users">
             <column name="first_name" value="Вера"/>

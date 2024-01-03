@@ -4,7 +4,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="" author="FokiDoki">
+    <changeSet id="v2.6.2.2_delete_old_data" author="FokiDoki">
         <preConditions>
             <tableExists tableName="documents"/>
             <tableExists tableName="document_types"/>
@@ -16,7 +16,7 @@
         <delete tableName="document_types">
             <where>type_id &lt;&#61; 5</where>
         </delete>
-        
+
 
     </changeSet>
 </databaseChangeLog>

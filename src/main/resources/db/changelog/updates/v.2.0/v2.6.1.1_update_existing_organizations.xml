@@ -4,9 +4,9 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="" author="FokiDoki">
+    <changeSet id="v2.6.1.1_update_existing_organizations" author="FokiDoki">
         <preConditions>
-            <tableExists tableName="documents"/>
+            <tableExists tableName="organizations"/>
         </preConditions>
 
         <update tableName="organizations">
