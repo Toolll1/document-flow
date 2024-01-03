@@ -7,8 +7,10 @@ import lombok.Data;
 import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -37,10 +39,8 @@ public class UserUpdateDto {
     private final String patronymic;
 
     @Schema(description = "Дата рождения", minLength = 10, maxLength = 10)
-    @Nullable
-    @Pattern(regexp = "\\A(?!\\s*\\Z).+")
-    @Size(min = 10, max = 10)
-    private final String dateOfBirth;
+    @NotNull
+    private final LocalDate dateOfBirth;
 
     @Schema(description = "Email", minLength = 6, maxLength = 320)
     @Nullable
@@ -73,10 +73,8 @@ public class UserUpdateDto {
     private final String passportIssued; // кем выдан
 
     @Schema(description = "Дата выдачи паспорта", minLength = 10, maxLength = 10)
-    @Nullable
-    @Pattern(regexp = "\\A(?!\\s*\\Z).+")
-    @Size(min = 10, max = 10)
-    private final String passportDate;
+    @NotNull
+    private final LocalDate passportDate;
 
     @Schema(description = "Код подразделения", minLength = 6, maxLength = 6)
     @Nullable
