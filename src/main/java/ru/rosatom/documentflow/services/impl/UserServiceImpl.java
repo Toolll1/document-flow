@@ -130,12 +130,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean setPasswordToUser(String password, Long id) {
-        return userRepository.findById(id).map(user -> {
+    public void setPasswordToUser(String password, Long id) {
+        if (password == null)
+            throw new BadRequestException("Password cannot be null");
+        userRepository.findById(id).map(user -> {
             user.setPassword(passwordEncoder.encode(password));
             userRepository.save(user);
             return true;
-        }).orElse(false);
+        }).orElseThrow(() -> new ObjectNotFoundException("There is no user with this id"));
     }
 
     @Override
