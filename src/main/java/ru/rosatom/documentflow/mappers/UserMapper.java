@@ -22,7 +22,9 @@ public class UserMapper {
 
         return UserReplyDto.builder()
                 .id(user.getId())
-                .fullName(createFullName(user))
+                .lastName(user.getLastName())
+                .firstName(user.getFirstName())
+                .patronymic(user.getPatronymic())
                 .dateOfBirth(user.getDateOfBirth())
                 .phone(user.getPhone())
                 .email(user.getEmail())
@@ -42,8 +44,8 @@ public class UserMapper {
         return User.builder()
                 .organization(organization)
                 .passport(passport)
-                .firstName(dto.getFirstName())
                 .lastName(dto.getLastName())
+                .firstName(dto.getFirstName())
                 .patronymic(dto.getPatronymic())
                 .dateOfBirth(dto.getDateOfBirth())
                 .email(dto.getEmail())
@@ -51,20 +53,5 @@ public class UserMapper {
                 .post(dto.getPost())
                 .role(role)
                 .build();
-    }
-
-    private String createFullName(User user) {
-
-        StringBuilder fullName = new StringBuilder();
-
-        fullName.append(user.getFirstName());
-
-        if (user.getPatronymic() != null) {
-            fullName.append(" ").append(user.getPatronymic());
-        }
-
-        fullName.append(" ").append(user.getLastName());
-
-        return fullName.toString();
     }
 }

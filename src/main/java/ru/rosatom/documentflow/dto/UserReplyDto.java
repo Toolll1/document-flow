@@ -18,8 +18,14 @@ public class UserReplyDto {
     @Schema(description = "ID пользователя")
     private final Long id;
 
-    @Schema(description = "ФИО")
-    private final String fullName;
+    @Schema(description = "Фамилия")
+    private final String lastName;
+
+    @Schema(description = "Имя")
+    private final String firstName;
+
+    @Schema(description = "Отчество")
+    private final String patronymic;
 
     @Schema(description = "Дата рождения")
     private final LocalDate dateOfBirth;
