@@ -27,7 +27,7 @@ public class DocType {
     private String name;
 
     @ToString.Exclude
-    @ManyToMany(cascade = CascadeType.ALL, targetEntity = DocAttribute.class)
+    @ManyToMany(targetEntity = DocAttribute.class)
     @JoinTable(
             name = "type_attributes",
             joinColumns = @JoinColumn(name = "type_id", referencedColumnName = "type_id"),

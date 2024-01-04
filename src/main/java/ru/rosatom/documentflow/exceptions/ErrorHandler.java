@@ -108,6 +108,11 @@ public class ErrorHandler {
                 HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<AppError> UserRoleNotFoundException(final UserRoleNotFoundException e) {
+        return createAppError(e, HttpStatus.BAD_REQUEST);
+    }
+
 
     public ResponseEntity<AppError> createAppError(Throwable e, HttpStatus status) {
         return new ResponseEntity<>(
