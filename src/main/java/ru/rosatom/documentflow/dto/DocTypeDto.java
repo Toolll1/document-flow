@@ -26,6 +26,6 @@ public class DocTypeDto {
     private AgreementType agreementType;
 
     @Schema(description = "ID организации")
-    private long userOrganizationId;
+    private long organizationId;
 
 }

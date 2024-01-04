@@ -75,7 +75,7 @@ public class UserController {
     @Operation(summary = "Изменить пользователя")
     @PatchMapping("/{userId}")
     @SecurityRequirement(name = "JWT")
-    @PreAuthorize("hasAuthority('ADMIN') || (@userServiceImpl.isAllowed(#dto.id, #user) || hasAuthority('COMPANY_ADMIN'))")
+    @PreAuthorize("hasAuthority('ADMIN') || (@userServiceImpl.isAllowed(#userId, #user) || hasAuthority('COMPANY_ADMIN'))")
     public UserReplyDto updateUser(
             @Valid @RequestBody UserUpdateDto dto,
             @PathVariable @Parameter(description = "ID пользователя") Long userId,
@@ -126,7 +126,7 @@ public class UserController {
     @SecurityRequirement(name = "JWT")
     @PreAuthorize("hasAuthority('ADMIN')")
     public Page<UserReplyDto> getAllUsers(@ParameterObject
-                                          @PageableDefault(page = 0, size = 20, sort = "id", direction = Sort.Direction.ASC)
+                                          @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC)
                                           @Parameter(description = "ID организации") Pageable pageable) {
 
         log.info("A search request was received for all users");
@@ -142,7 +142,7 @@ public class UserController {
     public Page<UserReplyDto> getUsers(
             @RequestParam(required = false) List<Long> ids,
             @ParameterObject
-            @PageableDefault(page = 0, size = 20, sort = "id", direction = Sort.Direction.ASC)
+            @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC)
             @Parameter(description = "ID организации") Pageable pageable) {
 
         log.info(
@@ -158,9 +158,10 @@ public class UserController {
     @Operation(summary = "Получить пользователя по номеру телефона")
     @GetMapping("/phone/{phone}")
     @SecurityRequirement(name = "JWT")
-    @PostAuthorize("((returnObject.userOrganization.id == authentication.principal.organization.id && hasAuthority('COMPANY_ADMIN')) " +
+    @PostAuthorize("((returnObject.organization.id == #user.organization.id && hasAuthority('COMPANY_ADMIN')) " +
             "|| hasAuthority('ADMIN'))")
     public UserReplyDto getUserByPhone(
+            @AuthenticationPrincipal @Parameter(hidden = true) User user,
             @PathVariable @Parameter(description = "Телефон пользователя") String phone) {
 
         log.info("Received a request to search user for telephone {}", phone);
@@ -171,9 +172,10 @@ public class UserController {
     @Operation(summary = "Получить пользователя по eMail")
     @GetMapping("/email/{email}")
     @SecurityRequirement(name = "JWT")
-    @PostAuthorize("((returnObject.userOrganization.id == authentication.principal.organization.id && hasAuthority('COMPANY_ADMIN'))" +
+    @PostAuthorize("((returnObject.organization.id == #user.organization.id && hasAuthority('COMPANY_ADMIN'))" +
             " || hasAuthority('ADMIN'))")
     public UserReplyDto getUserByEmail(
+            @AuthenticationPrincipal @Parameter(hidden = true) User user,
             @PathVariable @Parameter(description = "eMail пользователя") String email) {
 
         log.info("Received a request to search user for email {}", email);
@@ -184,9 +186,10 @@ public class UserController {
     @Operation(summary = "Получить пользователя по паспорту")
     @GetMapping("/passport/{passport}")
     @SecurityRequirement(name = "JWT")
-    @PostAuthorize("((returnObject.userOrganization.id == authentication.principal.organization.id && hasAuthority('COMPANY_ADMIN')) " +
+    @PostAuthorize("((returnObject.organization.id == #user.organization.id && hasAuthority('COMPANY_ADMIN')) " +
             "|| hasAuthority('ADMIN'))")
     public UserReplyDto getUserByPassport(
+            @AuthenticationPrincipal @Parameter(hidden = true) User user,
             @PathVariable @Parameter(description = "Паспорт пользователя") String passport) {
 
         log.info("Received a request to search user for passport {}", passport);

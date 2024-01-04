@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,6 +22,7 @@ public class DocTypeCreateDto {
             "EVERYONE - все получатели, " +
             "ANYONE - хотя бы один, " +
             "QUORUM - не менее 50% получателей.")
+    @Pattern(regexp = "^EVERYONE$|^ANYONE$|^QUORUM$")
     private String agreementType;
 
     @Schema(description = "Организация")

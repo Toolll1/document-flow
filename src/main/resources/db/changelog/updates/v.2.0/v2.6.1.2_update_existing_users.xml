@@ -46,6 +46,7 @@
             <column name="user_password" value="$2a$10$cQFePvGZSKi/XA4J0.BoQeki1cjpniwMJTCP5ByUGQJhyAAkHeMlG"/>
             <column name="post" value="Директор"/>
             <column name="passport_id" valueComputed="(SELECT last_value FROM passports_passport_id_seq)"/>
+            <column name="role" value="COMPANY_ADMIN"/>
             <where>user_id = 3</where>
         </update>
 
@@ -86,6 +87,7 @@
             <column name="user_password" value="$2a$10$cQFePvGZSKi/XA4J0.BoQeki1cjpniwMJTCP5ByUGQJhyAAkHeMlG"/>
             <column name="post" value="Гл. Бухгалтер"/>
             <column name="passport_id" valueComputed="(SELECT last_value FROM passports_passport_id_seq)"/>
+            <column name="org_id" value="2"/>
             <where>user_id = 5</where>
         </update>
     </changeSet>

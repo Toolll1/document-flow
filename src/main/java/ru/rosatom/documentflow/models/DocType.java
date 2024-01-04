@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -53,7 +52,7 @@ public class DocType {
 
     @OneToOne(targetEntity = UserOrganization.class)
     @JoinColumn(name = "org_id")
-    private UserOrganization userOrganization;
+    private UserOrganization organization;
 
     public void addAttributes(DocAttribute docAttribute) {
         attributes.add(docAttribute);
