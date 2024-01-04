@@ -5,7 +5,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 import ru.rosatom.documentflow.dto.OrgDto;
 import ru.rosatom.documentflow.dto.UserCreateDto;
-import ru.rosatom.documentflow.dto.UserPassportDto;
 import ru.rosatom.documentflow.dto.UserReplyDto;
 import ru.rosatom.documentflow.exceptions.UserRoleNotFoundException;
 import ru.rosatom.documentflow.models.User;
@@ -29,7 +28,6 @@ public class UserMapper {
                 .email(user.getEmail())
                 .post(user.getPost())
                 .role(user.getRole().toString())
-                .userPassportDto(modelMapper.map(user.getPassport(), UserPassportDto.class))
                 .organization(modelMapper.map(user.getOrganization(), OrgDto.class))
                 .build();
     }

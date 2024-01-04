@@ -91,7 +91,7 @@ public class OrgController {
     @Operation(summary = "Изменить организацию.", description = "При запросе от ADMIN по указанной компании, для остальных ролей обновиться своя компания.")
     @RequestMapping(value = "/{orgId}", method = RequestMethod.PATCH)
     @SecurityRequirement(name = "JWT")
-    @PreAuthorize("(#orgId == authentication.principal.organization.id && hasAuthority('COMPANY_ADMIN')) || hasAuthority('ADMIN')")
+    @PreAuthorize("(#orgId == #user.organization.id && hasAuthority('COMPANY_ADMIN')) || hasAuthority('ADMIN')")
     public OrgDto updateOrg(
             @PathVariable @Parameter(description = "ID организации") Long orgId,
             @Valid @RequestBody OrgUpdateRequestDto orgUpdateRequestDto,

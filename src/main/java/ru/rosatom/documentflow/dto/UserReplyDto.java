@@ -36,9 +36,6 @@ public class UserReplyDto {
     @Schema(description = "Роль")
     private final String role;
 
-    @Schema(description = "Паспорт")
-    private final UserPassportDto userPassportDto;
-
     @Schema(description = "Организация")
     private final OrgDto organization;
 

@@ -41,7 +41,7 @@ public class DocType {
 
     @OneToOne(targetEntity = UserOrganization.class)
     @JoinColumn(name = "org_id")
-    private UserOrganization userOrganization;
+    private UserOrganization organization;
 
     public void addAttributes(DocAttribute docAttribute) {
         attributes.add(docAttribute);

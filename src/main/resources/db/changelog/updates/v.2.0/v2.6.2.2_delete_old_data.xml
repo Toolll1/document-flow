@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="v2.6.2.2_delete_old_data" author="FokiDoki">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="documents"/>
+            <tableExists tableName="document_types"/>
+            <changeLogPropertyDefined property="initial.data.enabled" value="true" />
+        </preConditions>
+
+        <delete tableName="documents">
+            <where>document_id &lt;&#61; 3</where>
+        </delete>
+        <delete tableName="document_types">
+            <where>type_id &lt;&#61; 5</where>
+        </delete>
+
+
+    </changeSet>
+</databaseChangeLog>

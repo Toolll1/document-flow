@@ -11,11 +11,11 @@ import java.util.List;
 
 @Repository
 public interface DocTypeRepository extends JpaRepository<DocType, Long> {
-    @Query("select d from DocType d where d.userOrganization.id = ?1")
+    @Query("select d from DocType d where d.organization.id = ?1")
     Page<DocType> findAllByUserOrganization(Long orgId, Pageable pageable);
 
     List<DocType> findByNameContains(String name);
 
-    List<DocType> findByUserOrganizationIdAndNameContains(Long userOrganizationId, String name);
+    List<DocType> findByOrganizationIdAndNameContains(Long userOrganizationId, String name);
 
 }
