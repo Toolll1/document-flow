@@ -5,7 +5,9 @@
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="v2.6.4.1_add_documents" author="FokiDoki">
-        <!-- Insert data into documents table -->
+        <preConditions onFail="MARK_RAN">
+            <changeLogPropertyDefined property="initial.data.enabled" value="true" />
+        </preConditions>
         <sql>
             INSERT INTO documents (name, document_path, created_at, organization_id, owner_id, type_id, value_id, final_doc_status, title)
             VALUES

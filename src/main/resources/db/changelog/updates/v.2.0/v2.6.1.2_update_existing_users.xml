@@ -5,9 +5,10 @@
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="v2.6.1.2_update_existing_users" author="FokiDoki">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <tableExists tableName="passports"/>
             <tableExists tableName="users"/>
+            <changeLogPropertyDefined property="initial.data.enabled" value="true" />
         </preConditions>
         <insert tableName="passports">
             <column name="series" value="4084"/>

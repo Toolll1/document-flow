@@ -5,9 +5,10 @@
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="v2.6.2.2_delete_old_data" author="FokiDoki">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <tableExists tableName="documents"/>
             <tableExists tableName="document_types"/>
+            <changeLogPropertyDefined property="initial.data.enabled" value="true" />
         </preConditions>
 
         <delete tableName="documents">

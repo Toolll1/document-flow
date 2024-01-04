@@ -5,8 +5,9 @@
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="v2.6.3.2_add_doctypes_and_attributes_to_opticlink" author="FokiDoki">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <tableExists tableName="documents"/>
+            <changeLogPropertyDefined property="initial.data.enabled" value="true" />
         </preConditions>
 
         <sql>

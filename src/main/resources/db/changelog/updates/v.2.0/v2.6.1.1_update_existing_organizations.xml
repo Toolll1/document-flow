@@ -5,8 +5,8 @@
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="v2.6.1.1_update_existing_organizations" author="FokiDoki">
-        <preConditions>
-            <tableExists tableName="organizations"/>
+        <preConditions onFail="MARK_RAN">
+            <changeLogPropertyDefined property="initial.data.enabled" value="true" />
         </preConditions>
 
         <update tableName="organizations">
