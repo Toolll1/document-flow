@@ -26,7 +26,7 @@ public interface UserService {
 
     User getUserByPassport(String passport);
 
-    boolean setPasswordToUser(String password, Long id);
+    void setPasswordToUser(String password, Long id);
 
     Page<User> getAllUsers(Pageable pageable);
 
