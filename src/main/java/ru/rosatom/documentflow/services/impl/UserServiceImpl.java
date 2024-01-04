@@ -120,7 +120,6 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public Page<User> getUsers(List<Long> ids, Pageable pageable) {
-
         if (ids == null || ids.isEmpty()) {
             return userRepository.findAll(pageable);
         } else {
@@ -247,6 +246,19 @@ public class UserServiceImpl implements UserService {
     public List<User> findAllByOrganizationId(Long id) {
         return userRepository.findAllByOrganizationId(id);
     }
+
+
+    /**
+     * Находит всех пользователей, принадлежащих к определенной организации с пагинацией.
+     *
+     * @param id идентификатор организации.
+     * @return список пользователей, принадлежащих к указанной организации.
+     */
+    @Override
+    public Page<User> findAllByOrganizationId(Long id, Pageable pageable) {
+        return userRepository.findAllByOrganizationId(id, pageable);
+    }
+
 
     /**
      * Проверяет уникальность пользователя в системе.

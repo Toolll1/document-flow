@@ -134,7 +134,7 @@ public class DocAttributeController {
     @Operation(summary = "Удалить атрибут")
     @DeleteMapping("/{docAttributeId}")
     @SecurityRequirement(name = "JWT")
-    @PreAuthorize("hasRole('ADMIN') || (@docAttributeServiceImpl.isAllowedAttribute(#docAttributeId, #user) && hasAuthority('COMPANY_ADMIN'))")
+    @PreAuthorize("hasAuthority('ADMIN') || (@docAttributeServiceImpl.isAllowedAttribute(#docAttributeId, #user) && hasAuthority('COMPANY_ADMIN'))")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteAttribute(
             @PathVariable @Parameter(description = "ID атрибута") Long docAttributeId,

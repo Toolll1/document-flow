@@ -31,4 +31,6 @@ public interface UserService {
     Page<User> getAllUsers(Pageable pageable);
 
     List<User> findAllByOrganizationId(Long id);
+
+    Page<User> findAllByOrganizationId(Long organizationId, Pageable pageable);
 }

@@ -41,6 +41,7 @@ import ru.rosatom.documentflow.services.UserService;
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Validated
@@ -124,16 +125,21 @@ public class UserController {
     @Operation(summary = "Получить всех пользователей")
     @GetMapping
     @SecurityRequirement(name = "JWT")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') || ((hasAuthority('COMPANY_ADMIN') || hasAuthority('USER')) " +
+            "&& #orgId.isPresent() && #user.organization.id.equals(#orgId.get()))")
     public Page<UserReplyDto> getAllUsers(@ParameterObject
                                           @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC)
-                                          @Parameter(description = "ID организации") Pageable pageable) {
+                                          @Parameter(description = "ID организации") Pageable pageable,
+                                          @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user,
+                                          @RequestParam(required = false, name = "org_id") @Parameter(description = "ID организации") Optional<Long> orgId) {
 
         log.info("A search request was received for all users");
 
-        return userService.getAllUsers(pageable)
-                .map(userMapper::objectToReplyDto);
+        return orgId.map(aLong -> userService.findAllByOrganizationId(aLong, pageable)
+                .map(userMapper::objectToReplyDto)).orElseGet(() -> userService.getAllUsers(pageable)
+                .map(userMapper::objectToReplyDto));
     }
+
 
     @Operation(summary = "Получить всех пользователей с сортировкой и пагинацией")
     @GetMapping("/ids")
