@@ -36,5 +36,6 @@
              relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/updates/v.2.0/v2.6.3.2_add_doctypes_and_attributes_to_opticlink.xml"
              relativeToChangelogFile="false"/>
-
+    <include file="classpath:db/changelog/updates/v.2.0/v2.6.4.1_add_documents.xml"
+             relativeToChangelogFile="false"/>
 </databaseChangeLog>

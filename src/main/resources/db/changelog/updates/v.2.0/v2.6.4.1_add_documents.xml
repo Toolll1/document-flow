@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="v2.6.4.1_add_documents" author="FokiDoki">
+        <!-- Insert data into documents table -->
+        <sql>
+            INSERT INTO documents (document_id, name, document_path, created_at, organization_id, owner_id, type_id, value_id, final_doc_status, title)
+            VALUES
+                (4, 'baydavletova1704371632825.docx',
+                 'https://minio.docflow.fokidoki.su/browser/baydavletova17',
+                 '2024-01-04 15:33:52.808334', 1, 2, 6, NULL, 'NEW', 'Договор поставки товаров от 11.12.2023');
+
+        </sql>
+        <sql>
+            INSERT INTO attribute_values (attribute_value, attribute_id, document_id)
+            VALUES
+                ('32-512', 10, 4),
+                ('Фролов Петр Сергеевич', 4, 4),
+                ('frolovps@gmail.com', 7, 4),
+                ('992.21', 8, 4),
+                ('32', 9, 4);
+
+        </sql>
+
+
+    </changeSet>
+</databaseChangeLog>
