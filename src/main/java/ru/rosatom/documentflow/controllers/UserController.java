@@ -81,7 +81,7 @@ public class UserController {
     @PostMapping("/password/{userId}")
     @SecurityRequirement(name = "JWT")
     public void setUserPassword(
-            @RequestBody @Valid @Parameter (description = "Пароль пользователя") PasswordDto passwordDto,
+            @RequestBody @Valid @Parameter(description = "Пароль пользователя") PasswordDto passwordDto,
             @PathVariable @Parameter(description = "ID пользователя") Long userId,
             @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
         log.info("Received a request to set password to user with userId = {}", userId);
@@ -144,7 +144,7 @@ public class UserController {
     @Operation(summary = "Получить всех пользователей по организации")
     @GetMapping("/organization/{orgId}")
     @SecurityRequirement(name = "JWT")
-    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('USER') || hasAuthority('COMPANY_ADMIN')")
+    @PreAuthorize("hasAuthority('USER') || hasAuthority('COMPANY_ADMIN')")
     public List<UserReplyDto> getUsersByOrganization(@PathVariable @Parameter(description = "Id организации") Long orgId) {
         List<User> users = userService.findAllByOrganizationId(orgId);
         return users.stream().map(userMapper::objectToReplyDto).collect(Collectors.toList());

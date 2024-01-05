@@ -3,6 +3,7 @@ package ru.rosatom.e2e.user;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import ru.rosatom.e2e.organization.Organization;
 
 @Data
 @NoArgsConstructor
@@ -15,7 +16,7 @@ public class User{
     private String dateOfBirth;
     private String email;
     private String phone;
-    private Integer organizationId;
+    private Organization organization;
     private UserRole role;
     private String post;
 }
