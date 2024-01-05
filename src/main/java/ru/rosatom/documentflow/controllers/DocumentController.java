@@ -51,7 +51,7 @@ import static ru.rosatom.documentflow.adapters.CommonUtils.DATE_TIME_PATTERN;
 @Validated
 @RestController
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@RequestMapping("/document")
+@RequestMapping("/v2/document")
 @RequiredArgsConstructor
 @Tag(name = "Документы")
 public class DocumentController {

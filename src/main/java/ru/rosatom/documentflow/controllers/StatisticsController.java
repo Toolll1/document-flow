@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/statistic")
+@RequestMapping("/v2/statistic")
 @Tag(name = "Статистика")
 public class StatisticsController {
 

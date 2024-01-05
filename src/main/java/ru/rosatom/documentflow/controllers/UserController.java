@@ -17,10 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.rosatom.documentflow.dto.PasswordDto;
-import ru.rosatom.documentflow.dto.UserCreateDto;
-import ru.rosatom.documentflow.dto.UserReplyDto;
-import ru.rosatom.documentflow.dto.UserUpdateDto;
+import ru.rosatom.documentflow.dto.*;
 import ru.rosatom.documentflow.mappers.UserMapper;
 import ru.rosatom.documentflow.mappers.UserPassportMapper;
 import ru.rosatom.documentflow.models.User;
@@ -32,12 +29,13 @@ import ru.rosatom.documentflow.services.UserService;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/admin/users")
+@RequestMapping(path = "/v2/users")
 @Tag(name = "Пользователи")
 public class UserController {
 
@@ -141,6 +139,15 @@ public class UserController {
                 pageable.getPageSize());
         return userService.getUsers(ids, pageable)
                 .map(userMapper::objectToReplyDto);
+    }
+
+    @Operation(summary = "Получить всех пользователей по организации")
+    @GetMapping("/organization/{orgId}")
+    @SecurityRequirement(name = "JWT")
+    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('USER') || hasAuthority('COMPANY_ADMIN')")
+    public List<UserReplyDto> getUsersByOrganization(@PathVariable @Parameter(description = "Id организации") Long orgId) {
+        List<User> users = userService.findAllByOrganizationId(orgId);
+        return users.stream().map(userMapper::objectToReplyDto).collect(Collectors.toList());
     }
 
     @Operation(summary = "Получить пользователя по номеру телефона")
