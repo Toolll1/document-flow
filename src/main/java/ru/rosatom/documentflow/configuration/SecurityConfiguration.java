@@ -75,7 +75,7 @@ public class SecurityConfiguration {
                 .exceptionHandling().authenticationEntryPoint(restAuthEntryPoint)
                 .and()
                 .authorizeHttpRequests()
-                .antMatchers("/auth/login", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                .antMatchers("/v2/auth/login", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
