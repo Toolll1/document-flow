@@ -6,8 +6,8 @@ import ru.rosatom.e2e.BasicEndpointProvider;
 @Getter
 public enum UserEndpoints implements BasicEndpointProvider {
 
-    AUTHORIZATION("/auth/login"),
-    AUTHORIZATION_INFO("/auth/info");
+    AUTHORIZATION("/v2/auth/login"),
+    AUTHORIZATION_INFO("/v2/auth/info");
 
     private final String url;
 
