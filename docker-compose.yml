@@ -42,6 +42,8 @@ services:
     image: quay.io/minio/minio
     command: server /data --console-address ":9090"
     restart: always
+    ports:
+      - "9090:9090"
     volumes:
       - ~/minio/data:/data
     environment:
