@@ -22,7 +22,7 @@ import ru.rosatom.documentflow.services.AuthService;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/auth")
+@RequestMapping(path = "/v2/auth")
 @Tag(name = "Авторизация")
 public class AuthController {
 

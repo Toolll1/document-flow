@@ -8,7 +8,9 @@ import ru.rosatom.e2e.organization.Organization;
 @NoArgsConstructor
 public class UserWithOrg {
     private int id;
-    private String fullName;
+    private String lastName;
+    private String firstName;
+    private String patronymic;
     private String dateOfBirth;
     private String email;
     private String phone;

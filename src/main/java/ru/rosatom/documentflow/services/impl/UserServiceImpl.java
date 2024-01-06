@@ -246,7 +246,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public List<User> findAllByOrganizationId(Long id) {
-        return userRepository.findAllByOrganizationId(id);
+        return userRepository.findAllByOrganizationId(organizationService.getOrganization(id).getId());
     }
 
 

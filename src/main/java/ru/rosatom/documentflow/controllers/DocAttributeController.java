@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/v1/docattributes")
+@RequestMapping(path = "/v2/docattributes")
 @Tag(name = "Атрибуты документа")
 public class DocAttributeController {
 

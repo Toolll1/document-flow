@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/v1/document")
+@RequestMapping("/v2/document")
 @AllArgsConstructor
 @Tag(name = "Бизнес процесс")
 public class DocProcessController {

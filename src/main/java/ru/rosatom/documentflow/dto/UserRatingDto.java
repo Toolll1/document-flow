@@ -20,6 +20,9 @@ public class UserRatingDto {
     @Schema(description = "Имя")
     private final String firstName;
 
+    @Schema(description = "Отчество")
+    private final String patronymic;
+
     @Schema(description = "Email")
     private final String email;
 

@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/v1/doctypes")
+@RequestMapping(path = "/v2/doctypes")
 @Tag(name = "Тип документа")
 public class DocTypeController {
 

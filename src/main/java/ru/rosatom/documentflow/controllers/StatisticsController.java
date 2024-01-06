@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/statistic")
+@RequestMapping("/v2/statistic")
 @Tag(name = "Статистика")
 public class StatisticsController {
 
@@ -78,8 +78,7 @@ public class StatisticsController {
     public List<UserRatingDto> getRating(
             @PathVariable @Parameter(description = "ID организации") Long orgId,
             @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
-        List<UserRatingDto> userRatingDtos = statisticsService.getRatingAllUsersByOrgId(orgId, user);
-        return userRatingDtos;
+        return statisticsService.getRatingAllUsersByOrgId(orgId, user);
     }
 
     @Operation(summary = "Получить список самых активных организаций")
