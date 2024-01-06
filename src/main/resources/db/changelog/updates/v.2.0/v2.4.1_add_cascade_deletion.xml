@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="v2.4.1_add_cascade_deletion" author="Vasily_Chumachenko">
+        <dropForeignKeyConstraint baseTableName="documents" constraintName="fk_document_type"/>
+        <addForeignKeyConstraint baseTableName="documents" baseColumnNames="type_id" constraintName="fk_document_type"
+                                 referencedTableName="document_types"
+                                 referencedColumnNames="type_id"
+                                 onDelete="SET NULL"/>
+
+        <dropForeignKeyConstraint baseTableName="document_process" constraintName="fk_document_process_document"/>
+        <addForeignKeyConstraint baseTableName="document_process" baseColumnNames="document_id"
+                                 constraintName="fk_document_process_document"
+                                 referencedTableName="documents"
+                                 referencedColumnNames="document_id"
+                                 onDelete="CASCADE"/>
+
+        <dropForeignKeyConstraint baseTableName="type_attributes" constraintName="fk_document_type_attribute"/>
+        <addForeignKeyConstraint baseTableName="type_attributes" baseColumnNames="attribute_id"
+                                 constraintName="fk_document_type_attribute"
+                                 referencedTableName="attributes"
+                                 referencedColumnNames="attribute_id"
+                                 onDelete="CASCADE"/>
+
+        <dropForeignKeyConstraint baseTableName="users" constraintName="fk_user_organization"/>
+        <addForeignKeyConstraint baseTableName="users" baseColumnNames="org_id" constraintName="fk_user_organization"
+                                 referencedTableName="organizations"
+                                 referencedColumnNames="org_id"
+                                 onDelete="CASCADE"/>
+
+        <dropForeignKeyConstraint baseTableName="documents" constraintName="fk_document_organization"/>
+        <addForeignKeyConstraint baseTableName="documents" baseColumnNames="organization_id"
+                                 constraintName="fk_document_organization"
+                                 referencedTableName="organizations"
+                                 referencedColumnNames="org_id"
+                                 onDelete="CASCADE"/>
+
+        <dropForeignKeyConstraint baseTableName="document_process" constraintName="organization_process"/>
+        <addForeignKeyConstraint baseTableName="document_process" baseColumnNames="org_id"
+                                 constraintName="organization_process"
+                                 referencedTableName="organizations"
+                                 referencedColumnNames="org_id"
+                                 onDelete="CASCADE"/>
+
+        <dropForeignKeyConstraint baseTableName="attributes" constraintName="fk_attribute_organization"/>
+        <addForeignKeyConstraint baseTableName="attributes" baseColumnNames="org_id"
+                                 constraintName="fk_attribute_organization"
+                                 referencedTableName="organizations"
+                                 referencedColumnNames="org_id"
+                                 onDelete="CASCADE"/>
+
+        <dropForeignKeyConstraint baseTableName="document_types" constraintName="fk_document_type_organization"/>
+        <addForeignKeyConstraint baseTableName="document_types" baseColumnNames="org_id"
+                                 constraintName="fk_document_type_organization"
+                                 referencedTableName="organizations"
+                                 referencedColumnNames="org_id"
+                                 onDelete="CASCADE"/>
+
+        <dropForeignKeyConstraint baseTableName="document_process" constraintName="fk_document_process_sender"/>
+        <addForeignKeyConstraint baseTableName="document_process" baseColumnNames="sender_id" constraintName="fk_document_process_sender"
+                                 referencedTableName="users"
+                                 referencedColumnNames="user_id"
+                                 onDelete="CASCADE"/>
+
+        <dropForeignKeyConstraint baseTableName="documents" constraintName="fk_document_user"/>
+        <dropNotNullConstraint tableName="documents" columnName="owner_id"/>
+        <addForeignKeyConstraint baseTableName="documents" baseColumnNames="owner_id" constraintName="fk_document_user"
+                                 referencedTableName="users"
+                                 referencedColumnNames="user_id"
+                                 onDelete="SET NULL"/>
+
+        <dropForeignKeyConstraint baseTableName="document_process" constraintName="fk_document_process_recipient"/>
+        <addForeignKeyConstraint baseTableName="document_process" baseColumnNames="recipient_id"
+                                 constraintName="fk_document_process_recipient"
+                                 referencedTableName="users"
+                                 referencedColumnNames="user_id"
+                                 onDelete="CASCADE"/>
+
+        <dropForeignKeyConstraint baseTableName="organizations" constraintName="user_organization"/>
+        <addForeignKeyConstraint baseTableName="organizations" baseColumnNames="user_id"
+                                 constraintName="user_organization"
+                                 referencedTableName="users"
+                                 referencedColumnNames="user_id"
+                                 onDelete="SET NULL"/>
+
+        <dropForeignKeyConstraint baseTableName="attribute_values" constraintName="fk_value_attribute"/>
+        <addForeignKeyConstraint baseTableName="attribute_values" baseColumnNames="attribute_id"
+                                 constraintName="fk_value_attribute"
+                                 referencedTableName="attributes"
+                                 referencedColumnNames="attribute_id"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+</databaseChangeLog>

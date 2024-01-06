@@ -52,14 +52,14 @@ public class ErrorHandler {
         return createAppError(e, HttpStatus.BAD_REQUEST);
     }
 
-  
+    @ExceptionHandler
     public ResponseEntity<AppError> handleDateTimeParseException(final DateTimeParseException e) {
         return createAppError(e, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
     public ResponseEntity<ValidationError> handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
-        return createValidationError(e, HttpStatus.CONFLICT);
+        return createValidationError(e, HttpStatus.BAD_REQUEST);
     }
 
 
@@ -106,6 +106,11 @@ public class ErrorHandler {
         return createWithCustomAppError(
                 new InvalidIdsError(e.getMessage(), e.getNotFoundIds()),
                 HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<AppError> UserRoleNotFoundException(final UserRoleNotFoundException e) {
+        return createAppError(e, HttpStatus.BAD_REQUEST);
     }
 
 

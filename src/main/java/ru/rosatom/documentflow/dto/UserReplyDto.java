@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
@@ -20,7 +22,7 @@ public class UserReplyDto {
     private final String fullName;
 
     @Schema(description = "Дата рождения")
-    private final String dateOfBirth;
+    private final LocalDate dateOfBirth;
 
     @Schema(description = "Email")
     private final String email;
@@ -33,9 +35,6 @@ public class UserReplyDto {
 
     @Schema(description = "Роль")
     private final String role;
-
-    @Schema(description = "Паспорт")
-    private final UserPassportDto userPassportDto;
 
     @Schema(description = "Организация")
     private final OrgDto organization;

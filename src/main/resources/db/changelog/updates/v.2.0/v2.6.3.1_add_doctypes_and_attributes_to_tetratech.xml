@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="v2.6.3.1_add_doctypes_and_attributes_to_tetratech.xml" author="FokiDoki">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="documents"/>
+            <changeLogPropertyDefined property="initial.data.enabled" value="true" />
+        </preConditions>
+
+        <sql>
+            WITH inserted_attributes AS (
+            INSERT INTO attributes (name, type, org_id)
+            VALUES
+                ('ИНН', 'Юр. информация', 1),
+                ('ОГРН', 'Юр. информация', 1),
+                ('Юридический адрес', 'Юр. информация', 1),
+                ('Отправитель', 'Персональные данные', 1),
+                ('Получатель', 'Персональные данные', 1),
+                ('Номер телефона отправителя', 'Персональные данные', 1),
+                ('Электронная почта отправителя', 'Персональные данные', 1),
+                ('Сумма (Руб)', 'Денежные', 1),
+                ('НДС %', 'Денежные', 1),
+                ('Номер документа', 'Идентификационные данные', 1)
+                RETURNING attribute_id
+                ),
+                inserted_document_type AS (
+            INSERT INTO document_types (name, agreement_type, org_id)
+            VALUES
+                ('Договор поставки товаров', 'EVERYONE', 1),
+                ('Договор аренды офисного помещения', 'QUORUM', 1),
+                ('Лицензионное соглашение на программное обеспечение', 'EVERYONE', 1),
+                ('Договор оказания услуг по IT-консалтингу', 'EVERYONE', 1),
+                ('Договор аренды транспортного средства', 'ANYONE', 1)
+                RETURNING type_id
+                )
+            INSERT INTO type_attributes (type_id, attribute_id)
+            VALUES
+                ((SELECT type_id FROM inserted_document_type LIMIT 1), (SELECT attribute_id FROM inserted_attributes LIMIT 1 OFFSET 3)),
+                ((SELECT type_id FROM inserted_document_type LIMIT 1), (SELECT attribute_id FROM inserted_attributes LIMIT 1 OFFSET 6)),
+                ((SELECT type_id FROM inserted_document_type LIMIT 1), (SELECT attribute_id FROM inserted_attributes LIMIT 1 OFFSET 7)),
+                ((SELECT type_id FROM inserted_document_type LIMIT 1), (SELECT attribute_id FROM inserted_attributes LIMIT 1 OFFSET 8)),
+                ((SELECT type_id FROM inserted_document_type LIMIT 1), (SELECT attribute_id FROM inserted_attributes LIMIT 1 OFFSET 9)),
+
+                ((SELECT type_id FROM inserted_document_type LIMIT 1 OFFSET 1), (SELECT attribute_id FROM inserted_attributes LIMIT 1 OFFSET 2)),
+                ((SELECT type_id FROM inserted_document_type LIMIT 1 OFFSET 1), (SELECT attribute_id FROM inserted_attributes LIMIT 1 OFFSET 8)),
+                ((SELECT type_id FROM inserted_document_type LIMIT 1 OFFSET 1), (SELECT attribute_id FROM inserted_attributes LIMIT 1 OFFSET 9)),
+                ((SELECT type_id FROM inserted_document_type LIMIT 1 OFFSET 1), (SELECT attribute_id FROM inserted_attributes LIMIT 1 OFFSET 4)),
+                ((SELECT type_id FROM inserted_document_type LIMIT 1 OFFSET 1), (SELECT attribute_id FROM inserted_attributes LIMIT 1 OFFSET 7)),
+                ((SELECT type_id FROM inserted_document_type LIMIT 1 OFFSET 1), (SELECT attribute_id FROM inserted_attributes LIMIT 1 OFFSET 1)),
+
+
+                ((SELECT type_id FROM inserted_document_type LIMIT 1 OFFSET 2), (SELECT attribute_id FROM inserted_attributes LIMIT 1 OFFSET 6)),
+                ((SELECT type_id FROM inserted_document_type LIMIT 1 OFFSET 2), (SELECT attribute_id FROM inserted_attributes LIMIT 1 OFFSET 8)),
+                ((SELECT type_id FROM inserted_document_type LIMIT 1 OFFSET 2), (SELECT attribute_id FROM inserted_attributes LIMIT 1 OFFSET 9)),
+                ((SELECT type_id FROM inserted_document_type LIMIT 1 OFFSET 2), (SELECT attribute_id FROM inserted_attributes LIMIT 1 OFFSET 1)),
+                ((SELECT type_id FROM inserted_document_type LIMIT 1 OFFSET 2), (SELECT attribute_id FROM inserted_attributes LIMIT 1 OFFSET 7)),
+
+
+                ((SELECT type_id FROM inserted_document_type LIMIT 1 OFFSET 3), (SELECT attribute_id FROM inserted_attributes LIMIT 1 OFFSET 6)),
+                ((SELECT type_id FROM inserted_document_type LIMIT 1 OFFSET 3), (SELECT attribute_id FROM inserted_attributes LIMIT 1 OFFSET 8)),
+                ((SELECT type_id FROM inserted_document_type LIMIT 1 OFFSET 3), (SELECT attribute_id FROM inserted_attributes LIMIT 1 OFFSET 9)),
+                ((SELECT type_id FROM inserted_document_type LIMIT 1 OFFSET 3), (SELECT attribute_id FROM inserted_attributes LIMIT 1 OFFSET 3)),
+                ((SELECT type_id FROM inserted_document_type LIMIT 1 OFFSET 3), (SELECT attribute_id FROM inserted_attributes LIMIT 1 OFFSET 7)),
+                ((SELECT type_id FROM inserted_document_type LIMIT 1 OFFSET 3), (SELECT attribute_id FROM inserted_attributes LIMIT 1 OFFSET 2)),
+
+                ((SELECT type_id FROM inserted_document_type LIMIT 1 OFFSET 4), (SELECT attribute_id FROM inserted_attributes LIMIT 1 OFFSET 6)),
+                ((SELECT type_id FROM inserted_document_type LIMIT 1 OFFSET 4), (SELECT attribute_id FROM inserted_attributes LIMIT 1 OFFSET 8)),
+                ((SELECT type_id FROM inserted_document_type LIMIT 1 OFFSET 4), (SELECT attribute_id FROM inserted_attributes LIMIT 1 OFFSET 9)),
+                ((SELECT type_id FROM inserted_document_type LIMIT 1 OFFSET 4), (SELECT attribute_id FROM inserted_attributes LIMIT 1 OFFSET 5)),
+                ((SELECT type_id FROM inserted_document_type LIMIT 1 OFFSET 4), (SELECT attribute_id FROM inserted_attributes LIMIT 1 OFFSET 4)),
+                ((SELECT type_id FROM inserted_document_type LIMIT 1 OFFSET 4), (SELECT attribute_id FROM inserted_attributes LIMIT 1 OFFSET 7))
+        </sql>
+    </changeSet>
+</databaseChangeLog>

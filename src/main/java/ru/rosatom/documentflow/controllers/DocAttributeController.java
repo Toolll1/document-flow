@@ -71,9 +71,10 @@ public class DocAttributeController {
     @Operation(summary = "Получить атрибут по ID")
     @GetMapping("/{docAttributeId}")
     @SecurityRequirement(name = "JWT")
-    @PostAuthorize("((returnObject.organization.id == authentication.principal.organization.id && (hasAuthority('COMPANY_ADMIN') || hasAuthority('USER'))) " +
+    @PostAuthorize("((returnObject.organizationId == #user.organization.id && (hasAuthority('COMPANY_ADMIN') || hasAuthority('USER'))) " +
             "|| hasAuthority('ADMIN'))")
     public DocAttributeDto getAttribute(
+            @AuthenticationPrincipal @Parameter(hidden = true) User user,
             @PathVariable @Parameter(description = "ID атрибута") Long docAttributeId) {
         DocAttribute docAttribute = docAttributeService.getDocAttributeById(docAttributeId);
         log.info("Получен запрос на получение DocAttribute с ID: {}", docAttributeId);
@@ -84,8 +85,9 @@ public class DocAttributeController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @SecurityRequirement(name = "JWT")
-    @PreAuthorize("hasAuthority('ADMIN') || (#docAttributeCreateDto.organizationId==#authentication.principal.organization.id && hasAuthority('COMPANY_ADMIN'))")
+    @PreAuthorize("hasAuthority('ADMIN') || (#docAttributeCreateDto.organizationId==#user.organization.id && hasAuthority('COMPANY_ADMIN'))")
     public DocAttributeDto createAttribute(
+            @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user,
             @Valid @RequestBody @Parameter(description = "DTO создания атрибута") DocAttributeCreateDto docAttributeCreateDto) {
         DocAttributeCreationRequest docAttributeCreationRequest =
                 modelMapper.map(docAttributeCreateDto, DocAttributeCreationRequest.class);
@@ -132,7 +134,7 @@ public class DocAttributeController {
     @Operation(summary = "Удалить атрибут")
     @DeleteMapping("/{docAttributeId}")
     @SecurityRequirement(name = "JWT")
-    @PreAuthorize("hasRole('ADMIN') || (@docAttributeServiceImpl.isAllowedAttribute(#docAttributeId, #user) && hasAuthority('COMPANY_ADMIN'))")
+    @PreAuthorize("hasAuthority('ADMIN') || (@docAttributeServiceImpl.isAllowedAttribute(#docAttributeId, #user) && hasAuthority('COMPANY_ADMIN'))")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteAttribute(
             @PathVariable @Parameter(description = "ID атрибута") Long docAttributeId,

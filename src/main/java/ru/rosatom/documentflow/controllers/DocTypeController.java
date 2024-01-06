@@ -46,7 +46,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/v1/doctypes")
-@PreAuthorize("hasAuthority('ADMIN')")
 @Tag(name = "Тип документа")
 public class DocTypeController {
 
@@ -70,8 +69,9 @@ public class DocTypeController {
     @GetMapping("/{docTypeId}")
     @SecurityRequirement(name = "JWT")
     @PostAuthorize("hasAuthority('ADMIN') || ((hasAuthority('COMPANY_ADMIN') || hasAuthority('USER'))" +
-            " && returnObject.userOrganization.id == authentication.principal.organization.id)")
-    public DocTypeDto getDocType(@PathVariable @Parameter(description = "ID типа") Long docTypeId) {
+            " && returnObject.organizationId == #user.organization.id)")
+    public DocTypeDto getDocType(@PathVariable @Parameter(description = "ID типа") Long docTypeId,
+                                 @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
         DocType docType = docTypeService.getDocTypeById(docTypeId);
         log.info("Получен запрос на получение DocType с ID: {}", docTypeId);
         return modelMapper.map(docType, DocTypeDto.class);
@@ -81,8 +81,9 @@ public class DocTypeController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @SecurityRequirement(name = "JWT")
-    @PreAuthorize("hasAuthority('ADMIN') || (#docTypeCreateDto.organizationId==#authentication.principal.organization.id && hasAuthority('COMPANY_ADMIN'))")
-    public DocTypeDto createDocType(@Valid @RequestBody @Parameter(description = "DTO создания типа") DocTypeCreateDto docTypeCreateDto) {
+    @PreAuthorize("hasAuthority('ADMIN') || (#docTypeCreateDto.organizationId==#user.organization.id && hasAuthority('COMPANY_ADMIN'))")
+    public DocTypeDto createDocType(@Valid @RequestBody @Parameter(description = "DTO создания типа") DocTypeCreateDto docTypeCreateDto,
+                                    @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
         DocTypeCreationRequest docTypeCreationRequest = modelMapper.map(docTypeCreateDto, DocTypeCreationRequest.class);
         DocType docType = docTypeService.createDocType(docTypeCreationRequest);
         log.info("Получен запрос на создание DocType: {}", docTypeCreateDto);

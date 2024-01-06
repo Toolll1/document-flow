@@ -25,4 +25,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<UserRatingDto> findRatingForAllUsersByOrganizationId(Long organizationId);
 
     List<User> findAllByOrganizationId(Long id);
+
+    Page<User> findAllByOrganizationId(Long organizationId, Pageable pageable);
 }

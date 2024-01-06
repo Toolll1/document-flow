@@ -9,7 +9,6 @@ import org.docx4j.wml.Jc;
 import org.docx4j.wml.JcEnumeration;
 import org.docx4j.wml.PPr;
 import ru.rosatom.documentflow.dto.UserReplyDto;
-import ru.rosatom.documentflow.exceptions.BadRequestException;
 import ru.rosatom.documentflow.mappers.UserMapper;
 import ru.rosatom.documentflow.models.DocAttributeValues;
 import ru.rosatom.documentflow.models.DocProcess;
@@ -17,6 +16,8 @@ import ru.rosatom.documentflow.models.DocProcessStatus;
 import ru.rosatom.documentflow.models.Document;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
@@ -75,7 +76,7 @@ public class FileServiceAbstract {
     public void deleteLocalFile(File file) {
 
         if (!file.delete()) {
-            throw new BadRequestException("Ошибка при удалении файла");
+            throw new UncheckedIOException(new IOException("Ошибка при удалении файла"));
         }
     }
 }

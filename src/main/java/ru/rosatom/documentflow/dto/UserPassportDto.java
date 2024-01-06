@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
@@ -21,8 +23,8 @@ public class UserPassportDto {
     @Schema(description = "Кем выдан паспорт", minLength = 2, maxLength = 1000)
     private final String passportIssued; // кем выдан
 
-    @Schema(description = "Дата выдачи паспорта", minLength = 10, maxLength = 10)
-    private final String passportDate;
+    @Schema(description = "Дата выдачи паспорта")
+    private final LocalDate passportDate;
 
     @Schema(description = "Код подразделения", minLength = 6, maxLength = 6)
     private final String passportKp; // код подразделения

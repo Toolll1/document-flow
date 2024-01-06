@@ -65,7 +65,7 @@ public class DocTypeServiceImpl implements DocTypeService {
         DocType docType = DocType.builder()
                 .name(docTypeCreationRequest.getName())
                 .agreementType(docTypeCreationRequest.getAgreementType())
-                .userOrganization(userOrganizationService.getOrganization(docTypeCreationRequest.getOrganizationId()))
+                .organization(userOrganizationService.getOrganization(docTypeCreationRequest.getOrganizationId()))
                 .attributes(docAttributeService.getAllByIdsElseThrow(docTypeCreationRequest.getAttributes()))
                 .build();
         return docTypeRepository.save(docType);
@@ -117,7 +117,7 @@ public class DocTypeServiceImpl implements DocTypeService {
         if (user.isAdmin()) {
             docTypes = docTypeRepository.findByNameContains(name);
         } else {
-            docTypes = docTypeRepository.findByUserOrganizationIdAndNameContains(user.getOrganization().getId(), name);
+            docTypes = docTypeRepository.findByOrganizationIdAndNameContains(user.getOrganization().getId(), name);
         }
         return docTypes;
     }
@@ -149,7 +149,7 @@ public class DocTypeServiceImpl implements DocTypeService {
      * @return boolean - true, если доступ разрешен, иначе false
      */
     public boolean isAllowedType(Long id, User user) {
-        return Objects.equals(getDocTypeById(id).getUserOrganization().getId(), user.getOrganization().getId());
+        return Objects.equals(getDocTypeById(id).getOrganization().getId(), user.getOrganization().getId());
     }
 
     /**
@@ -164,7 +164,7 @@ public class DocTypeServiceImpl implements DocTypeService {
         DocType docType = getDocTypeById(docTypeId);
         DocAttribute docAttribute = docAttributeService.getDocAttributeById(docAttributeId);
 
-        return Objects.equals(docType.getUserOrganization().getId(), user.getOrganization().getId()) &&
+        return Objects.equals(docType.getOrganization().getId(), user.getOrganization().getId()) &&
                 Objects.equals(docAttribute.getOrganization().getId(), user.getOrganization().getId());
     }
 }
