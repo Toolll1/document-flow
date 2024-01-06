@@ -10,6 +10,8 @@ import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 
+import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
+
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -18,21 +20,21 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class DocumentChangesDto {
 
-    @Schema(description = "ID изменения")
-    Long id;
+    @Schema(description = "ID изменения", requiredMode = REQUIRED)
+    private Long id;
 
-    @Schema(description = "ID документа")
-    Long documentId;
+    @Schema(description = "ID документа", requiredMode = REQUIRED)
+    private Long documentId;
 
-    @Schema(description = "Дата изменения")
-    LocalDate dateChange;
+    @Schema(description = "Дата изменения", requiredMode = REQUIRED)
+    private LocalDate dateChange;
 
-    @Schema(description = "Изменения")
-    String changes;
+    @Schema(description = "Изменения", requiredMode = REQUIRED)
+    private String changes;
 
-    @Schema(description = "Предыдущая версия")
-    String previousVersion;
+    @Schema(description = "Предыдущая версия", requiredMode = REQUIRED)
+    private String previousVersion;
 
-    @Schema(description = "ID автора изменения")
-    Long userChangerId;
+    @Schema(description = "ID автора изменения", requiredMode = REQUIRED)
+    private Long userChangerId;
 }
