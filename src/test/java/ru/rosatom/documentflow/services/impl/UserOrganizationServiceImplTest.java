@@ -1,6 +1,6 @@
 /*
 package ru.rosatom.documentflow.services.impl;
-
+/*
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,8 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
-import ru.rosatom.documentflow.models.*;
+import ru.rosatom.documentflow.models.Document;
+import ru.rosatom.documentflow.models.OrgCreationRequest;
+import ru.rosatom.documentflow.models.OrgUpdateRequest;
+import ru.rosatom.documentflow.models.UserOrganization;
 import ru.rosatom.documentflow.repositories.UserOrganizationRepository;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -81,7 +85,7 @@ class UserOrganizationServiceImplTest {
     void getAllActiveOrganization() {
         Document document = new Document();
         document.setIdOrganization(1L);
-        List<UserOrganization> organisations = new ArrayList<>(Arrays.asList(new UserOrganization(2L , "1111", "Name2"), new UserOrganization(3L , "333", "Name3"), new UserOrganization(4L , "444", "Name4")));
+        List<UserOrganization> organisations = new ArrayList<>(Arrays.asList(new UserOrganization(2L, "1111", "Name2"), new UserOrganization(3L, "333", "Name3"), new UserOrganization(4L, "444", "Name4")));
         List<UserOrganization> organisationActive = new ArrayList<>();
         for (UserOrganization organization : organisations) {
             if (organization.getId().equals(document.getIdOrganization())) {

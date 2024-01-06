@@ -1,6 +1,5 @@
 package ru.rosatom.documentflow.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -16,15 +15,14 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DocumentCreateDto {
 
-  @Schema(description = "ID организации")
-  @NotNull
-  Long idOrganization;
+    @Schema(description = "Тип документа")
+    @NotNull
+    Long docTypeId;
 
-  @Schema(description = "Тип документа")
-  @NotNull
-  Long docTypId;
+    @Schema(description = "Пользовательское название документа")
+    String title;
 
-  @Schema(description = "Список атрибутов")
-  @NotNull
-  List<DocAttributeValueCreateDto> docAttributeValueCreateDtos;
+    @Schema(description = "Список атрибутов")
+    @NotNull
+    List<DocAttributeValueCreateDto> attributeValues;
 }

@@ -7,8 +7,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springdoc.api.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +33,7 @@ import ru.rosatom.documentflow.dto.DocTypeUpdateRequestDto;
 import ru.rosatom.documentflow.models.DocType;
 import ru.rosatom.documentflow.models.DocTypeCreationRequest;
 import ru.rosatom.documentflow.models.DocTypeUpdateRequest;
+import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.services.DocTypeService;
 
 import javax.validation.Valid;
@@ -37,94 +45,103 @@ import java.util.stream.Collectors;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/v1/doctypes")
-@PreAuthorize("hasAuthority('ADMIN')")
+@RequestMapping(path = "/v2/doctypes")
 @Tag(name = "Тип документа")
 public class DocTypeController {
 
     private final DocTypeService docTypeService;
     private final ModelMapper modelMapper;
 
-  @Operation(summary = "Получить все типы", description = "Все типы с пагинацией и сортировкой")
-  @GetMapping
-  @SecurityRequirement(name = "JWT")
-  @PreAuthorize("hasAuthority('USER') || hasAuthority('ADMIN')")
-  List<DocTypeDto> getAllDocTypes(
-      @RequestParam @Parameter(description = "Номер страницы") Optional<Integer> page,
-      @RequestParam @Parameter(description = "Сортировка") Optional<String> sortBy) {
-    return docTypeService.getAllDocTypes(page, sortBy).stream()
-            .map(o -> modelMapper.map(o, DocTypeDto.class))
-            .collect(Collectors.toList());
-  }
 
-  @Operation(summary = "Получить тип по ID")
-  @GetMapping("/{docTypeId}")
-  @SecurityRequirement(name = "JWT")
-  @PreAuthorize("hasAuthority('USER') || hasAuthority('ADMIN')")
-  public DocTypeDto getDocType(@PathVariable @Parameter(description = "ID типа") Long docTypeId) {
-    DocType docType = docTypeService.getDocTypeById(docTypeId);
-    log.info("Получен запрос на получение DocType с ID: {}", docTypeId);
-    return modelMapper.map(docType, DocTypeDto.class);
-  }
+    @Operation(summary = "Получить все типы", description = "Все типы с пагинацией и сортировкой")
+    @GetMapping
+    @SecurityRequirement(name = "JWT")
+    @PreAuthorize("hasAuthority('ADMIN') || ((hasAuthority('COMPANY_ADMIN') || hasAuthority('USER')) " +
+            "&& #orgId.isPresent() && #user.organization.id.equals(#orgId.get()))")
+    Page<DocTypeDto> getAllDocTypes(@ParameterObject @PageableDefault(page = 0, size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
+                                    @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user,
+                                    @RequestParam(required = false, name = "org_id") @Parameter(description = "ID организации") Optional<Long> orgId) {
+        return docTypeService.getAllDocTypes(pageable, orgId)
+                .map(o -> modelMapper.map(o, DocTypeDto.class));
+    }
 
-  @Operation(summary = "Создать тип")
-  @PostMapping
-  @ResponseStatus(HttpStatus.CREATED)
-  @SecurityRequirement(name = "JWT")
-  public DocTypeDto createDocType(@Valid @RequestBody @Parameter(description = "DTO создания типа") DocTypeCreateDto docTypeCreateDto) {
-    DocTypeCreationRequest docTypeCreationRequest =
-        modelMapper.map(docTypeCreateDto, DocTypeCreationRequest.class);
-    DocType docType = docTypeService.createDocType(docTypeCreationRequest);
-    log.info("Получен запрос на создание DocType: {}", docTypeCreateDto);
+    @Operation(summary = "Получить тип по ID")
+    @GetMapping("/{docTypeId}")
+    @SecurityRequirement(name = "JWT")
+    @PostAuthorize("hasAuthority('ADMIN') || ((hasAuthority('COMPANY_ADMIN') || hasAuthority('USER'))" +
+            " && returnObject.organizationId == #user.organization.id)")
+    public DocTypeDto getDocType(@PathVariable @Parameter(description = "ID типа") Long docTypeId,
+                                 @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
+        DocType docType = docTypeService.getDocTypeById(docTypeId);
+        log.info("Получен запрос на получение DocType с ID: {}", docTypeId);
+        return modelMapper.map(docType, DocTypeDto.class);
+    }
 
-    return modelMapper.map(docType, DocTypeDto.class);
-  }
+    @Operation(summary = "Создать тип")
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    @SecurityRequirement(name = "JWT")
+    @PreAuthorize("hasAuthority('ADMIN') || (#docTypeCreateDto.organizationId==#user.organization.id && hasAuthority('COMPANY_ADMIN'))")
+    public DocTypeDto createDocType(@Valid @RequestBody @Parameter(description = "DTO создания типа") DocTypeCreateDto docTypeCreateDto,
+                                    @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
+        DocTypeCreationRequest docTypeCreationRequest = modelMapper.map(docTypeCreateDto, DocTypeCreationRequest.class);
+        DocType docType = docTypeService.createDocType(docTypeCreationRequest);
+        log.info("Получен запрос на создание DocType: {}", docTypeCreateDto);
 
-  @Operation(summary = "Изменить тип")
-  @RequestMapping(value = "/{docTypeId}", method = RequestMethod.PATCH)
-  @SecurityRequirement(name = "JWT")
-  public DocTypeDto updateDocType(
-      @PathVariable @Parameter(description = "ID типа") Long docTypeId,
-      @Valid @RequestBody @Parameter(description = "DTO изменения типа") DocTypeUpdateRequestDto docTypeUpdateRequestDto) {
-    DocTypeUpdateRequest docTypeUpdateRequest =
-        modelMapper.map(docTypeUpdateRequestDto, DocTypeUpdateRequest.class);
-    DocType docType = docTypeService.updateDocType(docTypeId, docTypeUpdateRequest);
+        return modelMapper.map(docType, DocTypeDto.class);
+    }
 
-    log.info(
-        "Получен запрос на обновление DocType с ID: {}. Обновлен DocType: {}", docTypeId, docType);
-    return modelMapper.map(docType, DocTypeDto.class);
-  }
+    @Operation(summary = "Изменить тип")
+    @RequestMapping(value = "/{docTypeId}", method = RequestMethod.PATCH)
+    @SecurityRequirement(name = "JWT")
+    @PreAuthorize("hasAuthority('ADMIN') || (@docTypeServiceImpl.isAllowedType(#docTypeId, #user) && hasAuthority('COMPANY_ADMIN'))")
+    public DocTypeDto updateDocType(
+            @PathVariable @Parameter(description = "ID типа") Long docTypeId,
+            @Valid @RequestBody @Parameter(description = "DTO изменения типа") DocTypeUpdateRequestDto docTypeUpdateRequestDto,
+            @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
+        DocTypeUpdateRequest docTypeUpdateRequest =
+                modelMapper.map(docTypeUpdateRequestDto, DocTypeUpdateRequest.class);
+        DocType docType = docTypeService.updateDocType(docTypeId, docTypeUpdateRequest);
 
-  @Operation(summary = "Поиск типа по подстроке в имени")
-  @GetMapping("/name/{name}")
-  @SecurityRequirement(name = "JWT")
-  @PreAuthorize("hasAuthority('USER') || hasAuthority('ADMIN')")
-  public List<DocTypeDto> getDocTypesByNameLike(
-      @PathVariable @Parameter(description = "Подстрока имени") String name) {
-    List<DocType> docTypes = docTypeService.getDocTypesByName(name);
-    return docTypes.stream()
-        .map(o -> modelMapper.map(o, DocTypeDto.class))
-        .collect(Collectors.toList());
-  }
+        log.info("Получен запрос на обновление DocType с ID: {}. Обновлен DocType: {}", docTypeId, docType);
+        return modelMapper.map(docType, DocTypeDto.class);
+    }
 
-  @Operation(summary = "Добавить атрибут к типу")
-  @RequestMapping(value = "/{docTypeId}/attributes/{docAttributeId}", method = RequestMethod.PUT)
-  @SecurityRequirement(name = "JWT")
-  public DocTypeDto addAttributeToType(
-      @PathVariable @Parameter(description = "ID типа") Long docTypeId,
-      @PathVariable @Parameter(description = "ID атрибута") Long docAttributeId) {
-    log.info("Добавлен атрибут с ID: {} к документу с ID: {}", docAttributeId, docTypeId);
+    @Operation(summary = "Поиск типа по подстроке в имени")
+    @GetMapping("/name/{name}")
+    @SecurityRequirement(name = "JWT")
+    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('USER') || hasAuthority('COMPANY_ADMIN')")
+    public List<DocTypeDto> getDocTypesByNameLike(
+            @PathVariable @Parameter(description = "Подстрока имени") String name,
+            @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
+        List<DocType> docTypes = docTypeService.getDocTypesByName(name, user);
+        return docTypes.stream()
+                .map(o -> modelMapper.map(o, DocTypeDto.class))
+                .collect(Collectors.toList());
+    }
 
-    return modelMapper.map(docTypeService.attributeToType(docTypeId, docAttributeId), DocTypeDto.class);
-  }
+    @Operation(summary = "Добавить атрибут к типу")
+    @RequestMapping(value = "/{docTypeId}/attributes/{docAttributeId}", method = RequestMethod.PUT)
+    @SecurityRequirement(name = "JWT")
+    @PreAuthorize("hasAuthority('ADMIN') || (@docTypeServiceImpl.isAllowedTypeAttribute(#docTypeId, #docAttributeId, #user) && hasAuthority('COMPANY_ADMIN'))")
+    public DocTypeDto addAttributeToType(
+            @PathVariable @Parameter(description = "ID типа") Long docTypeId,
+            @PathVariable @Parameter(description = "ID атрибута") Long docAttributeId,
+            @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
+        log.info("Добавлен атрибут с ID: {} к документу с ID: {}", docAttributeId, docTypeId);
 
-  @Operation(summary = "Удалить тип")
-  @DeleteMapping("/{docTypeId}")
-  @ResponseStatus(HttpStatus.NO_CONTENT)
-  @SecurityRequirement(name = "JWT")
-  public void deleteDocType(@PathVariable @Parameter(description = "ID типа") Long docTypeId) {
-    log.info("Получен запрос на удаление DocType с ID: {}", docTypeId);
-    docTypeService.deleteDocType(docTypeId);
-  }
+        return modelMapper.map(docTypeService.attributeToType(docTypeId, docAttributeId), DocTypeDto.class);
+    }
 
+
+    @Operation(summary = "Удалить тип")
+    @DeleteMapping("/{docTypeId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @SecurityRequirement(name = "JWT")
+    @PreAuthorize("hasAuthority('ADMIN') || (@docTypeServiceImpl.isAllowedType(#docTypeId, #user) && hasAuthority('COMPANY_ADMIN'))")
+    public void deleteDocType(@PathVariable @Parameter(description = "ID типа") Long docTypeId,
+                              @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
+        log.info("Получен запрос на удаление DocType с ID: {}", docTypeId);
+        docTypeService.deleteDocType(docTypeId);
+    }
 }

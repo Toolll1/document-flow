@@ -10,11 +10,14 @@ public interface DocumentProcessService {
 
     DocProcess createNewProcess(Long documentId, Long recipientId);
 
+    DocProcess createNewProcessToOtherCompany(Long documentId, Long companyId);
+
     void sendToApprove(ProcessUpdateRequest processUpdateRequest);
 
     DocProcess findProcessById(Long processId);
 
     Collection<DocProcess> findProcessesByDocumentId(Long documentId);
+
     List<DocProcess> getIncomingProcessesByUserId(Long userId);
 
     List<DocProcess> getOutgoingProcessesByUserId(Long userId);
@@ -26,4 +29,6 @@ public interface DocumentProcessService {
     void sendToCorrection(ProcessUpdateRequest processUpdateRequest);
 
     void deleteProcess(Long processId);
+
+    DocProcess delegateToOtherUser(ProcessUpdateRequest processUpdateRequest, Long recipientId);
 }

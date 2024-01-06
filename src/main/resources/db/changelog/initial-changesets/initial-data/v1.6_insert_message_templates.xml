@@ -1,0 +1,38 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="v1.6_insert_message_templates" author="nikita_glushko">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+            <sqlCheck expectedResult="${database.name}">SELECT current_database()</sqlCheck>
+            <tableExists tableName="message_templates"/>
+        </preConditions>
+        <insert tableName="message_templates">
+            <column name="message_pattern" value="AGREEMENT"/>
+            <column name="body"
+                    value="&lt;p&gt;Здравствуйте ${firstName}, вас назначили реципиентом на проверку документа ${documentName} пользователя &lt;a href='mailto:${mail}'&gt; ${fullName} &lt;/a&gt; &lt;/p&gt; &lt;br&gt; &lt;p&gt; Подробности доступны по &lt;a href='localhost:3000/'&gt;ссылке&lt;/a&gt; &lt;/p&gt;"/>
+            <column name="subject" value="Прислан документ на рассмотрение"/>
+        </insert>
+        <insert tableName="message_templates">
+            <column name="message_pattern" value="APPROVE"/>
+            <column name="body"
+                    value="&lt;p&gt;Здравствуйте ${firstName}, ваш документ ${documentName} прошёл рассмотрение и успешно принят&lt;/p&gt; &lt;br&gt; &lt;p&gt; Подробности доступны по &lt;a href='localhost:3000/'&gt;ссылке&lt;/a&gt; &lt;/p&gt;"/>
+            <column name="subject" value="Документ принят"/>
+        </insert>
+        <insert tableName="message_templates">
+            <column name="message_pattern" value="CORRECTING"/>
+            <column name="body"
+                    value="&lt;p&gt;Здравствуйте ${firstName}, для вашего документа ${documentName} отправлены доработки от пользователя @%s (%s)&lt;/p&gt; &lt;br&gt; &lt;p&gt; Подробности доступны по &lt;a href='localhost:3000/'&gt;ссылке&lt;/a&gt; &lt;/p&gt;"/>
+            <column name="subject" value="Документ требует доработок"/>
+        </insert>
+        <insert tableName="message_templates">
+            <column name="message_pattern" value="REJECT"/>
+            <column name="body"
+                    value="&lt;p&gt;Здравствуйте ${firstName}, в результате рассмотрения ваш документ ${documentName} отклонён&lt;/p&gt; &lt;br&gt; &lt;p&gt; Подробности доступны по &lt;a href='localhost:3000/'&gt;ссылке&lt;/a&gt; &lt;/p&gt;"/>
+            <column name="subject" value="Документ отклонён"/>
+        </insert>
+
+    </changeSet>
+</databaseChangeLog>

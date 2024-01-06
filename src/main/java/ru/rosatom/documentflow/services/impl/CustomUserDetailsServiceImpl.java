@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import ru.rosatom.documentflow.repositories.UserRepository;
 import ru.rosatom.documentflow.services.CustomUserDetailsService;
 
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -19,7 +20,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
         return userRepository.findByEmail(email).orElseThrow(() ->
         {
             log.error("No user found with email: {}", email);
-            return new UsernameNotFoundException("No user with email" + email);
+            return new UsernameNotFoundException("No user with email " + email);
         });
     }
 }

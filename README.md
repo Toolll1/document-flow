@@ -2,8 +2,8 @@
 ER-диаграмма:
 ![This is an image](https://i.postimg.cc/vBLDgNG7/ER.png)
 
-Для изменения конфигурации на сохранение файла в minio необходимо изменить 
-значение константы service.file в application.properties на minio
+Для изменения конфигурации по сохранению файлов (minio или local), необходимо откорректировать 
+значение константы service.file в application.properties
 
 ## Запуск через Docker
 
@@ -32,7 +32,11 @@ echo \
 sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin  docker-compose
 ```
+3. Утсановить [Buildx](https://docs.docker.com/build/architecture/#install-buildx)
+4. Включить [BuildKit](https://docs.docker.com/build/buildkit/#getting-started)
 
+
+```bash
 Для запуска проекта необходимо выполнить команду:
 ```bash
 docker-compose up

@@ -9,21 +9,24 @@ import lombok.NoArgsConstructor;
 @Schema(description = "Процесс изменения документа")
 public class DocProcessDto {
 
-  @Schema(description = "ID процесса")
-  private Long id;
+    @Schema(description = "ID процесса")
+    private Long id;
 
-  @Schema(description = "Документ")
-  private Long document;
+    @Schema(description = "Документ")
+    private Long document;
 
-  @Schema(description = "Отправитель")
-  private Long sender;
+    @Schema(description = "Отправитель")
+    private Long sender;
 
-  @Schema(description = "Получатель")
-  private Long recipient;
+    @Schema(description = "Получатель")
+    private Long recipientUserId;
 
-  @Schema(description = "Статус")
-  private String status;
+    @Schema(description = "Организация получатель")
+    private Long recipientOrganizationId;
 
-  @Schema(description = "Комментарий")
-  private String comment;
+    @Schema(description = "Статус")
+    private String status;
+
+    @Schema(description = "Комментарий")
+    private String comment;
 }

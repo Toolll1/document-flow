@@ -4,18 +4,28 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.rosatom.documentflow.exceptions.IllegalProcessStatusException;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
+import ru.rosatom.documentflow.exceptions.UnprocessableEntityException;
+import ru.rosatom.documentflow.kafka.Producer;
 import ru.rosatom.documentflow.models.AgreementType;
 import ru.rosatom.documentflow.models.DocProcess;
 import ru.rosatom.documentflow.models.DocProcessStatus;
 import ru.rosatom.documentflow.models.Document;
+import ru.rosatom.documentflow.models.MessagePattern;
 import ru.rosatom.documentflow.models.ProcessUpdateRequest;
 import ru.rosatom.documentflow.models.User;
+import ru.rosatom.documentflow.models.UserOrganization;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
 import ru.rosatom.documentflow.services.DocumentProcessService;
 import ru.rosatom.documentflow.services.DocumentService;
+import ru.rosatom.documentflow.services.EmailService;
+import ru.rosatom.documentflow.services.UserOrganizationService;
 import ru.rosatom.documentflow.services.UserService;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static ru.rosatom.documentflow.models.DocProcessStatus.*;
@@ -27,14 +37,47 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     private final static String EMPTY_COMMENT = "";
     private final static Map<DocProcessStatus, List<DocProcessStatus>> ALLOWED_STATUS_CHANGES = Map.of(
             DocProcessStatus.NEW, List.of(DocProcessStatus.WAITING_FOR_APPROVE),
-            DocProcessStatus.WAITING_FOR_APPROVE, List.of(DocProcessStatus.APPROVED, DocProcessStatus.REJECTED, DocProcessStatus.CORRECTING),
+            DocProcessStatus.WAITING_FOR_APPROVE, List.of(DocProcessStatus.APPROVED, DocProcessStatus.REJECTED
+                    , DocProcessStatus.CORRECTING, DocProcessStatus.DELEGATED),
             DocProcessStatus.CORRECTING, List.of(DocProcessStatus.WAITING_FOR_APPROVE),
             DocProcessStatus.APPROVED, List.of(),
-            DocProcessStatus.REJECTED, List.of()
+            DocProcessStatus.REJECTED, List.of(),
+            DocProcessStatus.DELEGATED, List.of()
     );
     private final DocumentService documentService;
     private final UserService userService;
     private final DocProcessRepository docProcessRepository;
+    private final EmailService emailService;
+    private final Producer producer;
+    private final UserOrganizationService userOrganizationService;
+
+
+    /**
+     * Создает новый процесс согласования документа для указанной компании.
+     * Статус процесса - NEW.
+     *
+     * @param documentId - id документа
+     * @param companyId  - id компании получателя
+     * @return DocProcess - процесс согласования
+     */
+    @Override
+    public DocProcess createNewProcessToOtherCompany(Long documentId, Long companyId) {
+        Document document = documentService.findDocumentById(documentId);
+        UserOrganization recipientCompany = userOrganizationService.getOrganization(companyId);
+        if (recipientCompany.getDefaultRecipient() == null)
+            throw new UnprocessableEntityException(
+                    String.format("The default recipient for company '%s' cannot be determined", recipientCompany.getName()));
+        User sender = userService.getUser(document.getOwnerId());
+        DocProcess docProcess = DocProcess.builder()
+                .document(document)
+                .sender(sender)
+                .recipientUser(userService.getUser(recipientCompany.getDefaultRecipient()))
+                .recipientOrganization(recipientCompany)
+                .status(DocProcessStatus.NEW)
+                .comment(EMPTY_COMMENT)
+                .build();
+        return docProcessRepository.save(docProcess);
+    }
 
 
     /**
@@ -51,8 +94,9 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         User sender = userService.getUser(document.getOwnerId());
         DocProcess docProcess = DocProcess.builder()
                 .document(document)
-                .recipient(recipient)
+                .recipientUser(recipient)
                 .sender(sender)
+                .recipientOrganization(sender.getOrganization())
                 .status(DocProcessStatus.NEW)
                 .comment(EMPTY_COMMENT)
                 .build();
@@ -69,6 +113,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
         throwIfStatusNotCorrect(docProcess, DocProcessStatus.WAITING_FOR_APPROVE);
         docProcess.setStatus(DocProcessStatus.WAITING_FOR_APPROVE);
+        emailService.sendDocProcessAgreementMessageForRecipient(docProcess);
         docProcessRepository.save(docProcess);
     }
 
@@ -79,7 +124,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
      * @return Список процессов
      */
     public List<DocProcess> getIncomingProcessesByUserId(Long userId) {
-        return docProcessRepository.findAllByRecipientId(userId)
+        return docProcessRepository.findAllByRecipientUserId(userId)
                 .stream()
                 .filter(docProcess -> !docProcess.getStatus().equals(NEW))
                 .collect(Collectors.toList());
@@ -112,6 +157,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         throwIfStatusNotCorrect(docProcess, DocProcessStatus.APPROVED);
         docProcess.setStatus(DocProcessStatus.APPROVED);
         docProcessRepository.save(docProcess);
+        emailService.sendDocProcessResultMessageForOwner(docProcess, MessagePattern.APPROVE);
         finalStatusUpdate(docProcess.getDocument().getId());
     }
 
@@ -126,6 +172,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         throwIfStatusNotCorrect(docProcess, DocProcessStatus.REJECTED);
         docProcess.setStatus(DocProcessStatus.REJECTED);
         docProcessRepository.save(docProcess);
+        emailService.sendDocProcessResultMessageForOwner(docProcess, MessagePattern.REJECT);
         finalStatusUpdate(docProcess.getDocument().getId());
     }
 
@@ -140,6 +187,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         throwIfStatusNotCorrect(docProcess, DocProcessStatus.CORRECTING);
         setStatusForAllProcessesExceptByDocument(docProcess.getDocument(), CORRECTING, List.of(CORRECTING, NEW));
         docProcessRepository.save(docProcess);
+        emailService.sendDocProcessResultMessageForOwner(docProcess, MessagePattern.CORRECTING);
     }
 
     /**
@@ -226,10 +274,12 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
             case QUORUM:
                 Map<DocProcessStatus, Integer> voteCount = new HashMap<>();
                 for (DocProcessStatus vote : processes) {
-                    if (voteCount.containsKey(vote)) {
-                        voteCount.put(vote, voteCount.get(vote) + 1);
-                    } else {
-                        voteCount.put(vote, 1);
+                    if (!vote.equals(DELEGATED)) {
+                        if (voteCount.containsKey(vote)) {
+                            voteCount.put(vote, voteCount.get(vote) + 1);
+                        } else {
+                            voteCount.put(vote, 1);
+                        }
                     }
                 }
                 int maxVotes = 0;
@@ -252,6 +302,22 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
                     }
                 }
         }
+        if (document.getFinalDocStatus().equals(APPROVED)) {
+            producer.sendMessage("Документ с id- [" + documentId + "] переведен в статус: " + APPROVED);
+        }
     }
 
+    /**
+     * Делегировать согласование другому пользователю. Статус процесса - DELEGATED
+     *
+     * @param processUpdateRequest - запрос на обновление процесса
+     * @param recipientId          - id получателя, которому делегировано согласование
+     */
+    @Override
+    public DocProcess delegateToOtherUser(ProcessUpdateRequest processUpdateRequest, Long recipientId) {
+        DocProcess docProcess = getProcessAndApplyRequest(processUpdateRequest);
+        docProcess.setStatus(DELEGATED);
+        docProcessRepository.save(docProcess);
+        return createNewProcess(docProcess.getDocument().getId(), recipientId);
+    }
 }

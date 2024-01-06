@@ -1,11 +1,21 @@
 package ru.rosatom.documentflow.repositories;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.rosatom.documentflow.models.DocType;
 
+import java.util.List;
+
 @Repository
 public interface DocTypeRepository extends JpaRepository<DocType, Long> {
-  List<DocType> findByNameContains(String name);
+    @Query("select d from DocType d where d.organization.id = ?1")
+    Page<DocType> findAllByUserOrganization(Long orgId, Pageable pageable);
+
+    List<DocType> findByNameContains(String name);
+
+    List<DocType> findByOrganizationIdAndNameContains(Long userOrganizationId, String name);
+
 }

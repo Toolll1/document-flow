@@ -1,0 +1,29 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="v1.5_create_table_type_attributes" author="nikita_glushko">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+            <sqlCheck expectedResult="${database.name}">SELECT current_database()</sqlCheck>
+            <not>
+                <tableExists tableName="type_attributes"/>
+            </not>
+        </preConditions>
+        <createTable tableName="type_attributes">
+            <column name="type_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_attribute_document_type"
+                             referencedTableName="document_types"
+                             referencedColumnNames="type_id"/>
+            </column>
+            <column name="attribute_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_document_type_attribute"
+                             referencedTableName="attributes"
+                             referencedColumnNames="attribute_id"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

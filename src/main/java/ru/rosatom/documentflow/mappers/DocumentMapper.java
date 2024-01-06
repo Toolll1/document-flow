@@ -27,7 +27,7 @@ public class DocumentMapper {
 
     public Document documentFromCreateDto(DocumentCreateDto dto) {
         List<DocAttributeValues> attributeValues = new ArrayList<>();
-        List<DocAttributeValueCreateDto> listDto = dto.getDocAttributeValueCreateDtos();
+        List<DocAttributeValueCreateDto> listDto = dto.getAttributeValues();
         for (DocAttributeValueCreateDto createDto : listDto) {
             DocAttributeValues values = new DocAttributeValues();
             values.setValue(createDto.getValue());
@@ -35,9 +35,9 @@ public class DocumentMapper {
             attributeValues.add(values);
         }
         return Document.builder()
-                .idOrganization(dto.getIdOrganization())
-                .docType(docTypeService.getDocTypeById(dto.getDocTypId()))
+                .docType(docTypeService.getDocTypeById(dto.getDocTypeId()))
                 .attributeValues(attributeValues)
+                .title(dto.getTitle())
                 .build();
     }
 

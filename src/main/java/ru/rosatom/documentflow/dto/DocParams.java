@@ -1,7 +1,11 @@
 package ru.rosatom.documentflow.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
@@ -18,7 +22,7 @@ public class DocParams {
     String text;
     LocalDateTime rangeStart;
     LocalDateTime rangeEnd;
-    @Schema(description = "ID оздателя")
+    @Schema(description = "ID создателя")
     Long creatorId;
     @Schema(description = "ID типа")
     Long typeId;

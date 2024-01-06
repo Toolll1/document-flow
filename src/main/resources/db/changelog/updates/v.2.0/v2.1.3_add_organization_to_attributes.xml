@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="v2.1.3_add_organization_to_attributes" author="Vasily_Chumachenko">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+
+            <tableExists tableName="attributes"/>
+            <and>
+                <tableExists tableName="document_types"/>
+            </and>
+        </preConditions>
+
+        <comment>Add column org_id to attributes</comment>
+        <addColumn tableName="attributes">
+            <column name="org_id" type="bigint"/>
+        </addColumn>
+
+        <comment>Add foreign key constraint to org_id</comment>
+        <addForeignKeyConstraint baseTableName="attributes" baseColumnNames="org_id"
+                                 constraintName="fk_attribute_organization"
+                                 referencedTableName="organizations"
+                                 referencedColumnNames="org_id"/>
+
+        <rollback>
+            <dropColumn tableName="attributes" columnName="org_id"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

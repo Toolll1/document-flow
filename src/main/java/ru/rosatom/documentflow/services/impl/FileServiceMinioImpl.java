@@ -1,8 +1,5 @@
 package ru.rosatom.documentflow.services.impl;
 
-import com.documents4j.api.DocumentType;
-import com.documents4j.api.IConverter;
-import com.documents4j.job.LocalConverter;
 import io.minio.BucketExistsArgs;
 import io.minio.CopyObjectArgs;
 import io.minio.CopySource;
@@ -17,23 +14,20 @@ import io.minio.errors.InvalidResponseException;
 import io.minio.errors.MinioException;
 import io.minio.errors.ServerException;
 import io.minio.errors.XmlParserException;
-import lombok.RequiredArgsConstructor;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
+import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
-import org.docx4j.wml.Jc;
-import org.docx4j.wml.JcEnumeration;
-import org.docx4j.wml.PPr;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 import ru.rosatom.documentflow.adapters.TranslitText;
+import ru.rosatom.documentflow.configuration.MinioConfig;
 import ru.rosatom.documentflow.dto.UserReplyDto;
 import ru.rosatom.documentflow.exceptions.BadRequestException;
 import ru.rosatom.documentflow.exceptions.ConflictException;
 import ru.rosatom.documentflow.mappers.UserMapper;
-import ru.rosatom.documentflow.models.DocAttributeValues;
 import ru.rosatom.documentflow.models.DocProcess;
-import ru.rosatom.documentflow.models.DocProcessStatus;
 import ru.rosatom.documentflow.models.Document;
 import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.services.FileService;
@@ -45,21 +39,33 @@ import java.nio.file.FileSystems;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
-import java.util.concurrent.TimeUnit;
-
 
 @Service
-@RequiredArgsConstructor
+@ConfigurationProperties(prefix = "minio")
 @ConditionalOnProperty(prefix = "service", name = "file", havingValue = "minio")
-public class FileServiceMinioImpl implements FileService {
-
-    private final MinioClient minioClient = MinioClient.builder()
-            .endpoint("http://minio:9000")
-            //.endpoint("http://localhost:9000") // для запуска нашего сервиса локально
-            .credentials("admin", "Secure123$")
-            .build();
+public class FileServiceMinioImpl extends FileServiceAbstract implements FileService {
     private final UserService userService;
     private final UserMapper userMapper;
+    private final MinioClient minioClient;
+    private final MinioConfig minioConfig;
+    private final WordprocessingMLPackage wordPackage;
+
+    public FileServiceMinioImpl(MinioConfig minioConfig, UserService userService, UserMapper userMapper) {
+        this.minioConfig = minioConfig;
+        this.userService = userService;
+        this.userMapper = userMapper;
+        minioClient = MinioClient.builder()
+                .endpoint(minioConfig.getEndpoint())
+                // .endpoint(minioConfig.getLocalEndpoint()) // для запуска нашего сервиса локально
+                .credentials(minioConfig.getLogin(), minioConfig.getPassword())
+                .build();
+
+        try {
+            wordPackage = WordprocessingMLPackage.createPackage();
+        } catch (InvalidFormatException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public Document createFile(Document document, Collection<DocProcess> docProcess) {
@@ -75,39 +81,13 @@ public class FileServiceMinioImpl implements FileService {
         }
         
         try {
-            WordprocessingMLPackage wordPackage = WordprocessingMLPackage.createPackage();
-            MainDocumentPart mainDocumentPart = wordPackage.getMainDocumentPart();
-            PPr paragraphProperties = new PPr();
-            Jc justification = new Jc();
             UserReplyDto userReplyDto = userMapper.objectToReplyDto(user);
+            MainDocumentPart mainDocumentPart = wordPackage.getMainDocumentPart();
 
-            justification.setVal(JcEnumeration.RIGHT);
-            paragraphProperties.setJc(justification);
-            mainDocumentPart.addStyledParagraphOfText("Title", document.getDocType().getName());
-            mainDocumentPart.addParagraphOfText("ФИО: " + userReplyDto.getFullName()).setPPr(paragraphProperties);
-            mainDocumentPart.addParagraphOfText("Организация: " + userReplyDto.getOrgDto().getName()).setPPr(paragraphProperties);
-            mainDocumentPart.addParagraphOfText("ИНН: " + userReplyDto.getOrgDto().getInn()).setPPr(paragraphProperties);
-            mainDocumentPart.addParagraphOfText("\n\n");
-            mainDocumentPart.addParagraphOfText("Значения атрибутов:");
-
-            for (DocAttributeValues attributeValue : document.getAttributeValues()) {
-                mainDocumentPart.addParagraphOfText(attributeValue.getAttribute().getName() + ": " + attributeValue.getValue());
-            }
+            addPreliminaryData(userReplyDto, mainDocumentPart, document);
 
             if (docProcess != null) {
-                mainDocumentPart.addParagraphOfText("\n\n");
-                mainDocumentPart.addParagraphOfText("Согласовали:");
-
-                for (DocProcess process : docProcess) {
-                    if (process.getStatus().equals(DocProcessStatus.APPROVED)) {
-                        UserReplyDto recipientReplyDto = userMapper.objectToReplyDto(process.getRecipient());
-                        mainDocumentPart.addParagraphOfText("ФИО: " + recipientReplyDto.getFullName());
-                        mainDocumentPart.addParagraphOfText("Организация: " + recipientReplyDto.getOrgDto().getName());
-                        mainDocumentPart.addParagraphOfText("ИНН: " + recipientReplyDto.getOrgDto().getInn());
-                        mainDocumentPart.addParagraphOfText("Подпись:");
-                        mainDocumentPart.addParagraphOfText("\n\n");
-                    }
-                }
+                addFinalData(mainDocumentPart, docProcess, userMapper);
 
                 String namePdf = TranslitText.transliterate(user.getLastName()).replaceAll(" ", "").toLowerCase() + System.currentTimeMillis() + ".pdf";
                 String pathPdf = FileSystems.getDefault().getPath("files", nameDocx).toAbsolutePath().toString();
@@ -127,27 +107,6 @@ public class FileServiceMinioImpl implements FileService {
         }
 
         return addFileToMinio(document, nameDocx, fileDocx);
-    }
-
-    private void convertToPdf(File fileDocx, File filePdf) {
-
-        IConverter converter = LocalConverter.builder()
-                .baseFolder(new File("C:\\temp"))
-                .workerPool(20, 25, 2, TimeUnit.SECONDS)
-                .processTimeout(30, TimeUnit.SECONDS)
-                .build();
-
-        converter.convert(fileDocx).as(DocumentType.MS_WORD)
-                .to(filePdf).as(DocumentType.PDF)
-                .prioritizeWith(1000)
-                .schedule();
-    }
-
-    private void deleteLocalFile(File file) {
-
-        if (!file.delete()) {
-            throw new BadRequestException("Ошибка при удалении файла");
-        }
     }
 
     private Document addFileToMinio(Document document, String name, File file) {
@@ -174,6 +133,7 @@ public class FileServiceMinioImpl implements FileService {
         }
 
         document.setDocumentPath("https://minio.docflow.fokidoki.su/browser/" + bucketName);
+        document.setDocumentPath(minioConfig.getPrefix() + bucketName);
         document.setName(name);
 
         return document;
@@ -182,11 +142,7 @@ public class FileServiceMinioImpl implements FileService {
     @Override
     public Document updateFile(Document newDocument, Document oldDocument, Collection<DocProcess> docProcess) {
 
-        if (docProcess != null) {
-            return editFileInMinio(newDocument, oldDocument, "modified-files", docProcess);
-        }
-
-        return editFileInMinio(newDocument, oldDocument, "modified-files", null);
+        return editFileInMinio(newDocument, oldDocument, "modified-files", docProcess);
     }
 
 
@@ -204,10 +160,11 @@ public class FileServiceMinioImpl implements FileService {
             throw new RuntimeException(e);
         }
 
-        if (basketVersionControl.equals("modified-files") && docProcess != null)
+        if (basketVersionControl.equals("modified-files")) {
             return createFile(newDocument, docProcess);
-        else if (basketVersionControl.equals("modified-files")) return createFile(newDocument, null);
-        else return null;
+        } else {
+            return null;
+        }
     }
 
     @Override

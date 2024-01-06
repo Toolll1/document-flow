@@ -1,0 +1,20 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="v1.1_insert_passports" author="nikita_glushko">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+            <sqlCheck expectedResult="${database.name}">SELECT current_database()</sqlCheck>
+            <tableExists tableName="passports"/>
+        </preConditions>
+        <insert tableName="passports">
+            <column name="series" value="4523"/>
+            <column name="number" value="148322"/>
+            <column name="issued" value="MVD PO MOSKVE"/>
+            <column name="date" value="2020-11-20 00:00:00.000000"/>
+            <column name="kp" value="770006"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

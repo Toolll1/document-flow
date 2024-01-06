@@ -13,6 +13,6 @@ public interface DocProcessRepository extends CrudRepository<DocProcess, Long> {
 
     List<DocProcess> findAllBySenderId(Long senderId);
 
-    List<DocProcess> findAllByRecipientId(Long recipientId);
+    List<DocProcess> findAllByRecipientUserId(Long recipientId);
 
 }
