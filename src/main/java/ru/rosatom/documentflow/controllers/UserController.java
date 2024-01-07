@@ -144,11 +144,21 @@ public class UserController {
     @Operation(summary = "Получить всех пользователей по организации")
     @GetMapping("/organization/{orgId}")
     @SecurityRequirement(name = "JWT")
-    @PreAuthorize("hasAuthority('USER') || hasAuthority('COMPANY_ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public List<UserReplyDto> getUsersByOrganization(@PathVariable @Parameter(description = "Id организации") Long orgId) {
         List<User> users = userService.findAllByOrganizationId(orgId);
         return users.stream().map(userMapper::objectToReplyDto).collect(Collectors.toList());
     }
+
+    @Operation(summary = "Получить всех пользователей по своей организации")
+    @GetMapping("/organization/my/")
+    @SecurityRequirement(name = "JWT")
+    @PreAuthorize("hasAuthority('ADMIN') ||hasAuthority('USER') || hasAuthority('COMPANY_ADMIN')")
+    public List<UserReplyDto> getUsersByOrganization(@AuthenticationPrincipal @Parameter(name = "user", hidden = true) User user) {
+        List<User> users = userService.findAllByOrganizationId(user.getOrganization().getId());
+        return users.stream().map(userMapper::objectToReplyDto).collect(Collectors.toList());
+    }
+
 
     @Operation(summary = "Получить пользователя по номеру телефона")
     @GetMapping("/phone/{phone}")
