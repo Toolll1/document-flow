@@ -82,10 +82,6 @@ public class UserUpdateDto {
     @Size(min = 6, max = 6)
     private final String passportKp; // код подразделения
 
-    @Schema(description = "ID организации")
-    @Nullable
-    private final Long organizationId;
-
     @Schema(description = "Роль пользователя")
     @Nullable
     @Pattern(regexp = "\\A(?!\\s*\\Z).+")
