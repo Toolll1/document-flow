@@ -17,14 +17,12 @@ import ru.rosatom.documentflow.models.ProcessUpdateRequest;
 import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.models.UserOrganization;
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
-import ru.rosatom.documentflow.repositories.DocumentRepository;
 import ru.rosatom.documentflow.services.DocumentProcessService;
 import ru.rosatom.documentflow.services.DocumentService;
 import ru.rosatom.documentflow.services.EmailService;
 import ru.rosatom.documentflow.services.UserOrganizationService;
 import ru.rosatom.documentflow.services.UserService;
 import java.time.LocalDateTime;
-import java.util.*;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -221,7 +219,8 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
 
     private DocProcess getProcessAndApplyRequest(ProcessUpdateRequest processUpdateRequest) {
         DocProcess docProcess = findProcessById(processUpdateRequest.getProcessId());
-        setCommentDocProcess(processUpdateRequest, docProcess);
+        createComment(processUpdateRequest.getComment(), docProcess.getSender(), docProcess);
+        emailService.sendMessageWithNewComment(docProcess);
         return docProcess;
     }
 
@@ -324,24 +323,14 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         return createNewProcess(docProcess.getDocument().getId(), recipientId);
     }
 
-
-    public void setCommentDocProcess(ProcessUpdateRequest processUpdateRequest, DocProcess docProcess){
-        Document document = docProcess.getDocument();
-        List<DocProcessComment> comments = document.getComment();
-        String textComment = processUpdateRequest.getComment();
-        DocProcessComment comment = createComment(textComment, docProcess.getSender(), docProcess);
-        document.setComment(comments);
-        docProcessCommentRepository.save(comment);
-        emailService.sendMessageWithNewComment(docProcess);
-    }
-
     @Override
     public DocProcessComment createComment(String text, User user, DocProcess docProcess) {
-        return  DocProcessComment.builder()
-                .authorComment(user)
+        DocProcessComment docProcessComment =  DocProcessComment.builder()
+                .author(user)
                 .docProcess(docProcess)
-                .textComment(text)
-                .date(LocalDateTime.now())
+                .content(text)
+                .createdAt(LocalDateTime.now())
                 .build();
+        return docProcessCommentRepository.save(docProcessComment);
     }
 }

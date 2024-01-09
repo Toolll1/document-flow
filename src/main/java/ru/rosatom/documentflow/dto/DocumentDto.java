@@ -63,6 +63,6 @@ public class DocumentDto {
     String finalDocStatus;
 
     @Schema(description = "Комментарии")
-    private List<DocProcessCommentDto> comment;
+    private List<DocProcessCommentDto> comments;
 }
 

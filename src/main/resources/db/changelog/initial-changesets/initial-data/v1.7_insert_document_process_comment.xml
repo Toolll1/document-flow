@@ -6,20 +6,20 @@
     <changeSet id="v1.7_insert_document_process_comment" author="sveta_klimova">
         <preConditions onFail="MARK_RAN">
             <dbms type="postgresql"/>
-            <sqlCheck expectedResult="document-flow">SELECT current_database()</sqlCheck>
+            <sqlCheck expectedResult="${database.name}">SELECT current_database()</sqlCheck>
             <tableExists tableName="document_process_comment"/>
         </preConditions>
         <insert tableName="document_process_comment">
             <column name="document_process_id" value="1"/>
             <column name="user_id" value="2"/>
-            <column name="text_comment" value="Text comment"/>
-            <column name="date_comment" value="NOW()"/>
+            <column name="comment_content" value="Text comment"/>
+            <column name="created_at" value="NOW()"/>
         </insert>
         <insert tableName="document_process_comment">
             <column name="document_process_id" value="2"/>
             <column name="user_id" value="2"/>
-            <column name="text_comment" value="Text comment 2"/>
-            <column name="date_comment" value="NOW()"/>
+            <column name="comment_content" value="Text comment 2"/>
+            <column name="created_at" value="NOW()"/>
         </insert>
     </changeSet>
 </databaseChangeLog>

@@ -1,19 +1,22 @@
 package ru.rosatom.documentflow.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Data
 @Schema(description = "Комментарий")
 public class DocProcessCommentDto {
+
+    @Schema(description = "ID комментария")
+    private Long id;
     @Schema(description = "Текст комментария")
-    private String textComment;
+    private String content;
     @Schema(description = "Автор комментария")
-    private UserReplyDto authorComment;
+    private UserReplyDto author;
     @Schema(description = "Дата создания комментария")
-    private LocalDateTime date;
+    private LocalDateTime createdAt;
     @Schema(description = "Процесс по документу")
     private DocProcessDto docProcess;
 

@@ -1,34 +1,34 @@
 package ru.rosatom.documentflow.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
-@Entity
 @Builder
+@Entity
 @Table(name = "document_process_comment")
 public class DocProcessComment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
-    private Long id;
+    private final Long id;
 
-    @Column(name = "text_comment")
-    private String textComment;
+    @Column(name = "comment_content")
+    private String content;
 
     @JoinColumn(name = "user_id")
     @OneToOne
-    private User authorComment;
+    private User author;
 
-    @Column (name = "date_comment")
-    private LocalDateTime date;
+    @Column (name = "created_at")
+    private LocalDateTime createdAt;
 
     @JoinColumn(name = "document_process_id")
     @ManyToOne
