@@ -16,6 +16,8 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
+
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -23,46 +25,46 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DocumentDto {
-    @Schema(description = "ID документа")
-    Long id;
+    @Schema(description = "ID документа", requiredMode = REQUIRED)
+    private Long id;
 
-    @Schema(description = "Название")
+    @Schema(description = "Название", requiredMode = REQUIRED)
     @NotNull
     @NotEmpty
-    String name;
+    private String name;
 
-    @Schema(description = "Пользовательское название документа")
-    String title;
+    @Schema(description = "Пользовательское название документа", requiredMode = REQUIRED)
+    private String title;
 
-    @Schema(description = "Путь документа")
+    @Schema(description = "Путь документа", requiredMode = REQUIRED)
     @NotNull
     @NotEmpty
-    String documentPath;
+    private String documentPath;
 
-    @Schema(description = "Дата последнего обновления")
+    @Schema(description = "Дата последнего обновления", requiredMode = REQUIRED)
     @NotNull
     @JsonFormat(pattern = CommonUtils.DATE_TIME_PATTERN)
-    LocalDateTime date;
+    private LocalDateTime date;
 
-    @Schema(description = "ID организации")
+    @Schema(description = "ID организации", requiredMode = REQUIRED)
     @NotNull
-    Long idOrganization;
+    private Long idOrganization;
 
-    @Schema(description = "ID создателя")
-    Long ownerId;
+    @Schema(description = "ID создателя", requiredMode = REQUIRED)
+    private Long ownerId;
 
-    @Schema(description = "Тип документа")
+    @Schema(description = "Тип документа", requiredMode = REQUIRED)
     @NotNull
-    String docTypeName;
+    private String docTypeName;
 
-    @Schema(description = "Список атрибутов")
+    @Schema(description = "Список атрибутов", requiredMode = REQUIRED)
     @NotNull
-    List<DocAttributeValues> attributeValues;
+    private List<DocAttributeValues> attributeValues;
 
-    @Schema(description = "Статус")
-    String finalDocStatus;
+    @Schema(description = "Статус", requiredMode = REQUIRED)
+    private  String finalDocStatus;
 
-    @Schema(description = "Комментарии")
+    @Schema(description = "Комментарии", requiredMode = REQUIRED)
     private List<DocProcessCommentDto> comments;
 }
 

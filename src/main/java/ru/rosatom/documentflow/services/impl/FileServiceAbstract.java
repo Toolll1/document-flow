@@ -32,7 +32,7 @@ public class FileServiceAbstract {
         justification.setVal(JcEnumeration.RIGHT);
         paragraphProperties.setJc(justification);
         mainDocumentPart.addStyledParagraphOfText("Title", document.getDocType().getName());
-        mainDocumentPart.addParagraphOfText("ФИО: " + userReplyDto.getFullName()).setPPr(paragraphProperties);
+        mainDocumentPart.addParagraphOfText("ФИО: " + userReplyDto.getLastName() + " " + userReplyDto.getFirstName() + " " + userReplyDto.getPatronymic()).setPPr(paragraphProperties);
         mainDocumentPart.addParagraphOfText("Организация: " + userReplyDto.getOrganization().getName()).setPPr(paragraphProperties);
         mainDocumentPart.addParagraphOfText("ИНН: " + userReplyDto.getOrganization().getInn()).setPPr(paragraphProperties);
         mainDocumentPart.addParagraphOfText("\n\n");
@@ -51,7 +51,7 @@ public class FileServiceAbstract {
         for (DocProcess process : docProcess) {
             if (process.getStatus().equals(DocProcessStatus.APPROVED)) {
                 UserReplyDto recipientReplyDto = userMapper.objectToReplyDto(process.getRecipientUser());
-                mainDocumentPart.addParagraphOfText("ФИО: " + recipientReplyDto.getFullName());
+                mainDocumentPart.addParagraphOfText("ФИО: " + recipientReplyDto.getLastName() + " " + recipientReplyDto.getFirstName() + " " + recipientReplyDto.getPatronymic());
                 mainDocumentPart.addParagraphOfText("Организация: " + recipientReplyDto.getOrganization().getName());
                 mainDocumentPart.addParagraphOfText("ИНН: " + recipientReplyDto.getOrganization().getInn());
                 mainDocumentPart.addParagraphOfText("Подпись:");

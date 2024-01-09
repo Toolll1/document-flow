@@ -3,9 +3,7 @@ package ru.rosatom.documentflow.services.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -90,7 +88,6 @@ public class UserServiceImpl implements UserService {
         } catch (IllegalArgumentException e) {
             throw new UserRoleNotFoundException("Роль пользователя '" + dto.getRole() + "' не найдена");
         }
-        user.setOrganization((dto.getOrganizationId() == null) ? user.getOrganization() : organizationService.getOrganization(dto.getOrganizationId()));
         user.setPassport(passport);
 
         return user;
@@ -213,7 +210,6 @@ public class UserServiceImpl implements UserService {
      *
      * @param password новый пароль пользователя.
      * @param id       идентификатор пользователя, которому устанавливается пароль.
-     * @return true, если пароль успешно установлен; false, если пользователь не найден.
      */
     @Override
     public void setPasswordToUser(String password, Long id) {
@@ -246,7 +242,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public List<User> findAllByOrganizationId(Long id) {
-        return userRepository.findAllByOrganizationId(id);
+        return userRepository.findAllByOrganizationId(organizationService.getOrganization(id).getId());
     }
 
 
@@ -323,19 +319,6 @@ public class UserServiceImpl implements UserService {
      */
     private <T> T defaultIfNull(T value, T defaultValue) {
         return value != null ? value : defaultValue;
-    }
-
-    /**
-     * Создает объект PageRequest для пагинации.
-     *
-     * @param from начальный индекс страницы.
-     * @param size размер страницы.
-     * @param sort параметр сортировки.
-     * @return объект PageRequest, сконфигурированный с заданными параметрами.
-     */
-    private PageRequest pageableCreator(Integer from, Integer size, String sort) {
-        Sort sortBy = !sort.isEmpty() ? Sort.by(sort) : Sort.unsorted();
-        return PageRequest.of(from / size, size, sortBy);
     }
 
     /**

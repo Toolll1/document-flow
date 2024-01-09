@@ -58,7 +58,7 @@ public class UserAuthorizationTests extends BasicHttpTest {
                 .expectBody(UserWithOrg.class)
                 .value(user -> {
                     assert user != null;
-                    Stream.of(user.getId(), user.getFullName(),
+                    Stream.of(user.getId(), user.getLastName(),user.getLastName(),user.getPatronymic(),
                             user.getDateOfBirth(), user.getEmail(), user.getPhone(), user.getOrganization(),
                             user.getRole(), user.getPost()).forEach(Assertions::assertNotNull);
                 });
@@ -88,7 +88,7 @@ public class UserAuthorizationTests extends BasicHttpTest {
                     assert response.getUser() != null;
                     User user = response.getUser();
                     Stream.of(user.getId(), user.getLastName(), user.getFirstName(), user.getPatronymic(),
-                            user.getDateOfBirth(), user.getEmail(), user.getPhone(), user.getOrganizationId(),
+                            user.getDateOfBirth(), user.getEmail(), user.getPhone(), user.getOrganization(),
                             user.getRole(), user.getPost()).forEach(Assertions::assertNotNull);
                 })
                 .returnResult().getResponseBody();
