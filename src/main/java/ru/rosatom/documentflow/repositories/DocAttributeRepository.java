@@ -23,4 +23,5 @@ public interface DocAttributeRepository extends JpaRepository<DocAttribute, Long
     @Query("SELECT DISTINCT a FROM DocAttribute a WHERE a.id IN :ids")
     Set<DocAttribute> findDistinctByIds(@Param("ids") Set<Long> ids);
 
+    List<DocAttribute>findAllByOrganizationId(Long orgId);
 }

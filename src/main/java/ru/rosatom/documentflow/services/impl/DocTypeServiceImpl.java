@@ -140,6 +140,16 @@ public class DocTypeServiceImpl implements DocTypeService {
         docType.addAttributes(docAttribute);
         return docTypeRepository.save(docType);
     }
+    /**
+     * Получает список всех типов документов, принадлежащих указанной организации.
+     *
+     * @param orgId Идентификатор организации, для которой необходимо получить типы.
+     * @return List<DocType> Список типов документов, принадлежащих заданной организации.
+     */
+    @Override
+    public List<DocType> findAllByOrganizationId(Long orgId) {
+        return docTypeRepository.findAllByOrganizationId(userOrganizationService.getOrganization(orgId).getId()) ;
+    }
 
     /**
      * Проверяет, разрешен ли доступ пользователю к определенному типу документа.
