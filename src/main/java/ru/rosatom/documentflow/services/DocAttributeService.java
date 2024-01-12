@@ -2,10 +2,7 @@ package ru.rosatom.documentflow.services;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import ru.rosatom.documentflow.models.DocAttribute;
-import ru.rosatom.documentflow.models.DocAttributeCreationRequest;
-import ru.rosatom.documentflow.models.DocAttributeUpdateRequest;
-import ru.rosatom.documentflow.models.User;
+import ru.rosatom.documentflow.models.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,4 +25,6 @@ public interface DocAttributeService {
     Set<DocAttribute> getDocAttributesByIds(List<Long> ids);
 
     Set<DocAttribute> getAllByIdsElseThrow(List<Long> ids);
+
+    List<DocAttribute> findAllByOrganizationId(Long orgId);
 }

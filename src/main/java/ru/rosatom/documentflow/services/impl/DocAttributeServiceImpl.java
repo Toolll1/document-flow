@@ -165,4 +165,15 @@ public class DocAttributeServiceImpl implements DocAttributeService {
         }
         return docAttributes;
     }
+
+    /**
+     * Получает список всех атрибутов документов, принадлежащих указанной организации.
+     *
+     * @param orgId Идентификатор организации, для которой необходимо получить атрибуты.
+     * @return List<DocAttribute> Список атрибутов документов, принадлежащих заданной организации.
+     */
+    @Override
+    public List<DocAttribute> findAllByOrganizationId(Long orgId) {
+        return docAttributeRepository.findAllByOrganizationId(userOrganizationService.getOrganization(orgId).getId());
+    }
 }
