@@ -24,4 +24,6 @@ public interface DocTypeService {
     List<DocType> getDocTypesByName(String name, User user);
 
     DocType attributeToType(Long docTypeId, Long docAttributeId);
+
+    List<DocType> findAllByOrganizationId(Long orgId);
 }

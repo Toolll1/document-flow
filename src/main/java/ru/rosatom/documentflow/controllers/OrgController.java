@@ -14,23 +14,14 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-import ru.rosatom.documentflow.dto.OrgCreateRequestDto;
-import ru.rosatom.documentflow.dto.OrgDto;
-import ru.rosatom.documentflow.dto.OrgUpdateRequestDto;
-import ru.rosatom.documentflow.models.OrgCreationRequest;
-import ru.rosatom.documentflow.models.OrgUpdateRequest;
-import ru.rosatom.documentflow.models.User;
-import ru.rosatom.documentflow.models.UserOrganization;
+import org.springframework.web.bind.annotation.*;
+import ru.rosatom.documentflow.dto.*;
+import ru.rosatom.documentflow.mappers.UserMapper;
+import ru.rosatom.documentflow.models.*;
+import ru.rosatom.documentflow.services.DocAttributeService;
+import ru.rosatom.documentflow.services.DocTypeService;
 import ru.rosatom.documentflow.services.UserOrganizationService;
+import ru.rosatom.documentflow.services.UserService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -43,7 +34,11 @@ import java.util.stream.Collectors;
 public class OrgController {
 
     UserOrganizationService userOrganizationService;
+    DocTypeService docTypeService;
+    DocAttributeService docAttributeService;
+    UserService userService;
     ModelMapper modelMapper;
+    UserMapper userMapper;
 
     @Operation(summary = "Получить все организации")
     @GetMapping
@@ -66,7 +61,6 @@ public class OrgController {
         return modelMapper.map(organization, OrgDto.class);
     }
 
-
     @Operation(summary = "Получить организацию по Id")
     @GetMapping("/{orgId}")
     @SecurityRequirement(name = "JWT")
@@ -75,6 +69,71 @@ public class OrgController {
         UserOrganization organization = userOrganizationService.getOrganization(orgId);
         return modelMapper.map(organization, OrgDto.class);
     }
+
+    @Operation(summary = "Получить всех пользователей по организации")
+    @GetMapping("/{orgId}/users")
+    @SecurityRequirement(name = "JWT")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public List<UserReplyDto> getUsersByOrganization(@PathVariable @Parameter(description = "Id организации") Long orgId) {
+        List<User> users = userService.findAllByOrganizationId(orgId);
+        return users.stream().map(userMapper::objectToReplyDto).collect(Collectors.toList());
+    }
+
+    @Operation(summary = "Получить всех пользователей по своей организации")
+    @GetMapping("/my/users")
+    @SecurityRequirement(name = "JWT")
+    @PreAuthorize("hasAuthority('ADMIN') ||hasAuthority('USER') || hasAuthority('COMPANY_ADMIN')")
+    public List<UserReplyDto> getUsersMyOrganization(@AuthenticationPrincipal @Parameter(name = "user", hidden = true) User user) {
+        List<User> users = userService.findAllByOrganizationId(user.getOrganization().getId());
+        return users.stream().map(userMapper::objectToReplyDto).collect(Collectors.toList());
+    }
+
+    @Operation(summary = "Получить все типы по организации")
+    @GetMapping("/{orgId}/doctypes")
+    @SecurityRequirement(name = "JWT")
+    @PreAuthorize("(#orgId == #user.organization.id && hasAuthority('USER')) ||hasAuthority('COMPANY_ADMIN') || hasAuthority('ADMIN')")
+    public List<DocTypeDto> getDocTypesByOrganization(
+            @AuthenticationPrincipal @Parameter(name = "user", hidden = true) User user,
+            @PathVariable @Parameter(description = "Id организации") Long orgId) {
+        List<DocType> docTypes = docTypeService.findAllByOrganizationId(orgId);
+        return docTypes.stream()
+                .map(o -> modelMapper.map(o, DocTypeDto.class))
+                .collect(Collectors.toList());
+    }
+
+    @Operation(summary = "Получить все типы по своей организации")
+    @GetMapping("/my/doctypes")
+    @SecurityRequirement(name = "JWT")
+    @PreAuthorize("hasAuthority('ADMIN') ||hasAuthority('USER') || hasAuthority('COMPANY_ADMIN')")
+    public List<DocTypeDto> getDocTypesMyOrganization(@AuthenticationPrincipal @Parameter(name = "user", hidden = true) User user) {
+        List<DocType> docTypes = docTypeService.findAllByOrganizationId(user.getOrganization().getId());
+        return docTypes.stream()
+                .map(o -> modelMapper.map(o, DocTypeDto.class))
+                .collect(Collectors.toList());
+    }
+
+    @Operation(summary = "Получить все атрибуты по организации")
+    @GetMapping("/{orgId}/docattributes")
+    @SecurityRequirement(name = "JWT")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public List<DocAttributeDto> getAttributesByOrganization(@PathVariable @Parameter(description = "Id организации") Long orgId) {
+        List<DocAttribute> docAttributes = docAttributeService.findAllByOrganizationId(orgId);
+        return docAttributes.stream()
+                .map(o -> modelMapper.map(o, DocAttributeDto.class))
+                .collect(Collectors.toList());
+    }
+
+    @Operation(summary = "Получить все атрибуты по своей организации")
+    @GetMapping("/my/docattributes")
+    @SecurityRequirement(name = "JWT")
+    @PreAuthorize("hasAuthority('ADMIN') ||hasAuthority('USER') || hasAuthority('COMPANY_ADMIN')")
+    public List<DocAttributeDto> getAttributesMyOrganization(@AuthenticationPrincipal @Parameter(name = "user", hidden = true) User user) {
+        List<DocAttribute> docAttributes = docAttributeService.findAllByOrganizationId(user.getOrganization().getId());
+        return docAttributes.stream()
+                .map(o -> modelMapper.map(o, DocAttributeDto.class))
+                .collect(Collectors.toList());
+    }
+
 
     @Operation(summary = "Поиск организации по подстроке в имени")
     @GetMapping("/name/{name}")
