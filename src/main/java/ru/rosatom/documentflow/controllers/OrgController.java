@@ -91,13 +91,16 @@ public class OrgController {
     @Operation(summary = "Получить все типы по организации")
     @GetMapping("/{orgId}/doctypes")
     @SecurityRequirement(name = "JWT")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public List<DocTypeDto> getDocTypesByOrganization(@PathVariable @Parameter(description = "Id организации") Long orgId) {
+    @PreAuthorize("(#orgId == #user.organization.id && hasAuthority('USER')) ||hasAuthority('COMPANY_ADMIN') || hasAuthority('ADMIN')")
+    public List<DocTypeDto> getDocTypesByOrganization(
+            @AuthenticationPrincipal @Parameter(name = "user", hidden = true) User user,
+            @PathVariable @Parameter(description = "Id организации") Long orgId) {
         List<DocType> docTypes = docTypeService.findAllByOrganizationId(orgId);
         return docTypes.stream()
                 .map(o -> modelMapper.map(o, DocTypeDto.class))
                 .collect(Collectors.toList());
     }
+
     @Operation(summary = "Получить все типы по своей организации")
     @GetMapping("/my/doctypes")
     @SecurityRequirement(name = "JWT")
@@ -108,6 +111,7 @@ public class OrgController {
                 .map(o -> modelMapper.map(o, DocTypeDto.class))
                 .collect(Collectors.toList());
     }
+
     @Operation(summary = "Получить все атрибуты по организации")
     @GetMapping("/{orgId}/docattributes")
     @SecurityRequirement(name = "JWT")
@@ -118,6 +122,7 @@ public class OrgController {
                 .map(o -> modelMapper.map(o, DocAttributeDto.class))
                 .collect(Collectors.toList());
     }
+
     @Operation(summary = "Получить все атрибуты по своей организации")
     @GetMapping("/my/docattributes")
     @SecurityRequirement(name = "JWT")
