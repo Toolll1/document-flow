@@ -44,7 +44,7 @@ public class DocType {
     private UserOrganization organization;
 
     @Column(name = "archived")
-    private boolean isArchived;
+    private boolean archived;
 
     public void addAttributes(DocAttribute docAttribute) {
         attributes.add(docAttribute);

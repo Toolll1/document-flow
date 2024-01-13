@@ -204,6 +204,12 @@ public class DocTypeServiceImpl implements DocTypeService {
         return docTypeRepository.findAllByOrganizationId(userOrganizationService.getOrganization(orgId).getId());
     }
 
+    /**
+     * Архивирует определенный тип документа {@link DocType}.
+     *
+     * @param docTypeId идентификатор типа документа, который будет архивирован
+     * @return архивированный объект {@link DocType}
+     */
     @Override
     public DocType archiveDocType(Long docTypeId) {
         DocType docType = getDocTypeById(docTypeId);
@@ -211,9 +217,15 @@ public class DocTypeServiceImpl implements DocTypeService {
         return docTypeRepository.save(docType);
     }
 
+    /**
+     * Проверяет, находится ли тип документа в архиве.
+     *
+     * @param docTypeId идентификатор типа документа для проверки его статуса
+     * @return true, если тип документа архивирован, иначе false
+     */
     @Override
     public boolean isArchivedDocType(Long docTypeId) {
-        return docTypeRepository.isArchived(docTypeId);
+        return docTypeRepository.existsByIdAndArchivedIsTrue(docTypeId);
     }
 
 
