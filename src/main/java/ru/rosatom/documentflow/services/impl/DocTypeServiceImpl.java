@@ -213,7 +213,7 @@ public class DocTypeServiceImpl implements DocTypeService {
 
     @Override
     public boolean isArchivedDocType(Long docTypeId) {
-        return docTypeRepository.findArchivedById(docTypeId);
+        return docTypeRepository.isArchived(docTypeId);
     }
 
 
