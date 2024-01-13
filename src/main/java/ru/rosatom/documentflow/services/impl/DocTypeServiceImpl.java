@@ -1,6 +1,8 @@
 package ru.rosatom.documentflow.services.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocTypeRepository;
 import ru.rosatom.documentflow.services.DocAttributeService;
 import ru.rosatom.documentflow.services.DocTypeService;
+import ru.rosatom.documentflow.services.DocumentService;
 import ru.rosatom.documentflow.services.UserOrganizationService;
 
 import java.util.*;
@@ -28,6 +31,7 @@ public class DocTypeServiceImpl implements DocTypeService {
     private final DocTypeRepository docTypeRepository;
     private final DocAttributeService docAttributeService;
     private final UserOrganizationService userOrganizationService;
+    private DocumentService documentService;
 
     /**
      * Получает все типы документов с учетом пагинации. Если предоставлен идентификатор организации,
@@ -144,10 +148,12 @@ public class DocTypeServiceImpl implements DocTypeService {
      */
     @Override
     public void deleteDocType(Long docTypeId) {
-        DocType docType = docTypeRepository.findById(docTypeId)
-                .orElseThrow(() -> new ObjectNotFoundException("Тип документа с ID " + docTypeId + " не найден."));
 
-        docTypeRepository.delete(docType);
+        if (documentService.existsDocumentsByType(docTypeId)) {
+            throw new ConflictException("Тип документа используется. Удаление невозможно.");
+        }
+
+        docTypeRepository.delete(getDocTypeById(docTypeId));
     }
 
     /**
@@ -178,8 +184,7 @@ public class DocTypeServiceImpl implements DocTypeService {
      */
     @Override
     public DocType attributeToType(Long docTypeId, Long docAttributeId) {
-        DocType docType = docTypeRepository.findById(docTypeId)
-                .orElseThrow(() -> new ObjectNotFoundException("Тип документа с ID " + docTypeId + " не найден."));
+        DocType docType = getDocTypeById(docTypeId);
         DocAttribute docAttribute = docAttributeService.getDocAttributeById(docAttributeId);
         if (docType.containsAttribute(docAttribute)) {
             throw new AlreadyExistsException(docAttribute.getName(), docType.getName());
@@ -187,6 +192,7 @@ public class DocTypeServiceImpl implements DocTypeService {
         docType.addAttributes(docAttribute);
         return docTypeRepository.save(docType);
     }
+
     /**
      * Получает список всех типов документов, принадлежащих указанной организации.
      *
@@ -195,8 +201,21 @@ public class DocTypeServiceImpl implements DocTypeService {
      */
     @Override
     public List<DocType> findAllByOrganizationId(Long orgId) {
-        return docTypeRepository.findAllByOrganizationId(userOrganizationService.getOrganization(orgId).getId()) ;
+        return docTypeRepository.findAllByOrganizationId(userOrganizationService.getOrganization(orgId).getId());
     }
+
+    @Override
+    public DocType archiveDocType(Long docTypeId) {
+        DocType docType = getDocTypeById(docTypeId);
+        docType.setArchived(true);
+        return docTypeRepository.save(docType);
+    }
+
+    @Override
+    public boolean isArchivedDocType(Long docTypeId) {
+        return docTypeRepository.findArchivedById(docTypeId);
+    }
+
 
     /**
      * Проверяет, разрешен ли доступ пользователю к определенному типу документа.
@@ -223,5 +242,11 @@ public class DocTypeServiceImpl implements DocTypeService {
 
         return Objects.equals(docType.getOrganization().getId(), user.getOrganization().getId()) &&
                 Objects.equals(docAttribute.getOrganization().getId(), user.getOrganization().getId());
+    }
+
+    @Lazy
+    @Autowired
+    public void setDocumentService(DocumentService documentService) {
+        this.documentService = documentService;
     }
 }

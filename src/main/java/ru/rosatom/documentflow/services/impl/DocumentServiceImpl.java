@@ -5,6 +5,7 @@ import com.querydsl.jpa.JPAExpressions;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -13,15 +14,9 @@ import ru.rosatom.documentflow.dto.DocAttributeValueCreateDto;
 import ru.rosatom.documentflow.dto.DocParams;
 import ru.rosatom.documentflow.dto.DocumentUpdateDto;
 import ru.rosatom.documentflow.exceptions.BadRequestException;
+import ru.rosatom.documentflow.exceptions.ConflictException;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
-import ru.rosatom.documentflow.models.DocAttributeValues;
-import ru.rosatom.documentflow.models.DocChanges;
-import ru.rosatom.documentflow.models.DocProcess;
-import ru.rosatom.documentflow.models.DocProcessStatus;
-import ru.rosatom.documentflow.models.Document;
-import ru.rosatom.documentflow.models.QDocAttributeValues;
-import ru.rosatom.documentflow.models.QDocument;
-import ru.rosatom.documentflow.models.User;
+import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocAttributeValuesRepository;
 import ru.rosatom.documentflow.repositories.DocChangesRepository;
 import ru.rosatom.documentflow.repositories.DocumentRepository;
@@ -64,6 +59,10 @@ public class DocumentServiceImpl implements DocumentService {
     public Document createDocument(Document document, User user) {
 
         userOrganizationService.getOrganization(user.getOrganization().getId());
+        DocType docType =docTypeService.getDocTypeById(document.getDocType().getId());
+        if (docTypeService.isArchivedDocType(docType.getId())){
+            throw new ConflictException("Невозможно создать документ архивированного типа");
+        }
         document.setOwnerId(user.getId());
         document.setIdOrganization(user.getOrganization().getId());
         document.setDate(LocalDateTime.now());
@@ -242,5 +241,8 @@ public class DocumentServiceImpl implements DocumentService {
         } else {
             documentRepository.save(newDocument);
         }
+    }
+    public boolean existsDocumentsByType(Long docTypeId) {
+        return documentRepository.existsByDocTypeId(docTypeId);
     }
 }

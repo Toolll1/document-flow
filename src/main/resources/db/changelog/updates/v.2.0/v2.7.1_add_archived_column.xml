@@ -7,7 +7,7 @@
     <changeSet id="v2.7.1_add_archived_column.xml" author="Vasily_Chumachenko">
 
         <addColumn tableName="document_types">
-            <column name="is_archived" type="boolean"/>
+            <column name="archived" type="boolean" defaultValueBoolean="false"/>
         </addColumn>
     </changeSet>
 </databaseChangeLog>

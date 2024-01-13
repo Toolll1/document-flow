@@ -19,4 +19,5 @@ public interface DocTypeRepository extends JpaRepository<DocType, Long> {
     List<DocType> findByOrganizationIdAndNameContains(Long userOrganizationId, String name);
 
     List<DocType>findAllByOrganizationId(Long orgId);
+    boolean findArchivedById(Long typeId);
 }

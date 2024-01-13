@@ -30,4 +30,7 @@ public class DocTypeDto {
     @Schema(description = "ID организации", requiredMode = REQUIRED)
     private long organizationId;
 
+    @Schema(description = "Архивный тип документа", requiredMode = REQUIRED)
+    private boolean archived;
+
 }

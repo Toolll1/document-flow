@@ -39,4 +39,6 @@ public interface DocumentService {
     List<DocChanges> findDocChangesByUserId(Long userId);
 
     void updateFinalStatus(Document document, DocProcessStatus status, Collection<DocProcess> docProcess);
+
+    boolean existsDocumentsByType(Long docTypeId);
 }
