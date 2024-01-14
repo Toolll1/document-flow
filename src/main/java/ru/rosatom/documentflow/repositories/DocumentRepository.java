@@ -26,4 +26,6 @@ public interface DocumentRepository extends JpaRepository<Document, Long>, Query
 
     Page<Document> findAllByIdOrganization(Long idOrganization, Pageable pageable);
 
+    boolean existsByDocTypeId(Long docTypeId);
+
 }
