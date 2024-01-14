@@ -22,19 +22,19 @@ public class UserUpdateDto {
 
     @Schema(description = "Фамилия", minLength = 2, maxLength = 100)
     @Nullable
-    @Pattern(regexp = "\\A(?!\\s*\\Z).+")
+    @Pattern(regexp = "^\\p{L}+$")
     @Size(min = 2, max = 100)
     private final String lastName;
 
     @Schema(description = "Имя", minLength = 2, maxLength = 100)
     @Nullable
-    @Pattern(regexp = "\\A(?!\\s*\\Z).+")
+    @Pattern(regexp = "^\\p{L}+$")
     @Size(min = 2, max = 100)
     private final String firstName;
 
     @Schema(description = "Отчество", minLength = 2, maxLength = 100)
-    @Nullable
-    @Pattern(regexp = "\\A(?!\\s*\\Z).+")
+    @NotNull
+    @Pattern(regexp = "^\\p{L}+$")
     @Size(min = 2, max = 100)
     private final String patronymic;
 
