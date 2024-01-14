@@ -79,7 +79,7 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<AppError> handleBadCredentialsException(final BadCredentialsException e){
+    public ResponseEntity<AppError> handleBadCredentialsException(final BadCredentialsException e) {
         return createAppError(e, HttpStatus.UNAUTHORIZED);
     }
 
@@ -94,8 +94,15 @@ public class ErrorHandler {
     public ResponseEntity<AppError> handleUnprocessableEntityException(final UnprocessableEntityException e) {
         return createAppError(e, HttpStatus.UNPROCESSABLE_ENTITY);
     }
+
     @ExceptionHandler
-    public ResponseEntity<AppError> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException methodArgumentTypeMismatchException){
+    public ResponseEntity<AppError> handleTokenExpiredException(final TokenExpiredException e) {
+        log.error("Token expired", e);
+        return createAppError(e, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<AppError> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException methodArgumentTypeMismatchException) {
         String errorMessage = String.format("Parameter %s is invalid",
                 methodArgumentTypeMismatchException.getValue());
         return createAppError(errorMessage, HttpStatus.BAD_REQUEST);
@@ -130,7 +137,7 @@ public class ErrorHandler {
         );
     }
 
-    private ResponseEntity<AppError> createAppError(String message, HttpStatus status){
+    private ResponseEntity<AppError> createAppError(String message, HttpStatus status) {
         return new ResponseEntity<>(
                 AppError.builder()
                         .message(message)
@@ -138,6 +145,7 @@ public class ErrorHandler {
                 status
         );
     }
+
     private ResponseEntity<ValidationError> createValidationError(BindException e, HttpStatus status) {
         Map<String, String> fieldErrors = e
                 .getFieldErrors()
