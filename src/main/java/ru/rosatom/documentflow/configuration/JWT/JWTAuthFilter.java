@@ -37,12 +37,14 @@ public class JWTAuthFilter extends OncePerRequestFilter {
                         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                         usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                    } else throw new TokenExpiredException("Token expired");
+                    } else {
+                        SecurityContextHolder.clearContext();
+                        restAuthEntryPoint.commence(request, response, new TokenExpiredException("Invalid token"));
+                        return;
+                    }
                 }
             }
             filterChain.doFilter(request, response);
-        } catch (TokenExpiredException ex) {
-            SecurityContextHolder.clearContext();
         } catch (AuthenticationException authenticationException) {
             SecurityContextHolder.clearContext();
             restAuthEntryPoint.commence(request, response, authenticationException);
