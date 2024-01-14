@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
+import java.util.StringJoiner;
 
 @Getter
 @Setter
@@ -89,16 +90,12 @@ public class User implements UserDetails {
     }
 
     public String getFullName(){
-        StringBuilder fullName = new StringBuilder();
-
-        fullName.append(getFirstName());
-
+        StringJoiner fullName = new StringJoiner(" ");
+        fullName.add(getFirstName());
+        fullName.add(getLastName());
         if (getPatronymic() != null) {
-            fullName.append(" ").append(getPatronymic());
+            fullName.add(getPatronymic());
         }
-
-        fullName.append(" ").append(getLastName());
-
         return fullName.toString();
     }
     public boolean isAdmin() {

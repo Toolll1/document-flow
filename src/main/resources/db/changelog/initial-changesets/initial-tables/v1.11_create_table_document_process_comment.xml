@@ -27,13 +27,6 @@
             <column name="created_at" type="timestamp">
                 <constraints nullable="false"/>
             </column>
-            <column name="document_process_id" type="bigint">
-                <constraints nullable="true"
-                             foreignKeyName="fk_document_process_comment_document_process"
-                             referencedTableName="document_process"
-                             referencedColumnNames="process_id"
-                             deleteCascade="true"/>
-            </column>
         </createTable>
     </changeSet>
 </databaseChangeLog>

@@ -31,13 +31,9 @@ import ru.rosatom.documentflow.dto.*;
 import ru.rosatom.documentflow.mappers.DocumentChangesMapper;
 import ru.rosatom.documentflow.mappers.DocumentMapper;
 import ru.rosatom.documentflow.models.*;
-import ru.rosatom.documentflow.repositories.DocProcessCommentRepository;
-import ru.rosatom.documentflow.repositories.DocumentRepository;
 import ru.rosatom.documentflow.services.DocumentProcessService;
 import ru.rosatom.documentflow.services.DocumentService;
-
 import javax.validation.Valid;
-import javax.xml.stream.events.Comment;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -55,10 +51,10 @@ import static ru.rosatom.documentflow.adapters.CommonUtils.DATE_TIME_PATTERN;
 public class DocumentController {
 
     final DocumentService documentService;
+    final DocumentProcessService documentProcessService;
     final DocumentMapper dm;
     final DocumentChangesMapper cm;
     private final ModelMapper modelMapper;
-    final DocumentProcessService documentProcessService;
 
 
     // создание нового документа
@@ -205,7 +201,7 @@ public class DocumentController {
     }
 
     @Operation(summary = "Оставить комментарий к к документу")
-    @PatchMapping("/addComment/{documentId}")
+    @PatchMapping("/{documentId}/comment")
     @SecurityRequirement(name = "JWT")
     @PreAuthorize("@documentProcessSecurityService.isMyCompany(#documentId,#user.id) && " +
             "(hasAuthority('USER') || hasAuthority('COMPANY_ADMIN'))")
@@ -213,12 +209,9 @@ public class DocumentController {
             @PathVariable @Parameter(description = "ID документа") Long documentId,
             @RequestBody @Valid @Parameter(description = "Текст нового комментария") String content,
             @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
-        log.trace("Добавлен новый комментарий к документу {} от пользователя {}", documentId, user.getId());
-        DocProcessComment comment = documentProcessService.createComment(content, user, null );
+        log.debug("Добавлен новый комментарий к документу {} от пользователя {}", documentId, user.getId());
         Document document = documentService.findDocumentById(documentId);
-        List<DocProcessComment> comments =  document.getComments();
-        comments.add(comment);
-        document.setComments(comments);
+        documentProcessService.createComment(content, user, document);
         Document updateDocument = documentService.updateDocument(modelMapper.map(document, DocumentUpdateDto.class), documentId, user.getId());
         return modelMapper.map(updateDocument, DocumentDto.class);
     }

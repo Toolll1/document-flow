@@ -28,7 +28,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static ru.rosatom.documentflow.models.DocProcessStatus.*;
@@ -52,7 +51,6 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     private final EmailService emailService;
     private final Producer producer;
     private final DocProcessCommentRepository docProcessCommentRepository;
-
     private final UserOrganizationService userOrganizationService;
 
 
@@ -219,7 +217,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
 
     private DocProcess getProcessAndApplyRequest(ProcessUpdateRequest processUpdateRequest) {
         DocProcess docProcess = findProcessById(processUpdateRequest.getProcessId());
-        createComment(processUpdateRequest.getComment(), docProcess.getSender(), docProcess);
+        createComment(processUpdateRequest.getComment(), docProcess.getSender(), docProcess.getDocument());
         emailService.sendMessageWithNewComment(docProcess);
         return docProcess;
     }
@@ -324,13 +322,14 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     }
 
     @Override
-    public DocProcessComment createComment(String text, User user, DocProcess docProcess) {
+    public void createComment(String text, User user, Document document) {
         DocProcessComment docProcessComment =  DocProcessComment.builder()
                 .author(user)
-                .docProcess(docProcess)
                 .content(text)
                 .createdAt(LocalDateTime.now())
                 .build();
-        return docProcessCommentRepository.save(docProcessComment);
+        List<DocProcessComment> comments =  document.getComments();
+        comments.add(docProcessComment);
+        docProcessCommentRepository.save(docProcessComment);
     }
 }
