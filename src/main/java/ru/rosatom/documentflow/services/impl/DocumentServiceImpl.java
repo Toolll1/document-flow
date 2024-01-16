@@ -58,7 +58,6 @@ public class DocumentServiceImpl implements DocumentService {
     final DocAttributeValuesRepository docAttributeValuesRepository;
     final DocAttributeService docAttributeService;
     final FileService fileService;
-
     @Override
     @Transactional
     public Document createDocument(Document document, User user) {

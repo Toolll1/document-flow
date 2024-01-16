@@ -32,6 +32,11 @@ public class DocProcessComment {
     @Column (name = "created_at")
     private LocalDateTime createdAt;
 
+    @ToString.Exclude
+    @JoinColumn(name = "document_id")
+    @ManyToOne
+    private Document document;
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;

@@ -45,8 +45,6 @@ public class DocProcess {
     @Column(name = "status")
     private DocProcessStatus status;
 
-//    @Column(name = "comment", nullable = false, length = 1000)
-//    private String comment;
 
     @Override
     public final boolean equals(Object o) {

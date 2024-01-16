@@ -207,7 +207,7 @@ public class DocumentController {
             "(hasAuthority('USER') || hasAuthority('COMPANY_ADMIN'))")
     public DocumentDto newComment(
             @PathVariable @Parameter(description = "ID документа") Long documentId,
-            @RequestBody @Valid @Parameter(description = "Текст нового комментария") String content,
+            @RequestBody(required = false) @Parameter(description = "Текст нового комментария") String content,
             @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
         log.debug("Добавлен новый комментарий к документу {} от пользователя {}", documentId, user.getId());
         Document document = documentService.findDocumentById(documentId);

@@ -327,9 +327,8 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
                 .author(user)
                 .content(text)
                 .createdAt(LocalDateTime.now())
+                .document(document)
                 .build();
-        List<DocProcessComment> comments =  document.getComments();
-        comments.add(docProcessComment);
         docProcessCommentRepository.save(docProcessComment);
     }
 }

@@ -60,9 +60,9 @@ public class Document {
     @Column(name = "final_doc_status")
     DocProcessStatus finalDocStatus;
 
-    @Column(name = "comments")
-    @OneToMany
-    @JoinColumn(name = "comment_id")
+    @Column(table = "document_process_comment")
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "document_id")
     private List<DocProcessComment> comments;
 
     @Override

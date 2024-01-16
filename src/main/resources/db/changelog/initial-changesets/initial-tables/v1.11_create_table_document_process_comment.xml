@@ -27,6 +27,12 @@
             <column name="created_at" type="timestamp">
                 <constraints nullable="false"/>
             </column>
+            <column name="document_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_document_process_comment_documents"
+                             referencedTableName="documents"
+                             referencedColumnNames="document_id"/>
+            </column>
         </createTable>
     </changeSet>
 </databaseChangeLog>
