@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
+import ru.rosatom.documentflow.exceptions.TokenExpiredException;
 import ru.rosatom.documentflow.services.CustomUserDetailsService;
 
 import javax.servlet.FilterChain;
@@ -36,6 +37,10 @@ public class JWTAuthFilter extends OncePerRequestFilter {
                         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                         usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                    } else {
+                        SecurityContextHolder.clearContext();
+                        restAuthEntryPoint.commence(request, response, new TokenExpiredException("Invalid token"));
+                        return;
                     }
                 }
             }
