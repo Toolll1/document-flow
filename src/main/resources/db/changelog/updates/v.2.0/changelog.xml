@@ -38,8 +38,12 @@
              relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/updates/v.2.0/v2.6.4.1_add_documents.xml"
              relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/updates/v.2.0/v2.4.1_update_table_document_process.xml"
+    <include file="classpath:db/changelog/updates/v.2.0/v2.7.1.1_create_table_document_process_comment.xml"
              relativeToChangelogFile="false"/>
-    <include file="classpath:db/changelog/updates/v.2.0/v2.4.2_update_table_documents.xml"
+    <include file="classpath:db/changelog/updates/v.2.0/v2.7.2.1_update_table_document_process.xml"
+             relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/updates/v.2.0/v2.7.2.2_update_table_documents.xml"
+             relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/updates/v.2.0/v2.7.3.1_insert_message_templates.xml"
              relativeToChangelogFile="false"/>
 </databaseChangeLog>

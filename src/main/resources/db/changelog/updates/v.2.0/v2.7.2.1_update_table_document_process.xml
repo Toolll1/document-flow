@@ -4,16 +4,14 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="v2.4.2_update_table_documents" author="Sveta_Klimova">
+    <changeSet id="v2.7.2.1_update_table_document_process" author="Sveta_Klimova">
         <preConditions>
-            <tableExists tableName="documents"/>
+            <tableExists tableName="document_process"/>
         </preConditions>
 
-        <addColumn tableName="documents">
-            <column name="comments" type="varchar(1000)">
-                <constraints nullable="true"/>
-            </column>
-        </addColumn>
+        <dropColumn tableName="document_process">
+            <column name="comment"/>
+        </dropColumn>
 
     </changeSet>
 </databaseChangeLog>

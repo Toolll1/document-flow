@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="v1.8_insert_message_templates" author="sveta_klimova">
+    <changeSet id="v2.7.3.1_insert_message_templates" author="sveta_klimova">
         <preConditions onFail="MARK_RAN">
             <dbms type="postgresql"/>
             <sqlCheck expectedResult="${database.name}">SELECT current_database()</sqlCheck>
