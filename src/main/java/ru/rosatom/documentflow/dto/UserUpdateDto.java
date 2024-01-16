@@ -18,23 +18,21 @@ import java.time.LocalDate;
 @Schema(description = "Данные для обновления пользователя")
 public class UserUpdateDto {
 
-
-
     @Schema(description = "Фамилия", minLength = 2, maxLength = 100)
     @Nullable
-    @Pattern(regexp = "\\A(?!\\s*\\Z).+")
+    @Pattern(regexp = "^\\p{L}+$")
     @Size(min = 2, max = 100)
     private final String lastName;
 
     @Schema(description = "Имя", minLength = 2, maxLength = 100)
     @Nullable
-    @Pattern(regexp = "\\A(?!\\s*\\Z).+")
+    @Pattern(regexp = "^\\p{L}+$")
     @Size(min = 2, max = 100)
     private final String firstName;
 
     @Schema(description = "Отчество", minLength = 2, maxLength = 100)
     @Nullable
-    @Pattern(regexp = "\\A(?!\\s*\\Z).+")
+    @Pattern(regexp = "^\\p{L}+$")
     @Size(min = 2, max = 100)
     private final String patronymic;
 
@@ -80,7 +78,7 @@ public class UserUpdateDto {
     @Nullable
     @Pattern(regexp = "\\A(?!\\s*\\Z).+")
     @Size(min = 6, max = 6)
-    private final String passportKp; // код подразделения
+    private final String passportKp;
 
     @Schema(description = "Роль пользователя")
     @Nullable
