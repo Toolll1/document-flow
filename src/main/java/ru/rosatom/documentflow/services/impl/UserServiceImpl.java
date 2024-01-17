@@ -78,7 +78,7 @@ public class UserServiceImpl implements UserService {
 
         user.setFirstName(defaultIfNull(dto.getFirstName(), user.getFirstName()));
         user.setLastName(defaultIfNull(dto.getLastName(), user.getLastName()));
-        user.setPatronymic(dto.getPatronymic());
+        user.setPatronymic(defaultIfNull(dto.getPatronymic(), user.getPatronymic()));
         user.setDateOfBirth((dto.getDateOfBirth() != null) ? dto.getDateOfBirth() : user.getDateOfBirth());
         user.setEmail(defaultIfNull(dto.getEmail(), user.getEmail()));
         user.setPhone(defaultIfNull(dto.getPhone(), user.getPhone()));
