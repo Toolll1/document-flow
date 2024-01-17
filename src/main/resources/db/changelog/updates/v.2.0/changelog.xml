@@ -38,6 +38,8 @@
              relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/updates/v.2.0/v2.6.4.1_add_documents.xml"
              relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/updates/v.2.0/v2.7.1_add_archived_column.xml"
+             relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/updates/v.2.0/v2.7.1.1_create_table_document_process_comment.xml"
              relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/updates/v.2.0/v2.7.2.1_update_table_document_process.xml"

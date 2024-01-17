@@ -13,15 +13,9 @@ import ru.rosatom.documentflow.dto.DocAttributeValueCreateDto;
 import ru.rosatom.documentflow.dto.DocParams;
 import ru.rosatom.documentflow.dto.DocumentUpdateDto;
 import ru.rosatom.documentflow.exceptions.BadRequestException;
+import ru.rosatom.documentflow.exceptions.ConflictException;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
-import ru.rosatom.documentflow.models.DocAttributeValues;
-import ru.rosatom.documentflow.models.DocChanges;
-import ru.rosatom.documentflow.models.DocProcess;
-import ru.rosatom.documentflow.models.DocProcessStatus;
-import ru.rosatom.documentflow.models.Document;
-import ru.rosatom.documentflow.models.QDocAttributeValues;
-import ru.rosatom.documentflow.models.QDocument;
-import ru.rosatom.documentflow.models.User;
+import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocAttributeValuesRepository;
 import ru.rosatom.documentflow.repositories.DocChangesRepository;
 import ru.rosatom.documentflow.repositories.DocumentRepository;
@@ -58,11 +52,16 @@ public class DocumentServiceImpl implements DocumentService {
     final DocAttributeValuesRepository docAttributeValuesRepository;
     final DocAttributeService docAttributeService;
     final FileService fileService;
+
     @Override
     @Transactional
     public Document createDocument(Document document, User user) {
 
         userOrganizationService.getOrganization(user.getOrganization().getId());
+        DocType docType = docTypeService.getDocTypeById(document.getDocType().getId());
+        if (docTypeService.isArchivedDocType(docType.getId())) {
+            throw new ConflictException("Невозможно создать документ архивированного типа");
+        }
         document.setOwnerId(user.getId());
         document.setIdOrganization(user.getOrganization().getId());
         document.setDate(LocalDateTime.now());
@@ -74,6 +73,15 @@ public class DocumentServiceImpl implements DocumentService {
         return documentRepository.save(newDocument);
     }
 
+    /**
+     * Обновляет существующий документ на основе предоставленных данных.
+     *
+     * @param documentUpdateDto DTO с данными для обновления документа
+     * @param id                идентификатор документа, который нужно обновить
+     * @param userId            идентификатор пользователя, выполняющего обновление
+     * @return обновленный объект Document
+     * @throws BadRequestException если документ находится в конечном статусе
+     */
     @Override
     @Transactional
     public Document updateDocument(DocumentUpdateDto documentUpdateDto, Long id, Long userId) {
@@ -122,12 +130,24 @@ public class DocumentServiceImpl implements DocumentService {
         return documentRepository.save(correctDocument);
     }
 
+    /**
+     * Ищет документ по его идентификатору.
+     *
+     * @param documentId идентификатор документа для поиска
+     * @return найденный документ
+     * @throws ObjectNotFoundException если документ с указанным id не найден
+     */
     @Override
     public Document findDocumentById(Long documentId) {
         return documentRepository.findById(documentId)
                 .orElseThrow(() -> new ObjectNotFoundException("Не найден документ с id " + documentId));
     }
 
+    /**
+     * Возвращает список всех документов.
+     *
+     * @return список всех документов
+     */
     @Override
     public List<Document> getAllDocuments() {
         return documentRepository.findAll();
@@ -144,11 +164,27 @@ public class DocumentServiceImpl implements DocumentService {
         return documentRepository.findDocumentsByProcessStatus(status);
     }
 
+    /**
+     * Находит документы по статусу обработки и идентификатору организации.
+     *
+     * @param status статус процесса обработки документов
+     * @param id     идентификатор организации
+     * @return множество документов, соответствующих заданным критериям
+     */
     @Override
     public Set<Document> findDocumentsByProcessStatusAndIdOrganization(DocProcessStatus status, Long id) {
         return documentRepository.findDocumentsByProcessStatusAndIdOrganization(status, id);
     }
 
+    /**
+     * Поиск документов на основе различных критериев, включая диапазон дат, текст, тип и другие атрибуты.
+     *
+     * @param userId   идентификатор пользователя, выполняющего поиск
+     * @param p        параметры поиска документов
+     * @param pageable параметры пагинации
+     * @return страница с документами, соответствующими заданным критериям
+     * @throws BadRequestException если указаны неверные даты для поиска
+     */
     @Override
     public Page<Document> findDocuments(Long userId, DocParams p, Pageable pageable) {
         User user = userService.getUser(userId);
@@ -184,6 +220,13 @@ public class DocumentServiceImpl implements DocumentService {
         return documentRepository.findAll(booleanBuilder, pageable);
     }
 
+    /**
+     * Удаляет документ по его идентификатору, если пользователь является владельцем документа.
+     *
+     * @param id     идентификатор документа для удаления
+     * @param userId идентификатор пользователя, пытающегося удалить документ
+     * @throws BadRequestException если пользователь не владелец документа или документ находится в конечном статусе
+     */
     @Override
     @Transactional
     public void deleteDocumentById(Long id, Long userId) {
@@ -200,6 +243,13 @@ public class DocumentServiceImpl implements DocumentService {
         }
     }
 
+    /**
+     * Проверяет, находится ли документ в конечном статусе обработки.
+     *
+     * @param document документ для проверки статуса
+     * @param text     текст исключения, если документ находится в конечном статусе
+     * @throws BadRequestException если документ находится в конечном статусе
+     */
     private void checkFinalStatus(Document document, String text) {
 
         if (document.getFinalDocStatus() != null) {
@@ -209,7 +259,14 @@ public class DocumentServiceImpl implements DocumentService {
         }
     }
 
-
+    /**
+     * Находит изменения документа по его идентификатору.
+     *
+     * @param id       идентификатор документа
+     * @param pageable параметры пагинации
+     * @param orgId    необязательный идентификатор организации
+     * @return страница с изменениями документа
+     */
     @Override
     public Page<DocChanges> findDocChangesByDocumentId(Long id, Pageable
             pageable, Optional<Long> orgId) {
@@ -217,17 +274,37 @@ public class DocumentServiceImpl implements DocumentService {
                 .orElse(docChangesRepository.findAllByDocumentId(id, pageable));
     }
 
+    /**
+     * Находит изменения документа по идентификатору изменений.
+     *
+     * @param id идентификатор изменений документа
+     * @return найденные изменения документа
+     * @throws ObjectNotFoundException если изменения с указанным id не найдены
+     */
     @Override
     public DocChanges findDocChangesById(Long id) {
         return docChangesRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Не найден лист изменений с id " + id));
     }
 
+    /**
+     * Возвращает список изменений документов, сделанных определенным пользователем.
+     *
+     * @param userId идентификатор пользователя, изменения которого необходимо найти
+     * @return список изменений документов, сделанных пользователем
+     */
     @Override
     public List<DocChanges> findDocChangesByUserId(Long userId) {
         return docChangesRepository.findAllByUserChangerId(userId);
     }
 
+    /**
+     * Обновляет конечный статус документа. Если статус изменен на 'APPROVED', также обновляет файл документа.
+     *
+     * @param newDocument документ, статус которого обновляется
+     * @param status      новый статус процесса документа
+     * @param docProcess  коллекция процессов, связанных с документом (может быть null)
+     */
     @Override
     public void updateFinalStatus(Document newDocument, DocProcessStatus
             status, Collection<DocProcess> docProcess) {
@@ -241,5 +318,15 @@ public class DocumentServiceImpl implements DocumentService {
         } else {
             documentRepository.save(newDocument);
         }
+    }
+
+    /**
+     * Проверяет, существуют ли документы определенного типа.
+     *
+     * @param docTypeId идентификатор типа документа
+     * @return true, если существуют документы данного типа, иначе false
+     */
+    public boolean existsDocumentsByType(Long docTypeId) {
+        return documentRepository.existsByDocTypeId(docTypeId);
     }
 }

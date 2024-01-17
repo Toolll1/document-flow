@@ -91,6 +91,15 @@ public class DocTypeController {
         return modelMapper.map(docType, DocTypeDto.class);
     }
 
+    @Operation(summary = "Архивировать тип")
+    @PostMapping("/{docTypeId}/archive")
+    @SecurityRequirement(name = "JWT")
+    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('COMPANY_ADMIN')")
+    public DocTypeDto archiveDocType(@PathVariable @Parameter(description = "ID типа") Long docTypeId) {
+        DocType docType = docTypeService.archiveDocType(docTypeId);
+        return modelMapper.map(docType, DocTypeDto.class);
+    }
+
     @Operation(summary = "Изменить тип")
     @RequestMapping(value = "/{docTypeId}", method = RequestMethod.PATCH)
     @SecurityRequirement(name = "JWT")

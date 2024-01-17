@@ -1,21 +1,26 @@
 package ru.rosatom.documentflow.services.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.rosatom.documentflow.adapters.TranslitText;
 import ru.rosatom.documentflow.exceptions.AlreadyExistsException;
+import ru.rosatom.documentflow.exceptions.ConflictException;
 import ru.rosatom.documentflow.exceptions.ObjectNotFoundException;
 import ru.rosatom.documentflow.models.*;
 import ru.rosatom.documentflow.repositories.DocTypeRepository;
 import ru.rosatom.documentflow.services.DocAttributeService;
 import ru.rosatom.documentflow.services.DocTypeService;
+import ru.rosatom.documentflow.services.DocumentService;
 import ru.rosatom.documentflow.services.UserOrganizationService;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 @Service
@@ -26,6 +31,7 @@ public class DocTypeServiceImpl implements DocTypeService {
     private final DocTypeRepository docTypeRepository;
     private final DocAttributeService docAttributeService;
     private final UserOrganizationService userOrganizationService;
+    private DocumentService documentService;
 
     /**
      * Получает все типы документов с учетом пагинации. Если предоставлен идентификатор организации,
@@ -62,6 +68,11 @@ public class DocTypeServiceImpl implements DocTypeService {
     @Override
     public DocType createDocType(DocTypeCreationRequest docTypeCreationRequest) {
 
+        String checkResult = checkName(docTypeCreationRequest.getName());
+        if (!checkResult.isEmpty()) {
+            throw new ConflictException(checkResult);
+        }
+
         DocType docType = DocType.builder()
                 .name(docTypeCreationRequest.getName())
                 .agreementType(docTypeCreationRequest.getAgreementType())
@@ -69,6 +80,46 @@ public class DocTypeServiceImpl implements DocTypeService {
                 .attributes(docAttributeService.getAllByIdsElseThrow(docTypeCreationRequest.getAttributes()))
                 .build();
         return docTypeRepository.save(docType);
+    }
+
+    /**
+     * Проверяет корректность имени типа документов на соответствие требованиям minio
+     *
+     * @param name - имя типа документа
+     * @return String - список ошибок в имени
+     */
+    private String checkName(String name) {
+
+        String input = TranslitText.transliterate(name);
+        StringBuilder sb = new StringBuilder();
+        Pattern pattern = Pattern.compile("[^a-zA-Z0-9.-]");
+        Matcher matcher = pattern.matcher(input);
+        Set<String> incorrectSymbols = new HashSet<>();
+
+        while (matcher.find()) {
+            incorrectSymbols.add(matcher.group());
+        }
+        if (!incorrectSymbols.isEmpty()) {
+            sb.append("В имени типа документа присутствуют недопустимые символы: ").append(incorrectSymbols).append("\n");
+        }
+        if (input.length() < 3 || input.length() > 63) {
+            sb.append("Длина имени типа документа без учета пробелов должна быть от 3 до 63 символов\n");
+        }
+        if (!input.matches("^[a-zA-Z0-9].*[a-zA-Z0-9]$")) {
+            sb.append("Имя типа документы должно начинаться и заканчиваться буквой или цифрой\n");
+        }
+        if (input.contains("..")) {
+            sb.append("Имя типа документы не должно содержать двух последовательных точек\n");
+        }
+        if (input.matches("(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)")) {
+            sb.append("Имя типа документы не должно быть отформатировано, как IP-адрес\n");
+        }
+        if (!input.matches("^(?!xn--|sthree-|sthree-configurator)(?!.*-s3alias$|.*--ol-s3$).*$")) {
+            sb.append("Имя типа документы не должно начинаться на \"xn--\", \"sthree-\" и  \"sthree-configurator\"\n" +
+                    "и не должно заканчиваться на \"-s3alias\" и \"--ol-s3\"");
+        }
+
+        return sb.toString();
     }
 
     /**
@@ -97,10 +148,12 @@ public class DocTypeServiceImpl implements DocTypeService {
      */
     @Override
     public void deleteDocType(Long docTypeId) {
-        DocType docType = docTypeRepository.findById(docTypeId)
-                .orElseThrow(() -> new ObjectNotFoundException("Тип документа с ID " + docTypeId + " не найден."));
 
-        docTypeRepository.delete(docType);
+        if (documentService.existsDocumentsByType(docTypeId)) {
+            throw new ConflictException("Тип документа используется. Удаление невозможно.");
+        }
+
+        docTypeRepository.delete(getDocTypeById(docTypeId));
     }
 
     /**
@@ -131,15 +184,50 @@ public class DocTypeServiceImpl implements DocTypeService {
      */
     @Override
     public DocType attributeToType(Long docTypeId, Long docAttributeId) {
-        DocType docType = docTypeRepository.findById(docTypeId)
-                .orElseThrow(() -> new ObjectNotFoundException("Тип документа с ID " + docTypeId + " не найден."));
+        DocType docType = getDocTypeById(docTypeId);
         DocAttribute docAttribute = docAttributeService.getDocAttributeById(docAttributeId);
-        if (docType.containsAttribute(docAttribute)){
+        if (docType.containsAttribute(docAttribute)) {
             throw new AlreadyExistsException(docAttribute.getName(), docType.getName());
         }
         docType.addAttributes(docAttribute);
         return docTypeRepository.save(docType);
     }
+
+    /**
+     * Получает список всех типов документов, принадлежащих указанной организации.
+     *
+     * @param orgId Идентификатор организации, для которой необходимо получить типы.
+     * @return List<DocType> Список типов документов, принадлежащих заданной организации.
+     */
+    @Override
+    public List<DocType> findAllByOrganizationId(Long orgId) {
+        return docTypeRepository.findAllByOrganizationId(userOrganizationService.getOrganization(orgId).getId());
+    }
+
+    /**
+     * Архивирует определенный тип документа {@link DocType}.
+     *
+     * @param docTypeId идентификатор типа документа, который будет архивирован
+     * @return архивированный объект {@link DocType}
+     */
+    @Override
+    public DocType archiveDocType(Long docTypeId) {
+        DocType docType = getDocTypeById(docTypeId);
+        docType.setArchived(true);
+        return docTypeRepository.save(docType);
+    }
+
+    /**
+     * Проверяет, находится ли тип документа в архиве.
+     *
+     * @param docTypeId идентификатор типа документа для проверки его статуса
+     * @return true, если тип документа архивирован, иначе false
+     */
+    @Override
+    public boolean isArchivedDocType(Long docTypeId) {
+        return docTypeRepository.existsByIdAndArchivedIsTrue(docTypeId);
+    }
+
 
     /**
      * Проверяет, разрешен ли доступ пользователю к определенному типу документа.
@@ -166,5 +254,11 @@ public class DocTypeServiceImpl implements DocTypeService {
 
         return Objects.equals(docType.getOrganization().getId(), user.getOrganization().getId()) &&
                 Objects.equals(docAttribute.getOrganization().getId(), user.getOrganization().getId());
+    }
+
+    @Lazy
+    @Autowired
+    public void setDocumentService(DocumentService documentService) {
+        this.documentService = documentService;
     }
 }

@@ -43,6 +43,9 @@ public class DocType {
     @JoinColumn(name = "org_id")
     private UserOrganization organization;
 
+    @Column(name = "archived")
+    private boolean archived;
+
     public void addAttributes(DocAttribute docAttribute) {
         attributes.add(docAttribute);
     }

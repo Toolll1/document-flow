@@ -56,14 +56,12 @@ public class DocumentController {
     final DocumentChangesMapper cm;
     private final ModelMapper modelMapper;
 
-
-    // создание нового документа
     @Operation(summary = "Добавить новый документ")
     @PreAuthorize("hasAuthority('USER') || hasAuthority('COMPANY_ADMIN')")
     @PostMapping
     @SecurityRequirement(name = "JWT")
     public DocumentDto createDocument(
-            @RequestBody @Valid @Parameter(description = "DTO создания объекта") DocumentCreateDto documentDto,
+            @RequestBody @Valid @Parameter(description = "DTO создания документа") DocumentCreateDto documentDto,
             @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
         log.trace("Создание документа пользователем {} : {}", user.getId(), documentDto);
         Document documentFromDto = dm.documentFromCreateDto(documentDto);
@@ -71,7 +69,6 @@ public class DocumentController {
         return modelMapper.map(docCreate, DocumentDto.class);
     }
 
-    // поиск документа по id
     @Operation(summary = "Получить документ по ID")
     @GetMapping("/{documentId}")
     @SecurityRequirement(name = "JWT")
@@ -85,7 +82,6 @@ public class DocumentController {
         return modelMapper.map(document, DocumentDto.class);
     }
 
-    // поиск документов по своей организации
     @Operation(summary = "Получить документы по своей организации")
     @GetMapping
     @SecurityRequirement(name = "JWT")
@@ -117,7 +113,6 @@ public class DocumentController {
                 .map(o -> modelMapper.map(o, DocumentDto.class));
     }
 
-    // поиск истории изменений по id документа
     @Operation(summary = "Получить историю изменений по ID")
     @GetMapping("/{documentId}/changes")
     @SecurityRequirement(name = "JWT")
@@ -138,7 +133,6 @@ public class DocumentController {
                 .map(o -> modelMapper.map(o, DocumentChangesDto.class));
     }
 
-    // обновление документа
     @Operation(summary = "Изменить документ")
     @PreAuthorize(
             "(@documentProcessSecurityService.isCanManageProcess(#documentId,#user.id) && hasAuthority('USER')) || " +
@@ -154,7 +148,6 @@ public class DocumentController {
         return modelMapper.map(updateDocument, DocumentDto.class);
     }
 
-    // удаление документа
     @Operation(summary = "Удалить документ")
     @PreAuthorize(
             "(@documentProcessSecurityService.isCanManageProcess(#documentId, #user.id) && hasAuthority('USER')) || " +
@@ -168,7 +161,6 @@ public class DocumentController {
         documentService.deleteDocumentById(documentId, user.getId());
     }
 
-    // поиск изменения по id
     @Operation(summary = "Получить изменения документа по ID")
     @GetMapping("/changesById/{documentChangesId}")
     @SecurityRequirement(name = "JWT")
@@ -183,7 +175,6 @@ public class DocumentController {
         return modelMapper.map(document, DocumentChangesDto.class);
     }
 
-    // поиск документов измененных пользователем
     @Operation(summary = "Получить документы измененные пользователем")
     @GetMapping("/changesByCreator/{creatorId}")
     @SecurityRequirement(name = "JWT")
