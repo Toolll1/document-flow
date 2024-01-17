@@ -207,11 +207,11 @@ public class DocumentController {
             "(hasAuthority('USER') || hasAuthority('COMPANY_ADMIN'))")
     public DocumentDto newComment(
             @PathVariable @Parameter(description = "ID документа") Long documentId,
-            @RequestBody(required = false) @Parameter(description = "Текст нового комментария") String content,
+            @RequestBody @Valid @Parameter(description = "Текст нового комментария") CommentCreationRequest commentCreationRequest,
             @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
         log.debug("Добавлен новый комментарий к документу {} от пользователя {}", documentId, user.getId());
         Document document = documentService.findDocumentById(documentId);
-        documentProcessService.createComment(content, user, document);
+        documentProcessService.createComment(commentCreationRequest.getContent(), user, document);
         Document updateDocument = documentService.updateDocument(modelMapper.map(document, DocumentUpdateDto.class), documentId, user.getId());
         return modelMapper.map(updateDocument, DocumentDto.class);
     }
