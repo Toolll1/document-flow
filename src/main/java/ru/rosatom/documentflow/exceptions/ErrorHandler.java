@@ -80,7 +80,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     public ResponseEntity<AppError> handleBadCredentialsException(final BadCredentialsException e) {
-        return createAppError(e, HttpStatus.FORBIDDEN);
+        return createAppError(e, HttpStatus.UNAUTHORIZED);
     }
 
 
@@ -98,7 +98,7 @@ public class ErrorHandler {
     @ExceptionHandler
     public ResponseEntity<AppError> handleTokenExpiredException(final TokenExpiredException e) {
         log.error("Token expired", e);
-        return createAppError(e, HttpStatus.UNAUTHORIZED);
+        return createAppError(e, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler
