@@ -59,6 +59,13 @@ public class DocumentServiceImpl implements DocumentService {
     final DocAttributeService docAttributeService;
     final FileService fileService;
 
+    /**
+     * Создает новый документ в системе.
+     *
+     * @param document Документ для создания.
+     * @param user Пользователь, который создает документ. Используется для присвоения прав собственности.
+     * @return Возвращает созданный документ, уже сохраненный в базе данных.
+     */
     @Override
     @Transactional
     public Document createDocument(Document document, User user) {
@@ -75,6 +82,15 @@ public class DocumentServiceImpl implements DocumentService {
         return documentRepository.save(newDocument);
     }
 
+    /**
+     * Обновляет существующий документ.
+     *
+     * @param documentUpdateDto DTO, содержащий изменения, которые нужно применить к документу.
+     * @param id Идентификатор документа, который нужно обновить.
+     * @param userId Идентификатор пользователя, выполняющего обновление.
+     * @return Обновленный документ.
+     * @throws BadRequestException если документ находится в финальном статусе и не может быть изменен.
+     */
     @Override
     @Transactional
     public Document updateDocument(DocumentUpdateDto documentUpdateDto, Long id, Long userId) {
@@ -123,12 +139,24 @@ public class DocumentServiceImpl implements DocumentService {
         return documentRepository.save(correctDocument);
     }
 
+    /**
+     * Ищет документ по его идентификатору.
+     *
+     * @param documentId Идентификатор документа, который нужно найти.
+     * @return Найденный документ.
+     * @throws ObjectNotFoundException если документ с заданным идентификатором не найден.
+     */
     @Override
     public Document findDocumentById(Long documentId) {
         return documentRepository.findById(documentId)
                 .orElseThrow(() -> new ObjectNotFoundException("Не найден документ с id " + documentId));
     }
 
+    /**
+     * Возвращает список всех документов в системе.
+     *
+     * @return Список всех документов.
+     */
     @Override
     public List<Document> getAllDocuments() {
         return documentRepository.findAll();
@@ -145,11 +173,27 @@ public class DocumentServiceImpl implements DocumentService {
         return documentRepository.findDocumentsByProcessStatus(status);
     }
 
+    /**
+     * Находит документы по статусу процесса и идентификатору организации.
+     *
+     * @param status Статус процесса.
+     * @param id Идентификатор организации.
+     * @return Множество документов, соответствующих заданным критериям.
+     */
     @Override
     public Set<Document> findDocumentsByProcessStatusAndIdOrganization(DocProcessStatus status, Long id) {
         return documentRepository.findDocumentsByProcessStatusAndIdOrganization(status, id);
     }
 
+    /**
+     * Поиск документов с учетом различных параметров.
+     *
+     * @param userId Идентификатор пользователя, выполняющего поиск.
+     * @param p Параметры поиска документов.
+     * @param pageable Параметры пагинации.
+     * @return Страница с документами, соответствующими заданным критериям.
+     * @throws BadRequestException если указаны неверные параметры поиска.
+     */
     @Override
     public Page<Document> findDocuments(Long userId, DocParams p, Pageable pageable) {
         User user = userService.getUser(userId);
@@ -185,6 +229,13 @@ public class DocumentServiceImpl implements DocumentService {
         return documentRepository.findAll(booleanBuilder, pageable);
     }
 
+    /**
+     * Удаляет документ по его идентификатору.
+     *
+     * @param id Идентификатор документа, который необходимо удалить.
+     * @param userId Идентификатор пользователя, пытающегося удалить документ.
+     * @throws BadRequestException если документ находится в финальном статусе или пользователь не имеет прав на удаление.
+     */
     @Override
     @Transactional
     public void deleteDocumentById(Long id, Long userId) {
@@ -201,6 +252,13 @@ public class DocumentServiceImpl implements DocumentService {
         }
     }
 
+    /**
+     * Проверяет, находится ли документ в финальном статусе.
+     *
+     * @param document Документ для проверки.
+     * @param text Сообщение об ошибке, если документ находится в финальном статусе.
+     * @throws BadRequestException если документ находится в финальном статусе.
+     */
     private void checkFinalStatus(Document document, String text) {
 
         if (document.getFinalDocStatus() != null) {
@@ -210,7 +268,14 @@ public class DocumentServiceImpl implements DocumentService {
         }
     }
 
-
+    /**
+     * Возвращает страницу с историей изменений документа по его идентификатору.
+     *
+     * @param id Идентификатор документа.
+     * @param pageable Параметры пагинации для списка изменений.
+     * @param orgId Опциональный идентификатор организации.
+     * @return Страница с записями об изменениях документа.
+     */
     @Override
     public Page<DocChanges> findDocChangesByDocumentId(Long id, Pageable
             pageable, Optional<Long> orgId) {
@@ -218,17 +283,37 @@ public class DocumentServiceImpl implements DocumentService {
                 .orElse(docChangesRepository.findAllByDocumentId(id, pageable));
     }
 
+    /**
+     * Находит запись об изменении документа по её идентификатору.
+     *
+     * @param id Идентификатор записи об изменении.
+     * @return Найденная запись об изменении.
+     * @throws ObjectNotFoundException если запись об изменении с указанным идентификатором не найдена.
+     */
     @Override
     public DocChanges findDocChangesById(Long id) {
         return docChangesRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Не найден лист изменений с id " + id));
     }
 
+    /**
+     * Возвращает список всех записей об изменениях, сделанных указанным пользователем.
+     *
+     * @param userId Идентификатор пользователя.
+     * @return Список записей об изменениях, сделанных пользователем.
+     */
     @Override
     public List<DocChanges> findDocChangesByUserId(Long userId) {
         return docChangesRepository.findAllByUserChangerId(userId);
     }
 
+    /**
+     * Обновляет финальный статус документа и, при необходимости, соответствующие файлах.
+     *
+     * @param newDocument Документ, для которого обновляется статус.
+     * @param status Новый финальный статус документа.
+     * @param docProcess Коллекция процессов, связанных с документом.
+     */
     @Override
     public void updateFinalStatus(Document newDocument, DocProcessStatus
             status, Collection<DocProcess> docProcess) {
