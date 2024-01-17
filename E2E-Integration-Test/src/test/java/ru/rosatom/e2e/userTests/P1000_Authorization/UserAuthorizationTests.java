@@ -70,7 +70,7 @@ public class UserAuthorizationTests extends BasicHttpTest {
 
     private void testAuthWithIncorrectParams(String email, String password) {
         sendAuthRequest(new UserAuthorizationRequest(email, password))
-                .expectStatus().isForbidden()
+                .expectStatus().isUnauthorized()
                 .expectBody(AppError.class)
                 .value(response -> {
                     assert response != null;
