@@ -13,6 +13,8 @@ import ru.rosatom.documentflow.models.Document;
 import ru.rosatom.documentflow.models.ProcessUpdateRequest;
 import ru.rosatom.documentflow.models.User;
 import ru.rosatom.documentflow.models.UserOrganization;
+import ru.rosatom.documentflow.repositories.DocProcessCommentRepository;
+
 import ru.rosatom.documentflow.repositories.DocProcessRepository;
 import ru.rosatom.documentflow.services.DocumentProcessService;
 import ru.rosatom.documentflow.services.DocumentService;
@@ -20,6 +22,8 @@ import ru.rosatom.documentflow.services.EmailService;
 import ru.rosatom.documentflow.services.UserOrganizationService;
 import ru.rosatom.documentflow.services.UserService;
 
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -36,6 +40,7 @@ class DocumentProcessServiceImplTest {
     private final EmailService emailService = Mockito.mock(EmailService.class);
     private final Producer producer = Mockito.mock(Producer.class);
     private final UserOrganizationService userOrganizationService = Mockito.mock(UserOrganizationService.class);
+    private final DocProcessCommentRepository docProcessCommentRepository = Mockito.mock(DocProcessCommentRepository.class);
 
     private final DocumentProcessService documentProcessService = new DocumentProcessServiceImpl(
             documentService,
@@ -43,6 +48,7 @@ class DocumentProcessServiceImplTest {
             docProcessRepository,
             emailService,
             producer,
+            docProcessCommentRepository,
             userOrganizationService);
 
 
@@ -61,8 +67,7 @@ class DocumentProcessServiceImplTest {
                     Mockito.mock(User.class),
                     Mockito.mock(User.class),
                     Mockito.mock(UserOrganization.class),
-                    DocProcessStatus.WAITING_FOR_APPROVE,
-                    "");
+                    DocProcessStatus.WAITING_FOR_APPROVE);
             processUpdateRequest.setProcessId(updatableDocProcess.getId());
             Mockito.doReturn(Optional.of(updatableDocProcess))
                     .when(docProcessRepository).findById(updatableDocProcess.getId());
@@ -112,7 +117,6 @@ class DocumentProcessServiceImplTest {
                 Mockito.mock(User.class),
                 Mockito.mock(User.class),
                 Mockito.mock(UserOrganization.class),
-                status,
-                "");
+                status);
     }
 }

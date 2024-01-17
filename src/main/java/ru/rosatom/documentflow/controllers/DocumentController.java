@@ -27,18 +27,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.rosatom.documentflow.dto.DocParams;
-import ru.rosatom.documentflow.dto.DocumentChangesDto;
-import ru.rosatom.documentflow.dto.DocumentCreateDto;
-import ru.rosatom.documentflow.dto.DocumentDto;
-import ru.rosatom.documentflow.dto.DocumentUpdateDto;
+import ru.rosatom.documentflow.dto.*;
 import ru.rosatom.documentflow.mappers.DocumentChangesMapper;
 import ru.rosatom.documentflow.mappers.DocumentMapper;
-import ru.rosatom.documentflow.models.DocChanges;
-import ru.rosatom.documentflow.models.Document;
-import ru.rosatom.documentflow.models.User;
+import ru.rosatom.documentflow.models.*;
+import ru.rosatom.documentflow.services.DocumentProcessService;
 import ru.rosatom.documentflow.services.DocumentService;
-
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -57,6 +51,7 @@ import static ru.rosatom.documentflow.adapters.CommonUtils.DATE_TIME_PATTERN;
 public class DocumentController {
 
     final DocumentService documentService;
+    final DocumentProcessService documentProcessService;
     final DocumentMapper dm;
     final DocumentChangesMapper cm;
     private final ModelMapper modelMapper;
@@ -194,5 +189,21 @@ public class DocumentController {
         return documentService.findDocChangesByUserId(creatorId).stream()
                 .map(o -> modelMapper.map(o, DocumentChangesDto.class))
                 .collect(Collectors.toList());
+    }
+
+    @Operation(summary = "Оставить комментарий к к документу")
+    @PatchMapping("/{documentId}/comment")
+    @SecurityRequirement(name = "JWT")
+    @PreAuthorize("@documentProcessSecurityService.isMyCompany(#documentId,#user.id) && " +
+            "(hasAuthority('USER') || hasAuthority('COMPANY_ADMIN'))")
+    public DocumentDto newComment(
+            @PathVariable @Parameter(description = "ID документа") Long documentId,
+            @RequestBody @Valid @Parameter(description = "Текст нового комментария") CommentCreationRequest commentCreationRequest,
+            @AuthenticationPrincipal @Parameter(description = "Пользователь", hidden = true) User user) {
+        log.debug("Добавлен новый комментарий к документу {} от пользователя {}", documentId, user.getId());
+        Document document = documentService.findDocumentById(documentId);
+        documentProcessService.createComment(commentCreationRequest.getContent(), user, document);
+        Document updateDocument = documentService.updateDocument(modelMapper.map(document, DocumentUpdateDto.class), documentId, user.getId());
+        return modelMapper.map(updateDocument, DocumentDto.class);
     }
 }

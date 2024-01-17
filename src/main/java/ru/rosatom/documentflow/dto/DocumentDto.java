@@ -63,5 +63,8 @@ public class DocumentDto {
 
     @Schema(description = "Статус", requiredMode = REQUIRED)
     private  String finalDocStatus;
+
+    @Schema(description = "Комментарии", requiredMode = REQUIRED)
+    private List<DocProcessCommentDto> comments;
 }
 

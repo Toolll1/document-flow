@@ -51,7 +51,7 @@ public class Document {
     DocType docType;
 
     @ToString.Exclude
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany
     @JoinColumn(name = "document_id")
     List<DocAttributeValues> attributeValues = new ArrayList<>();
 
@@ -59,6 +59,11 @@ public class Document {
     @Enumerated(EnumType.STRING)
     @Column(name = "final_doc_status")
     DocProcessStatus finalDocStatus;
+
+    @Column(table = "document_process_comment")
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "document_id")
+    private List<DocProcessComment> comments;
 
     @Override
     public final boolean equals(Object o) {

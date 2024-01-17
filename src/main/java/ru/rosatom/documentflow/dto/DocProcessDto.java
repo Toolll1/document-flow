@@ -29,6 +29,6 @@ public class DocProcessDto {
     @Schema(description = "Статус", requiredMode = REQUIRED)
     private String status;
 
-    @Schema(description = "Комментарий", requiredMode = REQUIRED)
-    private String comment;
+//    @Schema(description = "Комментарий")
+//    private String comment;
 }

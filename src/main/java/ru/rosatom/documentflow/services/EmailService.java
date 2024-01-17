@@ -9,4 +9,6 @@ public interface EmailService {
     void sendDocProcessAgreementMessageForRecipient(DocProcess docProcess);
 
     void sendDocProcessResultMessageForOwner(DocProcess docProcess, MessagePattern messagePattern);
+
+    void sendMessageWithNewComment(DocProcess docProcess);
 }

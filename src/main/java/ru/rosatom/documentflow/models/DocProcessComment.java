@@ -4,6 +4,7 @@ import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
@@ -13,38 +14,28 @@ import java.util.Objects;
 @NoArgsConstructor(force = true)
 @Builder
 @Entity
-@Table(name = "document_process")
-public class DocProcess {
+@Table(name = "document_process_comment")
+public class DocProcessComment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "process_id", nullable = false)
+    @Column(name = "comment_id", nullable = false)
     private final Long id;
 
-    @ToString.Exclude
+    @Column(name = "comment_content")
+    private String content;
+
+    @JoinColumn(name = "user_id")
     @ManyToOne
+    private User author;
+
+    @Column (name = "created_at")
+    private LocalDateTime createdAt;
+
+    @ToString.Exclude
     @JoinColumn(name = "document_id")
-    private final Document document;
-
-    @ToString.Exclude
-    @OneToOne
-    @JoinColumn(name = "sender_id")
-    private User sender;  //отправитель
-
-    @ToString.Exclude
-    @OneToOne
-    @JoinColumn(name = "recipient_id")
-    private User recipientUser;  //получатель
-
-    @ToString.Exclude
-    @OneToOne
-    @JoinColumn(name = "org_id")
-    private UserOrganization recipientOrganization;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private DocProcessStatus status;
-
+    @ManyToOne
+    private Document document;
 
     @Override
     public final boolean equals(Object o) {
@@ -53,7 +44,7 @@ public class DocProcess {
         Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        DocProcess that = (DocProcess) o;
+        DocProcessComment that = (DocProcessComment) o;
         return getId() != null && Objects.equals(getId(), that.getId());
     }
 

@@ -1,9 +1,7 @@
 package ru.rosatom.documentflow.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.lang.Nullable;
 
@@ -14,6 +12,8 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Schema(description = "Обновление документа")
+@AllArgsConstructor
+@NoArgsConstructor
 public class DocumentUpdateDto {
     @Schema(description = "Название")
     @Nullable

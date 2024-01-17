@@ -1,0 +1,20 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="v2.8.3_insert_message_templates" author="sveta_klimova">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+            <sqlCheck expectedResult="${database.name}">SELECT current_database()</sqlCheck>
+            <tableExists tableName="message_templates"/>
+        </preConditions>
+        <insert tableName="message_templates">
+            <column name="message_pattern" value="NEW_COMMENT"/>
+            <column name="body"
+                    value="&lt;p&gt;Здравствуйте ${firstName}, добавлен новый комментарий по документу ${documentName} от пользователя &lt;a href='mailto:${mail}'&gt; ${fullName} &lt;/a&gt; &lt;/p&gt; &lt;br&gt; &lt;p&gt; Подробности доступны по &lt;a href=${application.baseUrl}&gt;ссылке&lt;/a&gt; &lt;/p&gt;"/>
+            <column name="subject" value="Добавлен новый комментарий"/>
+        </insert>
+
+    </changeSet>
+</databaseChangeLog>

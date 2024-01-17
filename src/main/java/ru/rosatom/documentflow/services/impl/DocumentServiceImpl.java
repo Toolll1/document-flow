@@ -53,15 +53,6 @@ public class DocumentServiceImpl implements DocumentService {
     final DocAttributeService docAttributeService;
     final FileService fileService;
 
-    /**
-     * Создает новый документ с указанными атрибутами и привязывает его к пользователю.
-     * Проверяет, не архивирован ли тип документа.
-     *
-     * @param document объект документа для создания
-     * @param user     пользователь, создающий документ
-     * @return созданный объект Document
-     * @throws ConflictException если тип документа архивирован
-     */
     @Override
     @Transactional
     public Document createDocument(Document document, User user) {
