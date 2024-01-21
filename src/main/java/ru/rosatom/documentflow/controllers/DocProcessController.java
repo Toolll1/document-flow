@@ -66,8 +66,7 @@ public class DocProcessController {
 
     @Operation(summary = "Посмотреть все процессы по документу")
     @GetMapping("{documentId}/processes")
-    @PreAuthorize("(@documentProcessSecurityService.isHasAccessToProcess(#documentId, #user.id) && hasAuthority('USER'))" +
-            "|| (@documentProcessSecurityService.isMyCompany(#documentId, #user.id) && hasAuthority('COMPANY_ADMIN'))")
+    @PreAuthorize("@documentProcessSecurityService.isMyCompany(#documentId, #user.id) && hasAnyAuthority('USER', 'COMPANY_ADMIN')")
     @SecurityRequirement(name = "JWT")
     public List<DocProcessDto> findProcessByDocumentId(
             @AuthenticationPrincipal @Parameter(hidden = true) User user,
