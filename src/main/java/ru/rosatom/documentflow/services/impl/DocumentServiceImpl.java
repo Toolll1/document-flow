@@ -5,6 +5,7 @@ import com.querydsl.jpa.JPAExpressions;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -242,5 +243,9 @@ public class DocumentServiceImpl implements DocumentService {
         } else {
             documentRepository.save(newDocument);
         }
+    }
+
+    public Resource getFileFromMinio(Document document){
+        return fileService.getFile(document);
     }
 }
