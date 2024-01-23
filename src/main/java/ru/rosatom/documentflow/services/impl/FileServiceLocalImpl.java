@@ -93,9 +93,15 @@ public class FileServiceLocalImpl extends FileServiceAbstract implements FileSer
         return createFile(newDocument, docProcess);
     }
 
+    /**
+     * Не поддерживается в локальном хранилище.
+     *
+     * @param document Документ для получения файла.
+     * @throws UnsupportedOperationException всегда, так как метод не поддерживается.
+     */
     @Override
     public String getFile(Document document) {
-        return null;
+        throw new UnsupportedOperationException("Получение документа не поддерживается для локального хранения");
     }
 
     @Override

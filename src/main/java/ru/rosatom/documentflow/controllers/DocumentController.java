@@ -80,7 +80,6 @@ public class DocumentController {
     @SecurityRequirement(name = "JWT")
     public FileDownloadDto downloadDocument(
             @PathVariable @Parameter(description = "ID документа") Long documentId) {
-
         return new FileDownloadDto(documentService.getFileFromMinio(documentService.findDocumentById(documentId)));
     }
 

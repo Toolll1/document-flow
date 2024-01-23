@@ -55,15 +55,19 @@ public class FileServiceMinioImpl extends FileServiceAbstract implements FileSer
         }
     }
 
+    /**
+     * Возвращает предварительно подписанный URL для файла в MinIO.
+     *
+     * @param document Документ, содержащий путь и имя файла.
+     * @return Предварительно подписанный URL для скачивания файла.
+     * @throws FileDownloadException при ошибке скачивания файла.
+     */
     public String getFile(Document document) {
-        String bucketName = document.getDocumentPath().replace("http://127.0.0.1:9090/browser/", "");//todo поменять хттп
-        String objectName = document.getName();
-
         try {
             GetPresignedObjectUrlArgs urlArgs = GetPresignedObjectUrlArgs.builder()
                     .method(Method.GET)
-                    .bucket(bucketName)
-                    .object(objectName)
+                    .bucket(document.getDocumentPath().replace("https://minio.docflow.fokidoki.su/browser/", ""))
+                    .object(document.getName())
                     .expiry(120)
                     .build();
             return minioClient.getPresignedObjectUrl(urlArgs);
@@ -138,7 +142,7 @@ public class FileServiceMinioImpl extends FileServiceAbstract implements FileSer
             deleteLocalFile(file);
         }
 
-        document.setDocumentPath("http://127.0.0.1:9000" + bucketName);
+        document.setDocumentPath("https://minio.docflow.fokidoki.su/browser/" + bucketName);
         document.setDocumentPath(minioConfig.getPrefix() + bucketName);
         document.setName(name);
 
@@ -155,7 +159,7 @@ public class FileServiceMinioImpl extends FileServiceAbstract implements FileSer
     public Document editFileInMinio(Document newDocument, Document oldDocument, String basketVersionControl, Collection<DocProcess> docProcess) {
 
         String fileName = oldDocument.getName();
-        String bucketName = oldDocument.getDocumentPath().replace("http://127.0.0.1:9000", "");
+        String bucketName = oldDocument.getDocumentPath().replace("https://minio.docflow.fokidoki.su/browser/", "");
 
         try {
             copyFileFromMinio(fileName, bucketName, basketVersionControl);
