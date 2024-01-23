@@ -2,13 +2,12 @@ package ru.rosatom.documentflow.services.impl;
 
 import io.minio.*;
 import io.minio.errors.*;
+import io.minio.http.Method;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import ru.rosatom.documentflow.adapters.TranslitText;
 import ru.rosatom.documentflow.configuration.MinioConfig;
@@ -25,7 +24,6 @@ import ru.rosatom.documentflow.services.UserService;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.FileSystems;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -57,14 +55,18 @@ public class FileServiceMinioImpl extends FileServiceAbstract implements FileSer
         }
     }
 
-    public Resource getFile(Document document) {
+    public String getFile(Document document) {
         String bucketName = document.getDocumentPath().replace("http://127.0.0.1:9090/browser/", "");//todo поменять хттп
         String objectName = document.getName();
 
         try {
-            InputStream stream = minioClient.getObject(
-                    GetObjectArgs.builder().bucket(bucketName).object(objectName).bucket(bucketName).build());
-            return new InputStreamResource(stream);
+            GetPresignedObjectUrlArgs urlArgs = GetPresignedObjectUrlArgs.builder()
+                    .method(Method.GET)
+                    .bucket(bucketName)
+                    .object(objectName)
+                    .expiry(120)
+                    .build();
+            return minioClient.getPresignedObjectUrl(urlArgs);
         } catch (Exception e) {
             throw new FileDownloadException("Ошибка при скачивании файла: " + e.getMessage());
         }

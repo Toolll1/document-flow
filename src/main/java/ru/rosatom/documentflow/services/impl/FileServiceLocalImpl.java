@@ -5,7 +5,6 @@ import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import ru.rosatom.documentflow.adapters.TranslitText;
 import ru.rosatom.documentflow.dto.UserReplyDto;
@@ -95,7 +94,7 @@ public class FileServiceLocalImpl extends FileServiceAbstract implements FileSer
     }
 
     @Override
-    public Resource getFile(Document document) {
+    public String getFile(Document document) {
         return null;
     }
 

@@ -10,15 +10,11 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springdoc.api.annotations.ParameterObject;
-import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -82,15 +78,10 @@ public class DocumentController {
     @GetMapping("/{documentId}/download")
     @PreAuthorize("hasAuthority('USER') || hasAuthority('COMPANY_ADMIN')")
     @SecurityRequirement(name = "JWT")
-    public ResponseEntity<Resource> downloadDocument(
+    public FileDownloadDto downloadDocument(
             @PathVariable @Parameter(description = "ID документа") Long documentId) {
 
-        String contentDisposition = "attachment; filename=\"" + documentService.findDocumentById(documentId).getName() + "\"";
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
-                .body(documentService.getFileFromMinio(documentService.findDocumentById(documentId)));
+        return new FileDownloadDto(documentService.getFileFromMinio(documentService.findDocumentById(documentId)));
     }
 
 

@@ -1,6 +1,5 @@
 package ru.rosatom.documentflow.services;
 
-import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import ru.rosatom.documentflow.dto.DocParams;
@@ -37,5 +36,5 @@ public interface DocumentService {
 
     void updateFinalStatus(Document document, DocProcessStatus status, Collection<DocProcess> docProcess);
 
-    Resource getFileFromMinio(Document document);
+    String getFileFromMinio(Document document);
 }
