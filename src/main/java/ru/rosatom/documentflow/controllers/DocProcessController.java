@@ -109,7 +109,7 @@ public class DocProcessController {
 
     @Operation(summary = "Удалить процесс")
     @DeleteMapping("/processes/{processId}")
-    @PreAuthorize("(@documentProcessSecurityService.isCanManageProcess(#processId, #user.id) " +
+    @PreAuthorize("(@documentProcessSecurityService.isHasAccessToProcess(#processId, #user.id) " +
             "&& !@documentProcessSecurityService.isProcessDone(#processId) && hasAuthority('USER')) " +
             "|| (@documentProcessSecurityService.isMyCompanyProcess(#processId, #user.id) && hasAuthority('COMPANY_ADMIN'))")
     @ResponseStatus(HttpStatus.NO_CONTENT)
