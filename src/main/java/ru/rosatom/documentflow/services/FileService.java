@@ -11,5 +11,7 @@ public interface FileService {
 
     Document updateFile(Document newDocument, Document oldDocument, Collection<DocProcess> docProcess);
 
+    String getFile(Document document);
+
     void deleteFile(Document document);
 }

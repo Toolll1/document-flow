@@ -95,6 +95,11 @@ public class ErrorHandler {
         return createAppError(e, HttpStatus.UNPROCESSABLE_ENTITY);
     }
     @ExceptionHandler
+    public ResponseEntity<AppError> handleFileDownloadException(final FileDownloadException e) {
+        return createAppError(e, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler
     public ResponseEntity<AppError> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException methodArgumentTypeMismatchException){
         String errorMessage = String.format("Parameter %s is invalid",
                 methodArgumentTypeMismatchException.getValue());

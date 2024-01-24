@@ -243,4 +243,8 @@ public class DocumentServiceImpl implements DocumentService {
             documentRepository.save(newDocument);
         }
     }
+
+    public String getFileFromMinio(Document document){
+        return fileService.getFile(document);
+    }
 }

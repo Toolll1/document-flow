@@ -1,31 +1,20 @@
 package ru.rosatom.documentflow.services.impl;
 
-import io.minio.BucketExistsArgs;
-import io.minio.CopyObjectArgs;
-import io.minio.CopySource;
-import io.minio.MakeBucketArgs;
-import io.minio.MinioClient;
-import io.minio.RemoveObjectArgs;
-import io.minio.UploadObjectArgs;
-import io.minio.errors.ErrorResponseException;
-import io.minio.errors.InsufficientDataException;
-import io.minio.errors.InternalException;
-import io.minio.errors.InvalidResponseException;
-import io.minio.errors.MinioException;
-import io.minio.errors.ServerException;
-import io.minio.errors.XmlParserException;
+import io.minio.*;
+import io.minio.errors.*;
+import io.minio.http.Method;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 import ru.rosatom.documentflow.adapters.TranslitText;
 import ru.rosatom.documentflow.configuration.MinioConfig;
 import ru.rosatom.documentflow.dto.UserReplyDto;
 import ru.rosatom.documentflow.exceptions.BadRequestException;
 import ru.rosatom.documentflow.exceptions.ConflictException;
+import ru.rosatom.documentflow.exceptions.FileDownloadException;
 import ru.rosatom.documentflow.mappers.UserMapper;
 import ru.rosatom.documentflow.models.DocProcess;
 import ru.rosatom.documentflow.models.Document;
@@ -41,7 +30,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 
 @Service
-@ConfigurationProperties(prefix = "minio")
 @ConditionalOnProperty(prefix = "service", name = "file", havingValue = "minio")
 public class FileServiceMinioImpl extends FileServiceAbstract implements FileService {
     private final UserService userService;
@@ -67,6 +55,28 @@ public class FileServiceMinioImpl extends FileServiceAbstract implements FileSer
         }
     }
 
+    /**
+     * Возвращает предварительно подписанный URL для файла в MinIO.
+     *
+     * @param document Документ, содержащий путь и имя файла.
+     * @return Предварительно подписанный URL для скачивания файла.
+     * @throws FileDownloadException при ошибке скачивания файла.
+     */
+    public String getFile(Document document) {
+        try {
+            GetPresignedObjectUrlArgs urlArgs = GetPresignedObjectUrlArgs.builder()
+                    .method(Method.GET)
+                    .bucket(document.getDocumentPath().replace("https://minio.docflow.fokidoki.su/browser/", ""))
+                    .object(document.getName())
+                    .expiry(120)
+                    .build();
+            return minioClient.getPresignedObjectUrl(urlArgs);
+        } catch (Exception e) {
+            throw new FileDownloadException("Ошибка при скачивании файла: " + e.getMessage());
+        }
+    }
+
+
     @Override
     public Document createFile(Document document, Collection<DocProcess> docProcess) {
 
@@ -79,7 +89,7 @@ public class FileServiceMinioImpl extends FileServiceAbstract implements FileSer
         if (fileDocx.exists()) {
             throw new ConflictException("Такой файл уже существует");
         }
-        
+
         try {
             UserReplyDto userReplyDto = userMapper.objectToReplyDto(user);
             MainDocumentPart mainDocumentPart = wordPackage.getMainDocumentPart();
